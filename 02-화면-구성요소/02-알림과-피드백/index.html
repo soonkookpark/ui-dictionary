@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="알림과 피드백 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>알림과 피드백 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 알림이 뜨는 작은 휴대폰 화면 */
+.scr { width: 190px; height: 180px; }
+.scr .lines { padding: 12px; display: grid; gap: 8px; }
+
+/* 01 토스트: 아래에서 올라와 잠깐 머물다 사라진다(opacity + translateY) */
+.toast { position: absolute; left: 50%; bottom: 14px; padding: 7px 14px; border-radius: 99px; background: #1f2937; color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap; animation: toast 3.6s ease-out infinite; }
+@keyframes toast { 0%, 12% { opacity: 0; transform: translate(-50%, 12px); } 22%, 70% { opacity: 1; transform: translate(-50%, 0); } 82%, 100% { opacity: 0; transform: translate(-50%, 0); } }
+
+/* 02 스낵바: 폭이 넓고 오른쪽에 되돌리기 버튼이 붙는다 */
+.snack { position: absolute; left: 8px; right: 8px; bottom: 10px; display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; border-radius: 8px; background: #1f2937; color: #fff; font-size: 12px; animation: snack 4s ease-out infinite; }
+.snack u { color: #a5b4fc; font-weight: 800; text-decoration: none; }
+@keyframes snack { 0%, 10% { transform: translateY(150%); } 22%, 75% { transform: translateY(0); } 88%, 100% { transform: translateY(150%); } }
+
+/* 03 배너: 화면 위쪽에 자리를 차지하고 머문다(위에서 내려옴) */
+.ban { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: #e0e7ff; color: var(--p); font-size: 11px; font-weight: 700; animation: ban 4s ease-out infinite; }
+.ban .d-svg { width: 14px; height: 14px; flex: none; }
+.ban .x { margin-left: auto; }
+@keyframes ban { 0%, 8% { transform: translateY(-100%); } 20%, 100% { transform: none; } }
+
+/* 04 모달: <dialog> 와 ::backdrop(뒤를 어둡게) */
+.mdlg { border: 0; border-radius: 16px; padding: 20px; width: 280px; box-shadow: 0 20px 50px rgba(0,0,0,.3); font: 14px var(--font); color: var(--ink); }
+.mdlg::backdrop { background: rgba(15,15,30,.55); }
+.mdlg h3 { margin: 0 0 4px; font-size: 17px; }
+.mdlg p { margin: 0 0 16px; color: var(--mute); }
+.mdlg .d-row { justify-content: flex-end; }
+
+/* 05 바텀시트: 아래에서 올라오는 판과 뒤의 어둠 */
+.dim { position: absolute; inset: 0; background: rgba(15,15,30,.45); animation: dim 4s ease-out infinite; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 14px 12px; background: #fff; border-radius: 14px 14px 0 0; font-size: 12px; font-weight: 600; display: grid; gap: 9px; animation: sheet 4s ease-out infinite; }
+.sheet::before { content: ""; width: 30px; height: 4px; border-radius: 9px; background: #c9cfe6; justify-self: center; }
+@keyframes dim { 0%, 8% { opacity: 0; } 25%, 75% { opacity: 1; } 92%, 100% { opacity: 0; } }
+@keyframes sheet { 0%, 8% { transform: translateY(100%); } 25%, 75% { transform: none; } 92%, 100% { transform: translateY(100%); } }
+
+/* 06 인라인 오류: 입력칸이 비어 있지 않고 형식이 틀리면(:invalid) 빨갛게 */
+.field { width: 230px; display: grid; gap: 4px; }
+.field .err { display: none; color: var(--danger); font-size: 12px; font-weight: 600; }
+.field input:not(:placeholder-shown):invalid { border-color: var(--danger); background: #fef2f2; }
+.field input:not(:placeholder-shown):invalid ~ .err { display: block; }
+
+/* 07 툴팁: 물음표에 마우스를 올리거나 키보드로 오면 말풍선이 나타난다 */
+.tip { position: relative; display: inline-grid; place-items: center; width: 22px; height: 22px; border: 0; border-radius: 50%; background: #c9cfe6; color: var(--ink); font: 700 12px var(--font); cursor: help; }
+.tip span { position: absolute; bottom: 30px; left: 50%; transform: translate(-50%, 4px); width: max-content; max-width: 190px; padding: 6px 10px; border-radius: 8px; background: #1f2937; color: #fff; font-weight: 600; opacity: 0; pointer-events: none; transition: .15s; }
+.tip:hover span, .tip:focus-visible span { opacity: 1; transform: translate(-50%, 0); }
+
+/* 08 코치마크: 큰 box-shadow 로 한 곳만 남기고 화면을 덮는다(스포트라이트) */
+.coach { position: absolute; right: 14px; bottom: 14px; width: 34px; height: 34px; border-radius: 50%; background: var(--p); box-shadow: 0 0 0 200px rgba(15,15,30,.6); display: grid; place-items: center; color: #fff; animation: pulse 1.6s ease-in-out infinite; }
+.coach .d-svg { stroke: #fff; }
+.coachtxt { position: absolute; left: 14px; bottom: 66px; right: 14px; color: #fff; font-size: 12px; font-weight: 700; }
+.coachtxt i { display: inline-block; margin-top: 6px; padding: 2px 10px; border-radius: 99px; background: #fff; color: var(--ink); font-style: normal; font-size: 11px; }
+@keyframes pulse { 50% { transform: scale(1.12); } }
+
+/* 09 뱃지: 아이콘 모서리에 겹친 빨간 숫자, 새 알림이 오면 톡 튄다 */
+.bell { position: relative; display: inline-grid; }
+.bell .d-svg { width: 34px; height: 34px; }
+.bell b { position: absolute; top: -4px; right: -6px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 99px; background: var(--danger); color: #fff; font-size: 11px; line-height: 18px; text-align: center; animation: pop 2.6s ease-out infinite; }
+@keyframes pop { 0%, 10% { transform: scale(0); } 22% { transform: scale(1.3); } 30%, 85% { transform: scale(1); } 100% { transform: scale(0); } }
+
+/* 추가: 푸시 알림 — 잠금 화면 위에서 내려오는 카드 */
+.push { position: absolute; left: 8px; right: 8px; top: 8px; padding: 8px 10px; border-radius: 12px; background: #fff; box-shadow: 0 4px 14px rgba(30,27,75,.2); font-size: 11px; animation: ban 4s ease-out infinite; }
+.push b { display: block; }
+.lock { background: linear-gradient(160deg, #6366f1, #1e1b4b); }
+/* 추가: 햅틱 — 화면이 짧게 떨린다 */
+.shake { animation: shake 2.4s ease-in-out infinite; }
+@keyframes shake { 0%, 60%, 100% { transform: none; } 66% { transform: translateX(-4px); } 72% { transform: translateX(4px); } 78% { transform: translateX(-3px); } 84% { transform: translateX(3px); } 90% { transform: translateX(-1px); } }
+/* 추가: 알림 센터 — 읽지 않은 줄에만 점이 붙는다 */
+.nc { width: 230px; display: grid; gap: 6px; }
+.nc div { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #fff; border-radius: 10px; border: 1px solid var(--line); font-size: 12px; }
+.nc div.new { font-weight: 800; }
+.nc div.new::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--p); flex: none; }
+.nc div:not(.new) { color: var(--mute); padding-left: 26px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">화면 구성요소</a><span class="sep">›</span>
+  <span>알림과 피드백</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>알림과 피드백 9가지</h1>
+    <p class="lead">알려주는 방법에도 이름이 있어요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="toast">
+      <div class="demo">
+        <div class="d-phone scr"><div class="lines"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div><button class="d-btn" type="button" style="margin-top:6px">저장하기</button></div><div class="toast">포폴을 저장했어요</div></div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">토스트 <span class="en">Toast</span></h2>
+        <p class="desc">화면 한쪽에 작은 글상자가 잠깐 떴다가 저절로 사라집니다. 구운 토스트가 톡 튀어나오는 모습에서 따온 이름입니다. 눌러야 하는 버튼이 없습니다.</p>
+        <p class="when"><b>언제 쓰나</b>"저장했어요", "링크를 복사했어요"처럼 결과만 알려주면 끝나는 가벼운 안내.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>저장 버튼을 누르면 화면 아래에 "저장했어요" 토스트를 3초 동안 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>저절로 사라지기 때문에 놓치면 끝입니다. 오류나 되돌릴 수 없는 결과처럼 꼭 읽어야 하는 내용에는 쓰지 마세요. 또 화면 낭독기 사용자를 위해 알림 영역(aria-live)으로 읽히게 만들어야 하는데, 이걸 빼먹는 경우가 많습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="snackbar">
+      <div class="demo">
+        <div class="d-phone scr"><div class="lines"><div class="d-box" style="padding:8px;font-weight:700;font-size:12px">A사 지원서</div><div class="d-bar" style="width:70%"></div></div><div class="snack"><span>지원서를 삭제했어요</span><u>되돌리기</u></div></div>
+      </div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">스낵바 <span class="en">Snackbar</span></h2>
+        <p class="desc">토스트처럼 잠깐 뜨지만 옆에 <strong>행동 버튼</strong>(되돌리기 등)이 붙은 막대입니다. 구글 머티리얼 디자인에서 쓰는 이름이고, 토스트와 같은 뜻으로 섞어 부르는 경우도 많습니다.</p>
+        <p class="when"><b>언제 쓰나</b>삭제·이동처럼 실수했을 때 바로 되돌릴 기회를 주고 싶은 동작 뒤.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>항목을 삭제하면 아래에 "되돌리기" 버튼이 있는 스낵바를 5초 동안 보여주고, 누르면 복구해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>되돌리기 버튼이 있는데 3초 만에 사라지면 눌러 볼 틈이 없습니다. 최소 5초는 두고, 마우스를 올려 두는 동안에는 시간이 멈추게 하세요. 그리고 이 시간 안에는 서버에서 실제로 지우지 말고 기다렸다가 지워야 진짜 되돌려집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="banner">
+      <div class="demo">
+        <div class="d-phone scr"><div class="ban"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>서류 마감이 3일 남았어요<span class="x">x</span></div><div class="lines"><div class="d-bar dark" style="width:55%"></div><div class="d-bar"></div><div class="d-bar" style="width:75%"></div></div></div>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">배너 <span class="en">Banner</span></h2>
+        <p class="desc">화면 위쪽(또는 아래)에 붙어서 사용자가 닫을 때까지 머무는 안내 띠입니다. 토스트와 달리 화면 흐름 안에 <strong>자리를 차지합니다</strong>.</p>
+        <p class="when"><b>언제 쓰나</b>점검 공지, 마감 임박, 결제 수단 만료처럼 한동안 계속 알려야 하는 상태.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>목록 위에 마감 임박을 알려주는 파란 배너를 넣고, 오른쪽 X로 닫을 수 있게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>배너를 여러 개 겹쳐 쌓으면 정작 내용이 화면 아래로 밀려납니다. 한 번에 하나만 보여주세요. 닫은 배너가 새로고침하면 또 뜨는 것도 흔한 불만이니, 닫았다는 사실을 기억하게 만들어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="modal">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <button class="d-btn" type="button" onclick="document.getElementById('mdlg').showModal()">지원서 제출하기</button>
+          <span class="d-cap">눌러 보세요. 창이 열립니다</span>
+        </div>
+        <dialog class="mdlg" id="mdlg">
+          <h3>지원서를 제출할까요?</h3>
+          <p>제출하면 고칠 수 없어요</p>
+          <form method="dialog" class="d-row"><button class="d-btn ghost" value="cancel">취소</button><button class="d-btn" value="ok">제출</button></form>
+        </dialog>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">모달 <span class="en">Modal dialog</span></h2>
+        <p class="desc">뒤 화면을 어둡게 덮고 가운데에 뜨는 창. 사용자가 <strong>답하기 전에는 뒤 화면을 누를 수 없습니다</strong>. 다이얼로그, 팝업이라고도 부르지만 팝업은 더 넓은 말입니다.</p>
+        <p class="when"><b>언제 쓰나</b>제출, 삭제, 결제처럼 되돌릴 수 없는 일을 하기 직전의 마지막 확인.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>제출 버튼을 누르면 "취소"와 "제출" 버튼이 있는 모달을 띄우고, 바깥을 눌러도 닫히지 않게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모달은 사용자의 흐름을 끊는 가장 강한 알림이라 남발하면 바로 미움받습니다. 버튼 문구를 "예/아니오" 대신 "제출"·"취소"처럼 동작으로 쓰세요. Esc 키로 닫히는지, 열린 동안 키보드 포커스가 창 안에 갇히는지도 꼭 확인해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="bottom-sheet">
+      <div class="demo">
+        <div class="d-phone scr"><div class="lines"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div></div><div class="dim"></div><div class="sheet"><span>공유하기</span><span>이름 바꾸기</span><span style="color:var(--danger)">삭제하기</span></div></div>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">바텀시트 <span class="en">Bottom sheet</span></h2>
+        <p class="desc">화면 아래에서 올라오는 판. 모달이 가운데에 뜨는 창이라면 바텀시트는 <strong>엄지손가락이 닿는 아래쪽</strong>에서 올라옵니다. 위 손잡이를 끌어 닫는 경우가 많습니다.</p>
+        <p class="when"><b>언제 쓰나</b>모바일에서 "더보기" 메뉴, 옵션 고르기, 공유 목록처럼 선택지가 여러 개일 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>점 세 개 버튼을 누르면 공유·이름 바꾸기·삭제 항목이 있는 바텀시트가 아래에서 올라오게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>PC 화면에서는 어색해서 보통 일반 모달이나 드롭다운으로 바꿉니다. 삭제처럼 위험한 항목은 빨간색으로 구분하고 맨 아래에 두세요. 아래로 끌어 닫는 제스처 말고도 닫기 버튼이 있어야 접근성이 지켜집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="inline-error">
+      <div class="demo">
+        <div class="field">
+          <label class="d-cap" for="em">이메일</label>
+          <input class="d-input" id="em" type="email" placeholder="woody@mail 까지만 써 보세요" autocomplete="off">
+          <span class="err">이메일 형식이 아니에요. 예: woody@mail.com</span>
+          <span class="d-cap">입력하면 바로 알려줍니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">인라인 오류 <span class="en">Inline error</span></h2>
+        <p class="desc">잘못된 입력칸 <strong>바로 옆이나 아래</strong>에 빨간 글씨로 이유를 적어주는 방식입니다. 화면 위쪽에 오류를 한꺼번에 모아 보여주는 것과 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>회원가입, 주문서, 로그인처럼 입력칸이 있는 모든 폼.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이메일 입력칸에서 포커스가 빠질 때 형식이 틀리면 칸 아래에 빨간 인라인 오류 문구를 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>빨간색만으로 오류를 알리면 색을 구별하기 어려운 사용자는 놓칩니다. 아이콘이나 글자를 꼭 함께 쓰세요. 그리고 "잘못된 입력입니다" 같은 말은 쓸모없고, 어떻게 고쳐야 하는지까지 적어야 합니다. 타이핑 중간마다 바로 띄우면 공격받는 느낌이라 입력을 마친 뒤에 보여주는 편이 좋습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="tooltip">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:14px">
+          <div class="d-row"><div><span class="d-cap">서류 합격률</span><br><b style="font-size:24px">24%</b></div><button class="tip" type="button" aria-label="설명 보기">i<span role="tooltip">최근 3개월 지원 기준이에요</span></button></div>
+          <span class="d-cap">i 에 마우스를 올리거나 Tab 으로 가 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">툴팁 <span class="en">Tooltip</span></h2>
+        <p class="desc">요소에 마우스를 올리거나 포커스가 가면 옆에 뜨는 작은 설명 말풍선. 눌러서 열고 닫는 <strong>팝오버(popover)</strong>보다 가볍고, 안에 버튼을 넣지 않습니다.</p>
+        <p class="when"><b>언제 쓰나</b>아이콘 버튼의 이름, 낯선 용어의 한 줄 풀이처럼 짧은 보충 설명.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>합격률 옆 물음표 아이콘에 마우스를 올리거나 포커스하면 툴팁으로 기준을 설명해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>터치 화면에는 "올리기"가 없어서 모바일에서는 툴팁이 사실상 안 보입니다. 꼭 필요한 정보는 툴팁에 숨기지 말고 화면에 직접 쓰세요. 키보드 포커스에서도 뜨는지, 읽다가 마우스를 옮겨도 바로 사라지지 않는지 확인해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="coach-mark">
+      <div class="demo">
+        <div class="d-phone scr"><div class="lines"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div></div><div class="coachtxt">여기서 포폴을 올려요<br><i>알겠어요</i></div><div class="coach"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></div></div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">코치마크 <span class="en">Coach mark</span></h2>
+        <p class="desc">화면을 어둡게 덮고 알려줄 부분만 밝게 남긴 채 사용법을 짚어주는 안내. 처음 쓰는 사람에게 코치가 옆에서 가리켜 주는 모양이라 이런 이름이 붙었습니다. <strong>온보딩 툴팁</strong>, 스포트라이트 투어라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>앱을 처음 열었을 때, 또는 새 기능이 추가된 직후 그 기능의 위치를 알려줄 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>처음 접속한 사용자에게만 + 버튼을 밝게 강조하고 나머지는 어둡게 덮는 코치마크를 한 번 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>한 번에 3개 이상 보여주면 아무도 끝까지 읽지 않습니다. 그리고 "알겠어요"를 누른 뒤 다시 볼 방법이 없으면 곤란하니, 도움말 어딘가에 다시 보기를 두세요. 화면 크기가 달라질 때 구멍 위치가 어긋나는 개발 문제도 자주 터집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="badge">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:14px">
+          <div class="bell"><svg class="d-svg" viewBox="0 0 24 24" aria-label="알림 아이콘"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg><b>1</b></div>
+          <span class="d-cap">새 피드백이 1개 왔어요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">뱃지 <span class="en">Badge</span></h2>
+        <p class="desc">아이콘 모서리에 붙는 작은 숫자나 점. 소리 없이 "확인하지 않은 것이 있다"고 알려줍니다. 숫자가 없는 점만 있는 것은 <strong>점 뱃지(dot badge)</strong>라고 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>알림 종, 채팅 아이콘, 앱 아이콘, 탭 메뉴에서 읽지 않은 항목이 있을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>알림 아이콘 오른쪽 위에 읽지 않은 개수를 보여주는 빨간 뱃지를 달고, 99개가 넘으면 99+로 표시해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모든 메뉴에 뱃지를 달면 빨간색이 일상이 되어 아무도 신경 쓰지 않습니다. 정말 사용자의 행동이 필요한 곳에만 쓰세요. 숫자가 두 자리·세 자리로 늘어날 때 동그라미가 찌그러지지 않는지, 읽으면 사라지는지도 꼭 확인합니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">실무에서 알림과 피드백을 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="push-notification">
+      <div class="demo">
+        <div class="d-phone scr lock"><div class="push"><b>포트폴리오 앱</b>A사에서 지원서를 열람했어요</div></div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">푸시 알림 <span class="en">Push notification</span></h2>
+        <p class="desc">앱을 열어 두지 않아도 기기의 잠금 화면과 상단에 도착하는 알림. 앞의 9가지가 앱 <em>안</em>의 알림이라면 푸시는 앱 <strong>밖</strong>에서 사용자를 부르는 알림입니다.</p>
+        <p class="when"><b>언제 쓰나</b>배송 출발, 채팅 도착, 결제 완료처럼 지금 알려야 의미가 있는 소식.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>지원서가 열람되면 푸시 알림을 보내고, 설정에서 종류별로 끌 수 있게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>첫 실행 때 바로 "알림을 허용하시겠어요?"를 띄우면 대부분 거절당하고, 거절한 뒤에는 앱이 다시 물을 수 없습니다. 왜 필요한지 먼저 보여주고, 사용자가 필요를 느낀 순간에 허용을 요청하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="haptic">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="d-phone scr shake" style="width:120px;height:150px;display:grid;place-items:center"><svg class="d-svg" viewBox="0 0 24 24" aria-label="진동" style="width:36px;height:36px;color:var(--p)"><path d="M5 12l4 4 10-10"/></svg></div>
+          <span class="d-cap">단순화한 예시: 실제로는 기기가 진동합니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">햅틱 피드백 <span class="en">Haptic feedback</span></h2>
+        <p class="desc">화면이 아니라 <strong>진동</strong>으로 알려주는 피드백. 눈이 아닌 손끝으로 "눌렸다", "성공했다", "틀렸다"를 전합니다.</p>
+        <p class="when"><b>언제 쓰나</b>결제 성공, 스위치 전환, 잘못된 비밀번호처럼 짧고 분명한 결과를 몸으로 느끼게 하고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>결제가 완료되면 짧은 성공 햅틱 피드백을 주고, 실패하면 다른 패턴의 진동을 줘</q></p>
+        <p class="senior"><b>20년차 메모</b>웹에서는 기기와 브라우저에 따라 아예 동작하지 않는 일이 많으니 진동만으로 알려서는 안 됩니다. 눈으로도 같은 정보가 보여야 합니다. 너무 자주 울리면 오히려 거슬립니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="notification-center">
+      <div class="demo">
+        <div class="nc"><div class="new">A사에서 지원서를 열람했어요</div><div class="new">면접 일정이 확정됐어요</div><div>프로필을 업데이트했어요</div></div>
+      </div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">알림 센터 <span class="en">Notification center</span></h2>
+        <p class="desc">지나간 알림을 한곳에 모아 두고 다시 볼 수 있는 목록. <strong>인박스(inbox)</strong>라고도 합니다. 토스트나 푸시는 놓치면 사라지지만 알림 센터에는 남습니다.</p>
+        <p class="when"><b>언제 쓰나</b>알림이 많은 서비스에서, 놓친 알림을 사용자가 나중에 찾아볼 곳이 필요할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>종 아이콘을 누르면 알림 센터가 열려서 읽지 않은 알림은 굵게 점과 함께 보여주고, 누르면 읽음 처리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>알림이 하나도 없을 때의 빈 화면과 "모두 읽음" 버튼을 빠뜨리는 경우가 많습니다. 알림마다 눌렀을 때 어디로 가는지도 정해 두세요. 연결이 끊긴 알림이 제일 허탈합니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

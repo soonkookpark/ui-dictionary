@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="디자인 스타일 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>디자인 스타일 9가지 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 같은 "메모 카드"를 스타일 클래스만 바꿔 9번 그린다 */
+.memo { position: relative; width: 170px; padding: 14px; display: grid; gap: 6px; justify-items: start; }
+.memo .ic { width: 44px; height: 44px; display: grid; place-items: center; }
+.memo b { font-size: 15px; } .memo span { font-size: 12px; }
+
+/* 01 스큐어모피즘 핵심: 그라데이션(linear-gradient) + 안쪽 그림자(inset box-shadow) + 진한 바깥 그림자 = 실제 종이·플라스틱 질감 */
+.sk { background: linear-gradient(#fff9b0, #f4e56a); border-radius: 4px; color: #5a3d00; font-family: "Segoe Script", "Comic Sans MS", cursive; box-shadow: 0 8px 14px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.15), inset 0 -20px 30px rgba(180,150,0,.25); }
+.sk b, .sk span { text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+.sk .ic { border-radius: 10px; color: #fff; background: linear-gradient(#ffd54a, #e09b00); box-shadow: inset 0 2px 1px rgba(255,255,255,.8), inset 0 -3px 4px rgba(0,0,0,.3), 0 3px 4px rgba(0,0,0,.4); }
+
+/* 02 플랫 핵심: 그림자·테두리·그라데이션을 모두 빼고 단색(background) 면만 쓴다 */
+.fl { background: #f1c40f; border-radius: 6px; color: #2c3e50; }
+.fl .ic { background: #e67e22; border-radius: 6px; color: #fff; }
+
+/* 03 머티리얼 핵심: 겹친 두 개의 바깥 그림자로 "종이가 떠 있는 높이" + 동그란 FAB 버튼 */
+.mt { background: #fff; border-radius: 4px; color: #212121; box-shadow: 0 1px 3px rgba(0,0,0,.2), 0 4px 8px rgba(0,0,0,.14); }
+.mt .ic { border-radius: 50%; background: #6200ee; color: #fff; }
+.mt::after { content: "+"; position: absolute; right: 12px; bottom: -14px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #ff4081; color: #fff; font-size: 24px; box-shadow: 0 4px 8px rgba(0,0,0,.3); animation: ripple 2.4s ease-out infinite; }
+@keyframes ripple { 0% { box-shadow: 0 4px 8px rgba(0,0,0,.3), 0 0 0 0 rgba(255,64,129,.5); } 60%, 100% { box-shadow: 0 4px 8px rgba(0,0,0,.3), 0 0 0 16px rgba(255,64,129,0); } }
+
+/* 04 뉴모피즘 핵심: 배경과 같은 색 + 왼쪽 위는 밝은 그림자, 오른쪽 아래는 어두운 그림자. 눌린 곳은 inset */
+.nm { background: #e0e5ec; border-radius: 24px; color: #5b6785; box-shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #fff; }
+.nm .ic { border-radius: 14px; color: #6b7a99; box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #fff; }
+
+/* 05 글래스모피즘 핵심: 반투명 흰색(rgba) + 뒤를 흐리게(backdrop-filter: blur) + 얇은 흰 테두리 */
+.gl { background: rgba(255,255,255,.2); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.45); border-radius: 18px; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+.gl .ic { background: rgba(255,255,255,.3); border-radius: 12px; }
+
+/* 06 클레이모피즘 핵심: 큰 둥근 모서리 + 안쪽 밝은/어두운 그림자 두 겹 + 부드러운 바깥 그림자 = 말랑한 점토 */
+.cl { background: #ffb3d1; border-radius: 30px; color: #7a2a4d; font-weight: 800; box-shadow: 10px 14px 24px rgba(214,90,140,.35), inset -8px -8px 14px rgba(190,60,110,.25), inset 8px 8px 14px rgba(255,255,255,.7); }
+.cl .ic { background: #a8e6cf; border-radius: 50%; color: #2d6a4f; box-shadow: 4px 6px 10px rgba(45,106,79,.3), inset -4px -4px 8px rgba(45,106,79,.25), inset 4px 4px 8px rgba(255,255,255,.7); }
+
+/* 07 네오 브루탈리즘 핵심: 굵은 검정 테두리 + 번지지 않는 단단한 그림자(blur 0) + 원색 면. 올려 보면 눌린다 */
+.nb { background: #ffde59; border: 3px solid #000; color: #000; font-weight: 800; box-shadow: 6px 6px 0 #000; transition: transform .12s, box-shadow .12s; cursor: pointer; }
+.nb:hover { transform: translate(4px, 4px); box-shadow: 2px 2px 0 #000; }
+.nb .ic { background: #ff6b9d; border: 3px solid #000; box-shadow: 3px 3px 0 #000; }
+
+/* 08 3D 아이콘 핵심: perspective + rotateX/Y 로 기울이고, 1px 씩 어긋난 그림자를 겹쳐 두께를 만든다 */
+.d3 { background: linear-gradient(135deg, #7dd3fc, #3b82f6); border-radius: 22px; color: #fff; transform: perspective(500px) rotateX(16deg) rotateY(-22deg); animation: tilt 4s ease-in-out infinite;
+  box-shadow: 1px 1px 0 #1e40af, 2px 2px 0 #1e40af, 3px 3px 0 #1e40af, 4px 4px 0 #1e40af, 5px 5px 0 #1e40af, 6px 6px 0 #1e40af, 7px 7px 0 #1e40af, 8px 8px 0 #1e40af, 22px 30px 26px rgba(0,0,0,.25); }
+.d3 .ic { border-radius: 50%; background: radial-gradient(circle at 30% 28%, #fff 0 12%, #fde68a 30%, #f59e0b 80%); color: #92400e; box-shadow: inset -4px -6px 8px rgba(146,64,14,.4), 3px 5px 6px rgba(0,0,0,.3); }
+@keyframes tilt { 0%, 15% { transform: perspective(500px) rotateX(16deg) rotateY(-22deg); } 55%, 70% { transform: perspective(500px) rotateX(10deg) rotateY(14deg); } 100% { transform: perspective(500px) rotateX(16deg) rotateY(-22deg); } }
+
+/* 09 리퀴드 글래스 핵심: 반투명 + blur + saturate(채도 높임) + 안쪽 흰 테두리 빛(inset) + 뒤의 색이 일렁이며 비침 */
+.lq { background: linear-gradient(135deg, rgba(255,255,255,.45), rgba(255,255,255,.08)); backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px) saturate(180%); border-radius: 30px; color: #1b2540;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,.9), inset -1px -1px 0 rgba(255,255,255,.35), inset 0 0 20px rgba(255,255,255,.35), 0 10px 30px rgba(0,0,0,.2); }
+.lq .ic { background: rgba(255,255,255,.5); border-radius: 50%; box-shadow: inset 1px 1px 0 #fff; }
+.blob { position: absolute; width: 90px; height: 90px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffe27a, #ff4d8d); animation: roam 5s ease-in-out infinite; }
+@keyframes roam { 0%, 10% { transform: translate(-70px, -20px); } 50%, 60% { transform: translate(60px, 20px); } 100% { transform: translate(-70px, -20px); } }
+
+/* 추가: 엘리베이션 — 그림자가 클수록 "높이 떠 있다" */
+.el { width: 70px; height: 70px; background: #fff; border-radius: 8px; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: var(--mute); }
+/* 추가: 모서리 반경 — border-radius 숫자만 바꾼다 */
+.rd { width: 56px; height: 56px; background: var(--p); display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; }
+/* 추가: 대비 — 글자색과 배경색의 밝기 차이 */
+.ct { width: 100%; padding: 12px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font-weight: 700; }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">레이아웃과 스타일</a><span class="sep">›</span>
+  <span>디자인 스타일 9가지</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>디자인 스타일 9가지</h1>
+    <p class="lead">같은 메모 카드도 스타일 이름 하나로 이렇게 달라집니다</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="skeuomorphism">
+      <div class="demo" style="background: repeating-linear-gradient(90deg, #b98a5a 0 6px, #a97a4c 6px 12px)"><div class="memo sk"><i class="ic"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>메모</b><span>내일 10시 회의</span></div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">스큐어모피즘 <span class="en">Skeuomorphism</span></h2>
+        <p class="desc">현실의 물건(종이 메모, 가죽, 나무, 금속)을 그림자와 질감으로 똑같이 흉내 내는 스타일입니다. 초기 아이폰 시절에 유행했고, 어떻게 쓰는 물건인지 보기만 해도 알게 하는 것이 목적이었습니다. <strong>실물 모사 디자인</strong>이라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>게임, 악기·계산기 같은 실제 도구를 닮은 앱, 처음 쓰는 사람에게 사용법을 직관적으로 알려야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>스큐어모피즘 스타일로 노란 포스트잇 종이 질감의 메모 카드를 만들어줘. 나무 책상 배경, 부드러운 안쪽 그림자와 진한 드롭 섀도 포함</q></p>
+        <p class="senior"><b>20년차 메모</b>질감 그림과 그림자가 많아 파일이 무겁고, 화면 크기가 달라지면 이미지가 어색하게 늘어납니다. 앱 전체에 쓰면 금방 낡아 보이니 한 군데(게임 아이템, 악기 등)에만 쓰세요. 질감 위에 얹은 글자는 대비가 떨어지기 쉽습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="flat">
+      <div class="demo" style="background:#ecf0f1"><div class="memo fl"><i class="ic"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>메모</b><span>내일 10시 회의</span></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">플랫 디자인 <span class="en">Flat design</span></h2>
+        <p class="desc">그림자, 질감, 그라데이션을 모두 걷어내고 단색 면과 단순한 도형만 쓰는 스타일입니다. 스큐어모피즘의 반대편에 있고, 화면이 가볍고 빠르게 읽힙니다. 거의 모든 요즘 앱의 바탕이 되는 방식입니다.</p>
+        <p class="when"><b>언제 쓰나</b>업무 도구, 정보를 빠르게 훑어야 하는 앱, 화면 크기가 다양한 반응형 웹.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>플랫 디자인 스타일로 그림자와 그라데이션 없이 단색 면만 쓴 메모 카드를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>그림자가 없으니 무엇이 눌리는 버튼인지 알 수 없게 되는 것이 가장 큰 함정입니다. 색, 글자 굵기, 밑줄로 눌림 가능성을 따로 알려 주세요. 노랑 배경 위의 흰 글자처럼 대비가 부족한 색 조합도 자주 나옵니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="material">
+      <div class="demo" style="background:#fafafa;padding-bottom:36px"><div class="memo mt"><i class="ic"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>메모</b><span>내일 10시 회의</span></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">머티리얼 <span class="en">Material design</span></h2>
+        <p class="desc">구글이 만든 디자인 규칙으로, 화면을 "종이 여러 장이 겹쳐 떠 있는 것"으로 보고 그림자의 크기로 높이를 나타냅니다. 둥근 FAB(떠 있는 동작 버튼)과 물결(ripple) 반응이 상징입니다. 플랫에 약간의 입체감을 더한 스타일로 이해하면 쉽습니다.</p>
+        <p class="when"><b>언제 쓰나</b>안드로이드 앱, 구글 계열 서비스, 규칙이 이미 정리된 컴포넌트 라이브러리를 쓰고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>머티리얼 디자인 스타일로 그림자 높이(elevation)가 있는 카드와 오른쪽 아래 둥근 FAB 버튼을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>머티리얼을 그대로 쓰면 어느 앱이나 같은 모양이 됩니다. 브랜드 색과 모서리만 바꿔도 달라 보이는지 확인하세요. 아이폰에 안드로이드 느낌의 FAB과 물결을 그대로 가져오면 어색해 보이니 플랫폼 관습도 함께 봐야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="neumorphism">
+      <div class="demo" style="background:#e0e5ec"><div class="memo nm"><i class="ic"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>메모</b><span>내일 10시 회의</span></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">뉴모피즘 <span class="en">Neumorphism</span></h2>
+        <p class="desc">배경과 같은 색에 밝은 그림자와 어두운 그림자를 함께 줘서 화면에서 살짝 솟았거나 눌린 것처럼 보이게 하는 스타일입니다. 딱 부드러운 플라스틱 느낌이 납니다. 영어로 새것(neo)과 스큐어모피즘을 합친 말입니다.</p>
+        <p class="when"><b>언제 쓰나</b>스마트홈 컨트롤, 음악 플레이어, 조절 다이얼처럼 만지는 느낌의 장식적인 화면. 실제 서비스보다는 콘셉트 시안에서 많이 봅니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>뉴모피즘 스타일로 배경과 같은 #e0e5ec 색 위에 부드럽게 솟아오른 메모 카드를 만들어줘. 밝은 그림자와 어두운 그림자를 함께 써줘</q></p>
+        <p class="senior"><b>20년차 메모</b>대비가 가장 약한 스타일입니다. 배경과 같은 색이라 버튼의 경계와 글자가 흐려서 시각 장애나 밝은 야외에서 쓰기 어렵습니다. 눌림·선택·비활성 상태를 그림자만으로 구분하기도 어려워 실서비스 전체에 쓰는 것은 권하지 않습니다. 한 가지 컨트롤에만 포인트로 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="glassmorphism">
+      <div class="demo" style="background: radial-gradient(circle at 25% 30%, #ff7eb3 0 22%, transparent 23%), radial-gradient(circle at 80% 75%, #ffd86f 0 20%, transparent 21%), linear-gradient(135deg, #7f5af0, #2cb1bc)"><div class="memo gl"><i class="ic"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>메모</b><span>내일 10시 회의</span></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">글래스모피즘 <span class="en">Glassmorphism</span></h2>
+        <p class="desc">반투명한 유리판을 컬러풀한 배경 위에 얹은 듯한 스타일입니다. 뒤의 색이 흐리게 비치고, 가장자리에 얇은 흰 선이 있습니다. CSS 의 <code>backdrop-filter: blur()</code> 가 핵심 기술입니다.</p>
+        <p class="when"><b>언제 쓰나</b>음악·날씨·금융 앱의 요약 카드, 사진이나 그라데이션 배경 위에 얹는 위젯.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>글래스모피즘 스타일로 컬러풀한 그라데이션 배경 위에 backdrop-filter blur 가 들어간 반투명 메모 카드를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>뒤 배경이 복잡하면 글자가 비쳐 보이는 색과 섞여 읽을 수 없게 됩니다. 글자색은 배경이 밝든 어둡든 대비가 나오도록 안쪽에 어두운 막을 한 겹 더 깔아 두세요. 구형 기기에서는 blur 가 느리고, 지원하지 않는 브라우저에서는 그냥 투명한 상자가 되니 대체 배경색을 꼭 지정합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="claymorphism">
+      <div class="demo" style="background:#fde7ef"><div class="memo cl"><i class="ic"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>메모</b><span>내일 10시 회의</span></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">클레이모피즘 <span class="en">Claymorphism</span></h2>
+        <p class="desc">점토나 풍선처럼 통통하고 말랑한 느낌을 주는 스타일입니다. 큰 둥근 모서리, 파스텔 색, 안쪽의 밝고 어두운 그림자 두 겹이 특징입니다. 뉴모피즘과 달리 배경과 다른 색을 쓰고 훨씬 선명합니다.</p>
+        <p class="when"><b>언제 쓰나</b>어린이·교육·생활 앱, 귀여운 캐릭터가 나오는 서비스, 온보딩 일러스트.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>클레이모피즘 스타일로 파스텔 핑크 점토처럼 통통한 메모 카드를 만들어줘. 큰 둥근 모서리와 안쪽 하이라이트 그림자를 써줘</q></p>
+        <p class="senior"><b>20년차 메모</b>그림자가 겹겹이라 작은 아이콘에 쓰면 뭉개져 보입니다. 큰 카드와 큰 일러스트에만 어울립니다. 귀여움이 강해서 금융·의료처럼 신뢰감이 먼저인 서비스에는 가볍게 보일 수 있고, 파스텔 위의 파스텔 글자는 대비가 부족합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="neo-brutalism">
+      <div class="demo" style="background:#fff"><div class="memo nb"><i class="ic"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>메모</b><span>내일 10시 회의</span></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">네오 브루탈리즘 <span class="en">Neo brutalism</span></h2>
+        <p class="desc">굵은 검정 테두리, 번지지 않는 단단한 그림자, 쨍한 원색을 쓰는 스타일입니다. 거칠지만 잘 정돈되어 있고 장난스럽습니다. 완전히 날것인 브루탈리즘과 달리 색과 모서리가 정리되어 있어 "네오"라고 붙입니다.</p>
+        <p class="when"><b>언제 쓰나</b>개성이 중요한 스타트업 랜딩, 크리에이터·디자인 도구, 포트폴리오.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>네오 브루탈리즘 스타일로 굵은 검정 테두리와 블러 없는 6px 하드 섀도, 노란 배경의 메모 카드를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>눈에 확 들어오는 만큼 화면 전체에 쓰면 피곤합니다. 포인트 카드 몇 개와 버튼에만 쓰세요. 테두리·그림자가 굵어 좁은 화면에서는 공간을 많이 먹고, 쓰는 색이 서로 부딪쳐 글자 대비가 떨어지는 조합(분홍 위 빨강 등)을 조심해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="icon-3d">
+      <div class="demo" style="background:#e8f1ff;padding-bottom:40px"><div class="d-col" style="align-items:center"><div class="memo d3"><i class="ic"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>메모</b><span>내일 10시 회의</span></div></div><span class="d-cap" style="position:absolute;bottom:8px">단순화한 예시: 실제 3D 렌더가 아니라 CSS 로 기울인 것입니다</span></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">3D 아이콘 <span class="en">3D icon</span></h2>
+        <p class="desc">평평한 아이콘 대신 두께, 반사광, 그림자가 있는 입체 그림을 쓰는 스타일입니다. 실제로는 3D 프로그램으로 렌더링한 이미지를 올리는 경우가 많습니다. 클레이모피즘과 비슷하지만 더 사실적이고 광택이 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>앱 홈 화면 아이콘, 서비스 소개 페이지의 일러스트, 빈 상태·온보딩 그림.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>3D 아이콘 스타일로 두께와 광택이 있는 파란 메모 아이콘을 만들어줘. 부드러운 그림자와 약간 기울어진 시점으로</q></p>
+        <p class="senior"><b>20년차 메모</b>이미지 파일이라서 모양을 바꾸거나 다크 모드에 맞추기가 어렵고, 파일이 크면 로딩이 느려집니다. 아이콘 세트 전체를 같은 광원 방향·같은 재질로 맞추지 않으면 어색한 모음집이 됩니다. 작게 쓰면 입체감이 사라지므로 큰 크기에서만 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="liquid-glass">
+      <div class="demo" style="background: linear-gradient(135deg, #a5b4fc, #67e8f9 60%, #fbcfe8)"><u class="blob"></u><div class="memo lq"><i class="ic"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></i><b>메모</b><span>내일 10시 회의</span></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">리퀴드 글래스 <span class="en">Liquid glass</span></h2>
+        <p class="desc">글래스모피즘에 빛의 굴절과 유동적인 느낌을 더한 스타일로, 2025년 애플이 새 운영체제에 쓰면서 알려졌습니다. 반투명한 유리가 뒤의 내용을 굴절시키고, 가장자리에서 빛이 반짝이며 움직임에 따라 모양이 변합니다.</p>
+        <p class="when"><b>언제 쓰나</b>운영체제 수준의 하단 메뉴, 떠 있는 컨트롤 바, 사진·영상 위에 올라오는 도구 모음.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>리퀴드 글래스 스타일로 뒤의 색을 굴절시키듯 비추는 투명한 메모 카드를 만들어줘. 가장자리에 흰 빛 테두리와 backdrop-filter blur, saturate 를 써줘</q></p>
+        <p class="senior"><b>20년차 메모</b>글래스모피즘의 대비 문제가 그대로 있고, 뒤의 내용이 계속 바뀌면 글자 읽기는 더 어려워집니다. 메뉴처럼 짧은 글에만 쓰고 본문 위에는 올리지 마세요. 그림자와 blur 연산이 많아 저사양 기기에서는 버벅이며, 웹에서는 진짜 굴절 효과를 완전히 내기 어려워 아직은 비슷한 흉내에 가깝습니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">스타일을 고르고 평가할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="elevation">
+      <div class="demo" style="background:#f1f3fa"><div class="d-row" style="gap:14px"><div class="el" style="box-shadow:0 1px 2px rgba(0,0,0,.2)">1</div><div class="el" style="box-shadow:0 4px 10px rgba(0,0,0,.2)">4</div><div class="el" style="box-shadow:0 14px 28px rgba(0,0,0,.25)">16</div></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">엘리베이션 <span class="en">Elevation</span></h2>
+        <p class="desc">요소가 바닥에서 얼마나 떠 있는지를 그림자의 크기와 흐림으로 나타내는 개념입니다. 클수록 위에 있고, 보통 단계(1, 2, 4, 8, 16)로 정해 둡니다.</p>
+        <p class="when"><b>언제 쓰나</b>카드는 낮게, 드롭다운과 팝업은 더 높게, 모달 대화상자는 가장 높게 둘 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>그림자를 elevation 1, 4, 16 세 단계로 정해서 카드, 드롭다운, 모달에 각각 적용해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>높이 규칙 없이 아무 데나 그림자를 주면 무엇이 위에 있는지 헷갈립니다. 다크 모드에서는 그림자가 거의 안 보이므로 높이를 밝은 배경색으로 표현하는 방식으로 바꿔야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="border-radius">
+      <div class="demo"><div class="d-row" style="gap:12px"><div class="rd" style="border-radius:0">0</div><div class="rd" style="border-radius:8px">8</div><div class="rd" style="border-radius:20px">20</div><div class="rd" style="border-radius:50%">50%</div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">모서리 둥글기 <span class="en">Border radius</span></h2>
+        <p class="desc">모서리를 얼마나 둥글게 깎는지를 말합니다. 0이면 딱딱하고 진지하고, 클수록 친근하고 부드럽습니다. 스타일 이름의 많은 부분이 이 값에서 갈립니다.</p>
+        <p class="when"><b>언제 쓰나</b>버튼, 카드, 입력창, 이미지의 모서리를 한 가지 값으로 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>모서리 둥글기 토큰을 작게 4px, 보통 12px, 크게 24px, 알약 모양 999px 네 단계로 정해서 컴포넌트마다 적용해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>카드 안에 또 둥근 요소를 넣을 때는 안쪽 값이 바깥 값보다 작아야 자연스럽습니다. 같은 값을 쓰면 모서리 사이가 벌어져 보입니다. 값을 서너 개로 제한해 두면 시안과 구현이 쉽게 맞습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="contrast">
+      <div class="demo"><div class="d-col" style="width:240px"><div class="ct" style="color:#767676">충분한 대비의 회색 글자</div><div class="ct" style="color:#aaa">부족한 대비의 회색 글자</div><span class="d-cap">같은 흰 배경, 글자색만 다릅니다</span></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">명도 대비 <span class="en">Contrast ratio</span></h2>
+        <p class="desc">글자색과 배경색이 얼마나 밝기 차이가 나는지를 숫자(예: 4.5:1)로 나타낸 것입니다. 웹 접근성 기준(WCAG)에서 본문은 4.5:1 이상을 요구합니다.</p>
+        <p class="when"><b>언제 쓰나</b>뉴모피즘, 글래스, 연한 파스텔 스타일처럼 색이 옅은 조합을 쓸 때 꼭 확인합니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>모든 텍스트와 배경 조합이 명도 대비 4.5:1 이상인지 확인하고, 미달인 곳은 글자색을 진하게 바꿔줘</q></p>
+        <p class="senior"><b>20년차 메모</b>눈으로 보기에 괜찮은 것과 기준을 통과하는 것은 다릅니다. 모니터 밝기와 나이에 따라 읽히지 않는 사람이 있습니다. 시안 단계에서 대비 검사 도구로 숫자를 한 번 재 보는 습관이 나중의 수정을 막습니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

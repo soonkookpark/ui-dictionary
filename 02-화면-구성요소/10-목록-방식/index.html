@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="목록 보여주는 방식 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>목록 방식 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+
+.av { flex: none; width: 30px; height: 30px; border-radius: 50%; background: #c7d2fe; }
+.av.b { background: #fde68a; } .av.c { background: #a7f3d0; }
+.ph { background: linear-gradient(135deg, #c7d2fe, #a5b4fc); }
+.ph.b { background: linear-gradient(135deg, #fde68a, #fbbf24); } .ph.c { background: linear-gradient(135deg, #a7f3d0, #34d399); } .ph.d { background: linear-gradient(135deg, #fecaca, #f87171); }
+/* 01 리스트: 한 줄에 하나씩 세로로 쌓고 줄 사이에 얇은 선 */
+.lst { width: 250px; background: #fff; border-radius: 12px; border: 1px solid var(--line); }
+.lst .d-row { padding: 9px 12px; border-top: 1px solid var(--line); } .lst .d-row:first-child { border-top: 0; }
+.lst .d-row > span { flex: 1; font-weight: 600; } .lst .d-svg { color: var(--mute); width: 16px; height: 16px; }
+/* 02 그리드: grid-template-columns 로 같은 크기 칸을 격자로 */
+.gr { display: grid; grid-template-columns: repeat(3, 76px); gap: 6px; }
+.gr i { height: 76px; border-radius: 8px; }
+/* 03 카드: 사진 + 제목 + 설명 + 버튼을 한 덩어리로 묶고 그림자 */
+.cd1 { width: 210px; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(30,27,75,.12); transition: transform .2s; }
+.cd1:hover { transform: translateY(-3px); }
+.cd1 .ph { height: 80px; } .cd1 div.t { padding: 10px 12px; display: grid; gap: 6px; }
+/* 04 캐러셀: 슬라이드 3장을 가로로 이어 붙이고 translateX 로 한 장씩 넘긴다 */
+.cr { width: 230px; overflow: hidden; border-radius: 12px; }
+.cr .tr { display: flex; width: 300%; animation: slide3 9s ease-in-out infinite; }
+.cr .tr i { flex: 1; height: 110px; }
+@keyframes slide3 { 0%, 25% { transform: none; } 33%, 58% { transform: translateX(-33.333%); } 66%, 92% { transform: translateX(-66.666%); } 100% { transform: none; } }
+.dots { display: flex; gap: 5px; justify-content: center; } .dots i { width: 6px; height: 6px; border-radius: 50%; background: #c9cfe6; } .dots i:first-child { background: var(--p); }
+/* 05 테이블: 열 머리글 + 행. <table> 태그와 border-collapse */
+.tb { border-collapse: collapse; width: 250px; background: #fff; font-size: 12px; border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px var(--line); }
+.tb th { text-align: left; background: var(--p-soft); color: var(--p); padding: 7px 10px; } .tb td { padding: 7px 10px; border-top: 1px solid var(--line); }
+.tb td:last-child, .tb th:last-child { text-align: right; }
+/* 06 타임라인: 세로선 위에 점을 찍고 시간순으로 나열 */
+.tl { position: relative; display: grid; gap: 14px; padding-left: 22px; width: 230px; }
+.tl::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 2px; background: #c9cfe6; }
+.tl > div { position: relative; } .tl > div::before { content: ""; position: absolute; left: -22px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 3px solid var(--p); }
+.tl small { display: block; color: var(--mute); font-size: 11px; }
+/* 07 아코디언: details 태그가 열고 닫힘을 기본 제공 */
+.ac { width: 250px; display: grid; gap: 6px; }
+.ac details { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; }
+.ac summary { cursor: pointer; font-weight: 700; } .ac details[open] { border-color: var(--p); } .ac p { margin: 6px 0 0; color: var(--mute); }
+/* 08 메이슨리: columns 로 세로 칸을 나누면 높이가 다른 조각이 빈틈없이 쌓인다 */
+.ms { columns: 3; column-gap: 6px; width: 240px; } .ms i { display: block; margin-bottom: 6px; border-radius: 8px; break-inside: avoid; }
+/* 09 무한 스크롤: 목록이 위로 올라가다 바닥에서 로딩 후 새 항목이 이어진다(단순화) */
+.inf { width: 200px; height: 150px; overflow: hidden; border-radius: 12px; background: #fff; border: 1px solid var(--line); position: relative; }
+.inf .mv { padding: 8px; display: grid; gap: 7px; animation: up 5s ease-in-out infinite; }
+.inf .mv .d-row { height: 26px; } .inf .mv .d-row i { flex: none; width: 24px; height: 24px; border-radius: 6px; }
+.inf .ld { display: grid; place-items: center; height: 26px; } .inf .ld i { width: 16px; height: 16px; border: 3px solid #d5daea; border-top-color: var(--p); border-radius: 50%; animation: sp .8s linear infinite; }
+@keyframes up { 0%, 15% { transform: none; } 55%, 100% { transform: translateY(-130px); } }
+@keyframes sp { to { transform: rotate(360deg); } }
+/* 추가: 페이지네이션 / 더 보기 / 고정 머리글(position: sticky) */
+.pg { display: flex; gap: 4px; } .pg b { display: grid; place-items: center; min-width: 30px; height: 30px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font-size: 12px; } .pg b.on { background: var(--p); color: #fff; border-color: var(--p); }
+.sc { width: 230px; height: 140px; overflow-y: auto; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
+.sc h4 { position: sticky; top: 0; margin: 0; padding: 4px 12px; background: var(--p-soft); color: var(--p); font-size: 12px; }
+.sc p { margin: 0; padding: 8px 12px; border-top: 1px solid var(--line); }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">화면 구성요소</a><span class="sep">›</span>
+  <span>목록 방식</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>목록 보여주는 방식 9가지</h1>
+    <p class="lead">같은 데이터도 목록 방식에 따라 전혀 다른 화면이 됩니다</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="list">
+      <div class="demo"><div class="lst"><div class="d-row"><i class="av "></i><span>김서연</span><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></div><div class="d-row"><i class="av b"></i><span>박지훈</span><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></div><div class="d-row"><i class="av c"></i><span>이도윤</span><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></div><div class="d-row"><i class="av "></i><span>최하은</span><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></div></div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">리스트 <span class="en">List</span></h2>
+        <p class="desc">항목을 한 줄에 하나씩 세로로 쌓은 목록. 가장 기본적인 목록 방식이며 <strong>행(row) 목록</strong>이라고도 합니다. 훑어 내려가며 비교하기 쉽습니다.</p>
+        <p class="when"><b>언제 쓰나</b>연락처, 설정 메뉴, 알림처럼 글이 중심이고 항목 수가 많은 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>연락처를 왼쪽 아바타와 이름, 오른쪽 화살표가 있는 리스트로 보여주고 줄 사이에 얇은 구분선을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>한 줄 전체를 누를 수 있어야 하는데 화살표만 눌리게 만드는 경우가 많습니다. 줄 높이는 터치 기준 44pt/48dp 이상으로 하고, 이름이 길 때 말줄임할지 줄바꿈할지 정해두세요. 항목이 하나도 없을 때의 빈 화면도 같이 그려야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="grid">
+      <div class="demo"><div class="gr"><i class="ph"></i><i class="ph b"></i><i class="ph c"></i><i class="ph d"></i><i class="ph"></i><i class="ph b"></i></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">그리드 <span class="en">Grid</span></h2>
+        <p class="desc">같은 크기의 칸을 가로세로 격자로 늘어놓은 방식. 글보다 그림이 중심일 때 한 화면에 더 많이 보여줍니다. 리스트는 한 줄에 하나, 그리드는 한 줄에 여러 개입니다.</p>
+        <p class="when"><b>언제 쓰나</b>사진 앨범, 상품 둘러보기, 앱 아이콘 모음.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상품 목록을 세 열 그리드로 만들고 화면이 좁아지면 두 열로 줄어들게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>열 수를 고정하면 큰 화면에서는 칸이 지나치게 커집니다. 칸 너비의 최소값을 정해 열 수가 자동으로 바뀌게 하세요. 사진 비율이 제각각이면 격자가 들쭉날쭉해지니 비율을 먼저 정해야 합니다. 칸 사이 간격이 너무 좁으면 눌러야 할 칸이 헷갈립니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="card">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="cd1"><div class="ph"></div><div class="t"><b>제주 한 달 살기</b><span class="d-cap">조용한 숙소 12곳</span><button class="d-btn soft" type="button">보러 가기</button></div></div><span class="d-cap">마우스를 올려 보세요</span></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">카드 <span class="en">Card</span></h2>
+        <p class="desc">사진·제목·설명·버튼처럼 하나의 대상에 속한 정보를 테두리나 그림자로 한 덩어리로 묶은 것. 카드 하나가 하나의 대상(상품, 글, 사람)이라는 점이 그리드의 칸과 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>상품, 기사, 숙소처럼 요약 정보가 여러 종류 붙는 항목.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>숙소 정보를 카드로 만들고 사진, 제목, 가격, 찜 버튼을 넣고 카드 전체를 누르면 상세로 이동하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>카드 안에 눌리는 곳이 너무 많으면 어디를 눌러야 할지 모릅니다. 카드 전체는 상세로, 버튼은 한두 개만 두세요. 제목이 두 줄이 되는 카드와 한 줄인 카드가 섞이면 높이가 들쭉날쭉하니 줄 수를 제한해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="carousel">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="cr"><div class="tr"><i class="ph"></i><i class="ph b"></i><i class="ph c"></i></div></div><div class="dots"><i></i><i></i><i></i></div><span class="d-cap">옆으로 한 장씩 넘어갑니다</span></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">캐러셀 <span class="en">Carousel</span></h2>
+        <p class="desc">항목을 가로로 이어 붙여 놓고 한 번에 몇 개씩만 보여주며 옆으로 넘기는 방식. <strong>슬라이더</strong>라고도 부릅니다. 한정된 세로 공간에 여러 항목을 넣을 수 있지만 안 보이는 항목은 잘 눌리지 않습니다.</p>
+        <p class="when"><b>언제 쓰나</b>홈 상단 배너, 추천 상품 줄, 온보딩 이미지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>홈 배너를 캐러셀로 만들고 아래에 현재 위치 점을 넣고 사용자가 만지면 자동 넘김이 멈추게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>자동으로 넘어가는 캐러셀은 읽는 도중에 사라져 불편하니 반드시 멈춤 수단을 두세요. 두 번째 이후 장은 거의 보지 않으니 중요한 내용은 첫 장에 넣어야 합니다. 키보드·스크린리더용 이전/다음 버튼이 없으면 접근하기 어렵습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="table">
+      <div class="demo"><table class="tb"><thead><tr><th>이름</th><th>상태</th><th>금액</th></tr></thead><tbody><tr><td>김서연</td><td>결제 완료</td><td>12,000</td></tr><tr><td>박지훈</td><td>대기</td><td>8,500</td></tr><tr><td>이도윤</td><td>취소</td><td>0</td></tr></tbody></table></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">테이블 <span class="en">Table</span></h2>
+        <p class="desc">행과 열로 같은 종류의 값을 맞춰 놓아 비교하기 좋은 목록. 열 머리글이 있어서 어느 값이 무슨 뜻인지 바로 압니다. 카드·리스트와 달리 여러 항목을 숫자별로 견주는 데 강합니다.</p>
+        <p class="when"><b>언제 쓰나</b>주문 내역, 관리자 화면, 요금표, 기능 비교처럼 값이 많고 정렬·비교가 필요할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>주문 목록을 테이블로 만들고 열 머리글을 누르면 정렬되게 하고 숫자 열은 오른쪽 정렬로 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모바일에서는 열이 넘쳐서 글자가 깨지니 카드로 바꾸거나 가로 스크롤을 두는 방법을 미리 정해야 합니다. 숫자 열은 오른쪽 정렬로 자릿수를 맞추세요. 디자인용 표를 만들면서 <code>&lt;table&gt;</code> 대신 div로 짜면 스크린리더가 표로 읽지 못합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="timeline">
+      <div class="demo"><div class="tl"><div><small>09:00</small><b>주문 접수</b></div><div><small>11:30</small><b>배송 시작</b></div><div><small>14:10</small><b>도착 예정</b></div></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">타임라인 <span class="en">Timeline</span></h2>
+        <p class="desc">일어난 일을 시간 순서로 세로선 위에 이어서 보여주는 방식. 항목 사이의 순서와 시간 간격이 정보의 핵심입니다. <strong>활동 기록, 히스토리</strong>라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>배송 추적, 주문 진행 상태, 변경 이력, 소셜 피드.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>배송 상태를 세로 타임라인으로 만들고 지난 단계는 채워진 점, 지금 단계는 강조해서 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>점과 선 색만으로 지난 단계/현재/예정을 구분하면 색약 사용자가 알기 어려우니 아이콘이나 글로도 구분하세요. 시간이 오래된 순인지 최신순인지 정하지 않으면 화면마다 달라집니다. 기록이 수백 개일 때는 날짜별로 묶는 방법이 필요합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="accordion">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="ac"><details open><summary>환불은 어떻게 하나요?</summary><p>주문 내역에서 신청합니다.</p></details><details><summary>배송은 얼마나 걸리나요?</summary><p>보통 2~3일 걸립니다.</p></details><details><summary>회원 탈퇴는 어디서 하나요?</summary><p>설정에서 할 수 있습니다.</p></details></div><span class="d-cap">제목을 눌러 보세요</span></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">아코디언 <span class="en">Accordion</span></h2>
+        <p class="desc">제목만 보이다가 눌러야 내용이 펼쳐지는 목록. 아코디언 악기의 주름처럼 접히고 펴져서 붙은 이름입니다. HTML에는 <code>&lt;details&gt;</code> 태그가 기본으로 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>자주 묻는 질문(FAQ), 설정 그룹, 긴 상품 설명의 일부 접기.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>FAQ를 아코디언으로 만들고 한 번에 하나만 열리게 하고 열린 항목은 화살표가 돌아가게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>중요한 내용을 접어 두면 아무도 안 열어 봅니다. 사용자가 거의 다 읽어야 하는 정보는 펼쳐 두세요. 제목 줄 전체가 눌려야 하고 펼침 상태를 화살표 방향과 aria-expanded로 알려야 합니다. 한 번에 하나만 열지, 여러 개를 허용할지도 정해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="masonry">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="ms"><i class="ph" style="height:60px"></i><i class="ph b" style="height:90px"></i><i class="ph c" style="height:46px"></i><i class="ph d" style="height:80px"></i><i class="ph" style="height:50px"></i><i class="ph b" style="height:70px"></i><i class="ph c" style="height:66px"></i><i class="ph d" style="height:44px"></i><i class="ph" style="height:72px"></i></div></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">메이슨리 <span class="en">Masonry</span></h2>
+        <p class="desc">높이가 다른 사진을 세로 칸마다 빈틈없이 쌓는 배치. 벽돌공(mason)이 벽돌을 쌓는 모양에서 왔습니다. 칸 높이가 같은 그리드와 달리 사진의 원래 비율을 살립니다.</p>
+        <p class="when"><b>언제 쓰나</b>핀터레스트식 이미지 모음, 디자인 레퍼런스 갤러리, 후기 사진 모음.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이미지 목록을 CSS columns를 쓴 메이슨리 레이아웃으로 만들고 세 열이 두 열로 줄어들게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>CSS columns 방식은 항목이 위에서 아래로 칸을 채우므로 가로 방향 순서가 뒤섞여 키보드로 이동하면 순서가 이상합니다. 순서가 중요한 목록(최신순 등)에는 맞지 않습니다. 이미지 로딩 전에 높이를 모르면 로딩할 때마다 화면이 흔들립니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="infinite-scroll">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="inf"><div class="mv"><div class="d-row"><i class="ph "></i><div class="d-bar" style="flex:1"></div></div><div class="d-row"><i class="ph b"></i><div class="d-bar" style="flex:1"></div></div><div class="d-row"><i class="ph c"></i><div class="d-bar" style="flex:1"></div></div><div class="d-row"><i class="ph d"></i><div class="d-bar" style="flex:1"></div></div><div class="d-row"><i class="ph "></i><div class="d-bar" style="flex:1"></div></div><div class="d-row"><i class="ph b"></i><div class="d-bar" style="flex:1"></div></div><div class="ld"><i></i></div><div class="d-row"><i class="ph c"></i><div class="d-bar" style="flex:1"></div></div><div class="d-row"><i class="ph d"></i><div class="d-bar" style="flex:1"></div></div><div class="d-row"><i class="ph "></i><div class="d-bar" style="flex:1"></div></div><div class="d-row"><i class="ph b"></i><div class="d-bar" style="flex:1"></div></div></div></div><span class="d-cap">단순화한 예시: 바닥에 닿으면 새 항목이 이어집니다</span></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">무한 스크롤 <span class="en">Infinite scroll</span></h2>
+        <p class="desc">바닥까지 내려가면 다음 항목이 자동으로 이어 붙는 방식. <strong>인피니트 스크롤</strong> 또는 끝없는 스크롤이라고 합니다. 페이지를 나누는 방식과 달리 누르지 않아도 계속 나옵니다.</p>
+        <p class="when"><b>언제 쓰나</b>소셜 피드, 뉴스 피드, 영상·사진 추천처럼 끝이 없고 훑어보는 목록.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>피드를 무한 스크롤로 만들고 바닥 근처에서 다음 20개를 불러오며 불러오는 동안 하단에 스피너를 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>푸터(하단 링크)에 닿을 수 없어서 약관이나 고객센터를 못 찾는 사고가 납니다. 찾는 목적이 있는 목록(상품 검색)에는 어울리지 않고, 뒤로 가기를 하면 스크롤 위치가 맨 위로 돌아가는 문제를 개발자와 점검하세요. 끝났을 때 "마지막입니다" 표시도 필요합니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">실무에서 목록 화면을 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="pagination">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="pg"><b>&lsaquo;</b><b class="on">1</b><b>2</b><b>3</b><b>4</b><b>&rsaquo;</b></div><span class="d-cap">1~4쪽 중 1쪽</span></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">페이지네이션 <span class="en">Pagination</span></h2>
+        <p class="desc">목록을 쪽으로 나누고 번호로 이동하게 하는 방식. 무한 스크롤과 반대로 사용자가 어디쯤인지 알 수 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색 결과, 게시판, 관리자 목록처럼 특정 항목을 다시 찾아야 할 때. 데스크톱 웹.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>목록 아래에 페이지네이션을 넣고 현재 쪽은 강조하고 이전/다음 버튼과 최대 5개의 번호를 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>번호 칸이 너무 작아 모바일에서 잘못 눌립니다. 전체 쪽 수가 많을 때 생략 표시(…)를 어떻게 할지와, 현재 쪽을 주소에 남겨 새로고침해도 유지하는지도 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="load-more">
+      <div class="demo"><div class="d-col" style="align-items:center;width:230px"><div class="d-bar" style="width:100%"></div><div class="d-bar" style="width:75%"></div><div class="d-bar" style="width:90%"></div><button class="d-btn ghost" type="button" style="margin-top:8px">더 보기 (12)</button></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">더 보기 버튼 <span class="en">Load more</span></h2>
+        <p class="desc">목록 맨 아래에 버튼을 놓고 눌러야 다음 항목을 가져오는 방식. 무한 스크롤과 페이지네이션 사이의 절충안입니다.</p>
+        <p class="when"><b>언제 쓰나</b>후기 목록, 댓글, 푸터를 반드시 보여줘야 하는 목록.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>후기 목록 아래에 더 보기 버튼을 두고 누를 때마다 10개씩 이어서 보여주며 남은 개수를 표시해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>버튼을 눌렀을 때 로딩 상태와 새 항목이 들어온 뒤 포커스 위치를 놓치기 쉽습니다. 키보드 사용자가 새로 생긴 첫 항목으로 이동하게 해주세요. 더 이상 없을 때는 버튼을 없애세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="sticky-header">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="sc" tabindex="0" aria-label="스크롤 가능한 목록"><h4>ㄱ</h4><p>강민준</p><p>김서연</p><p>김지우</p><h4>ㄴ</h4><p>나은서</p><p>남도윤</p><h4>ㄷ</h4><p>도하준</p><p>류시안</p></div><span class="d-cap">스크롤해 보세요</span></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">고정 머리글 <span class="en">Sticky header</span></h2>
+        <p class="desc">목록을 내려도 현재 구역의 제목이 위에 붙어 따라오는 방식. CSS <code>position: sticky</code>로 만듭니다. 그룹으로 나뉜 긴 리스트에서 지금 어디인지 알려줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>연락처 가나다 순, 날짜별 내역, 표의 열 머리글.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>연락처 목록에 초성별 머리글을 달고 스크롤해도 위에 고정되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>고정 머리글이 화면의 상단 바와 겹치면 둘 다 가려지니 top 값을 맞춰야 합니다. 모바일에서 키보드가 올라오면 고정 요소가 화면을 너무 차지하는 점도 확인하세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="시각 효과와 그래픽 스타일 25가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>시각 효과와 그래픽 스타일 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 효과를 보여주는 액자(.fr), 칩 라디오(.rc) */
+.fr { position: relative; width: 250px; height: 150px; border-radius: 16px; overflow: hidden; }
+.rc { display: flex; gap: 6px; }
+.rc label { position: relative; cursor: pointer; }
+.rc input { position: absolute; opacity: 0; }
+.rc label:has(:checked) { background: var(--p); border-color: var(--p); color: #fff; }
+.rc label:has(:focus-visible) { outline: 3px solid var(--p); outline-offset: 2px; }
+.wrap { display: grid; gap: 8px; justify-items: center; }
+.wrap label.t { cursor: pointer; }
+.serif { font-family: Georgia, "Times New Roman", "Batang", "Noto Serif KR", serif; }
+
+/* 01 그라데이션 3종: linear-gradient(직선) / radial-gradient(원형) / conic-gradient(원뿔, 각도 변수를 돌려 회전) */
+@property --a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.sw { width: 78px; height: 78px; border-radius: 14px; }
+.sw.li { background: linear-gradient(135deg, #4f46e5, #ec4899); }
+.sw.ra { background: radial-gradient(circle at 30% 30%, #fde68a, #ea580c 75%); }
+.sw.co { background: conic-gradient(from var(--a), #4f46e5, #ec4899, #fbbf24, #4f46e5); animation: cr 5s linear infinite; }
+@keyframes cr { to { --a: 360deg; } }
+
+/* 02 메시 그라데이션: radial-gradient 여러 겹을 서로 다른 위치(at x y)에 깔고 background-position 을 천천히 움직인다 */
+.mesh { background: radial-gradient(at 20% 20%, #f9a8d4 0, transparent 50%), radial-gradient(at 80% 10%, #a5b4fc 0, transparent 50%), radial-gradient(at 75% 90%, #6ee7b7 0, transparent 50%), radial-gradient(at 10% 90%, #fde68a 0, transparent 50%), #e0e7ff; background-size: 150% 150%; animation: mv 8s ease-in-out infinite alternate; }
+@keyframes mv { to { background-position: 100% 100%; } }
+
+/* 03 오로라: 큰 원 몇 개에 filter: blur 를 크게 주고 느리게 translate */
+.aur { background: #0b1026; }
+.aur i { position: absolute; border-radius: 50%; filter: blur(26px); opacity: .8; }
+.aur .a1 { width: 150px; height: 70px; background: #34d399; left: -20px; top: 20px; animation: au1 7s ease-in-out infinite alternate; }
+.aur .a2 { width: 140px; height: 80px; background: #8b5cf6; right: -20px; top: 50px; animation: au2 9s ease-in-out infinite alternate; }
+.aur .a3 { width: 110px; height: 60px; background: #22d3ee; left: 70px; top: 75px; animation: au1 6s ease-in-out infinite alternate-reverse; }
+@keyframes au1 { to { transform: translate(50px, -15px); } }
+@keyframes au2 { to { transform: translate(-60px, 20px); } }
+
+/* 04 듀오톤: 사진을 grayscale 로 만든 뒤 mix-blend-mode 로 두 색(어두운 곳=남색, 밝은 곳=분홍)만 입힌다 */
+.scene { width: 112px; height: 92px; background: radial-gradient(circle at 70% 28%, #fff 0 12%, transparent 13%), linear-gradient(#9ec5ff 0 55%, #2f6fe0 55% 75%, #153e99 75%); border-radius: 10px; }
+.duo { position: relative; isolation: isolate; width: 112px; height: 92px; border-radius: 10px; overflow: hidden; background: #1e1b4b; }
+.duo .scene { width: 100%; height: 100%; border-radius: 0; filter: grayscale(1) contrast(1.1); mix-blend-mode: screen; }
+.duo::after { content: ""; position: absolute; inset: 0; background: #f472b6; mix-blend-mode: multiply; }
+
+/* 05 드롭 섀도 vs 이너 섀도: box-shadow 한 줄. 앞에 inset 이 붙으면 안쪽으로 파인다 */
+.sh { width: 96px; height: 70px; border-radius: 14px; display: grid; place-items: center; font-weight: 700; color: var(--mute); background: #eef0f8; }
+.sh.dr { box-shadow: 0 10px 18px rgba(30,27,75,.22), 0 2px 4px rgba(30,27,75,.12); background: #fff; }
+.sh.in { box-shadow: inset 0 4px 10px rgba(30,27,75,.25), inset 0 -2px 4px rgba(255,255,255,.8); }
+
+/* 06 글로: 뒤에 같은 색 상자를 깔고 filter: blur 를 준 뒤 opacity 로 숨 쉬듯 */
+.glw { background: #0f1020; display: grid; place-items: center; }
+.gwrap { position: relative; }
+.gwrap .gl { position: absolute; inset: 0; border-radius: 12px; background: #818cf8; filter: blur(16px); animation: gl 2.4s ease-in-out infinite; }
+.gb { position: relative; display: block; padding: 11px 26px; border-radius: 12px; background: #6366f1; color: #fff; font-weight: 800; font-size: 15px; }
+@keyframes gl { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+
+/* 07 블러 배경: 반투명 패널에 backdrop-filter: blur() — 패널 "뒤에 있는 것"만 흐려진다 */
+.bb .fr { background: #fff; }
+.bb .o1, .bb .o2 { position: absolute; border-radius: 50%; }
+.bb .o1 { width: 90px; height: 90px; background: #f472b6; left: 30px; top: 20px; animation: bx1 4s ease-in-out infinite alternate; }
+.bb .o2 { width: 80px; height: 80px; background: #4f46e5; right: 30px; bottom: 8px; animation: bx2 5s ease-in-out infinite alternate; }
+.bb .pn { position: absolute; left: 40px; right: 40px; top: 34px; bottom: 34px; border-radius: 14px; background: rgba(255,255,255,.35); border: 1px solid rgba(255,255,255,.75); backdrop-filter: blur(10px); display: grid; place-items: center; font-weight: 700; color: var(--ink); }
+.bb:has(input:checked) .pn { backdrop-filter: none; }
+@keyframes bx1 { to { transform: translateX(70px); } }
+@keyframes bx2 { to { transform: translateX(-70px); } }
+
+/* 08 아웃라인: 배경은 투명하게 두고 border / -webkit-text-stroke 로 선만, 올리면 채운다 */
+.ol { display: grid; gap: 12px; justify-items: center; }
+.ol .oc { width: 150px; padding: 14px; border: 2px solid var(--ink); border-radius: 14px; text-align: center; font-weight: 700; transition: background .2s, color .2s; }
+.ol .oc:hover { background: var(--ink); color: #fff; }
+.ol .ot { font-size: 40px; font-weight: 900; line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--p); transition: color .2s; }
+.ol .ot:hover { color: var(--p); }
+
+/* 09 모노크롬: 색상(hue) 값을 하나로 통일하고 밝기만 다르게 hsl() */
+.mc { display: grid; gap: 10px; justify-items: center; }
+.mc .row { display: flex; gap: 6px; }
+.mc i { width: 44px; height: 70px; border-radius: 10px; background: hsl(var(--h) 70% var(--l)); transition: background .4s; }
+.mc:has(input:checked) i { --h: 235 !important; }
+
+/* 10 파스텔: 채도(s)는 낮게, 밝기(l)는 높게. 체크하면 채도·진하기를 올려 비교 */
+.pst { --s: 70%; --l: 87%; display: grid; gap: 10px; justify-items: center; }
+.pst:has(input:checked) { --s: 85%; --l: 55%; }
+.pst .row { display: flex; gap: 6px; }
+.pst i { width: 54px; height: 60px; border-radius: 12px; display: grid; place-items: center; font-style: normal; font-weight: 700; color: var(--ink); background: hsl(var(--h) var(--s) var(--l)); transition: background .3s; }
+
+/* 11 네온: 여러 겹의 text-shadow / box-shadow 로 빛 번짐, 깜빡임은 opacity keyframes */
+.nn { background: #0a0a1a; display: grid; place-items: center; align-content: center; gap: 14px; }
+.neon { font: 800 36px/1 var(--font); letter-spacing: .06em; color: #fff; text-shadow: 0 0 4px #fff, 0 0 10px #ff2bd6, 0 0 22px #ff2bd6, 0 0 40px #ff2bd6; animation: fl 4s infinite; }
+.neonb { padding: 5px 16px; border: 2px solid #22f2ff; border-radius: 99px; color: #22f2ff; font-weight: 700; font-size: 12px; box-shadow: 0 0 8px #22f2ff, inset 0 0 8px #22f2ff; }
+@keyframes fl { 0%, 18%, 22%, 60%, 63%, 100% { opacity: 1; } 20%, 61% { opacity: .35; } }
+
+/* 12 일러스트 4종: 같은 물체를 면(플랫) / 선(라인) / 그라데이션+그림자(3D) / clip-path 세 면(아이소메트릭)으로 */
+.il { display: grid; grid-template-columns: repeat(2, 112px); gap: 8px; }
+.il > div { height: 82px; border-radius: 12px; background: #fff; display: grid; place-items: center; align-content: center; gap: 2px; font-size: 11px; font-weight: 700; color: var(--mute); }
+.ob { position: relative; width: 44px; height: 40px; }
+.ob b { position: absolute; left: 0; bottom: 0; width: 34px; height: 28px; border-radius: 6px; }
+.ob i { position: absolute; right: 0; top: 0; width: 20px; height: 20px; border-radius: 50%; }
+.fl b { background: #4f46e5; } .fl i { background: #fbbf24; }
+.ln b { border: 2px solid #4f46e5; } .ln i { border: 2px solid #ea580c; }
+.d3 b { background: linear-gradient(145deg, #818cf8, #3730a3); box-shadow: 0 6px 8px rgba(55,48,163,.35); }
+.d3 i { background: radial-gradient(circle at 30% 30%, #fde68a, #ea580c); box-shadow: 0 6px 6px rgba(234,88,12,.3); animation: bob 2s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-4px); } }
+.iso { position: relative; width: 48px; height: 56px; }
+.iso i { position: absolute; display: block; }
+.iso .t { left: 0; top: 0; width: 48px; height: 28px; background: #c7d2fe; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.iso .l { left: 0; top: 14px; width: 24px; height: 42px; background: #6366f1; clip-path: polygon(0 0, 100% 33.3%, 100% 100%, 0 66.6%); }
+.iso .r { left: 24px; top: 14px; width: 24px; height: 42px; background: #3730a3; clip-path: polygon(0 33.3%, 100% 0, 100% 66.6%, 0 100%); }
+
+/* 13 이모지·스티커: 이모지에 filter: drop-shadow 를 흰색으로 네 방향 겹쳐 스티커 테두리를 만들고 rotate 로 흔든다 */
+.stf { background: linear-gradient(135deg, #fbcfe8, #c7d2fe); display: flex; align-items: center; justify-content: center; gap: 14px; }
+.stf span { font-size: 46px; line-height: 1; filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 4px 5px rgba(0,0,0,.3)); animation: wig 2.6s ease-in-out infinite; }
+.stf span:nth-child(2) { animation-delay: .5s; } .stf span:nth-child(3) { animation-delay: 1s; }
+@keyframes wig { 0%, 55%, 100% { transform: rotate(0); } 65% { transform: rotate(-12deg); } 75% { transform: rotate(9deg); } 85% { transform: rotate(-4deg); } }
+
+/* 14 도트·그리드 패턴: background-image 에 radial-gradient(점) / linear-gradient(선)를 background-size 간격으로 반복, background-position 으로 흐르게 */
+.pt { width: 118px; height: 112px; border-radius: 14px; background-color: #fff; border: 1px solid var(--line); }
+.pt.dot { background-image: radial-gradient(#6366f1 1.6px, transparent 1.8px); background-size: 14px 14px; animation: drift 3s linear infinite; }
+.pt.grd { background-image: linear-gradient(#c7d2fe 1px, transparent 1px), linear-gradient(90deg, #c7d2fe 1px, transparent 1px); background-size: 14px 14px; animation: drift 3s linear infinite; }
+@keyframes drift { to { background-position: 14px 14px; } }
+
+/* 15 블롭: border-radius 를 가로/세로 8개 값으로 달리해 찌그러뜨리고 keyframes 로 모양을 바꾼다 */
+.blob { width: 130px; height: 130px; background: linear-gradient(135deg, #818cf8, #f472b6); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: bl 6s ease-in-out infinite alternate; }
+@keyframes bl { 50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; } 100% { border-radius: 50% 50% 40% 60% / 30% 50% 70% 60%; } }
+
+/* 16 스퀴클: 왼쪽은 border-radius(원호), 오른쪽은 clip-path: path() 로 그린 곡선(모서리가 더 부드럽게 이어짐) */
+.sq { width: 90px; height: 90px; background: linear-gradient(135deg, #818cf8, #4f46e5); }
+.sq.rr { border-radius: 24px; }
+.sq.sk { clip-path: path('M0 45 C0 7 7 0 45 0 C83 0 90 7 90 45 C90 83 83 90 45 90 C7 90 0 83 0 45 Z'); }
+
+/* 17 비네트: 가장자리를 어둡게 하는 radial-gradient 덧씌움. 체크하면 켜진다 */
+.vg .vs { position: relative; width: 240px; height: 140px; border-radius: 14px; overflow: hidden; background: radial-gradient(circle at 70% 28%, #fff 0 8%, transparent 9%), linear-gradient(#9ec5ff 0 55%, #2f6fe0 55% 75%, #153e99 75%); }
+.vg .vs::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.7) 100%); opacity: 0; transition: opacity .4s; }
+.vg:has(input:checked) .vs::after { opacity: 1; }
+
+/* 18 마스킹·클리핑: 왼쪽 clip-path: circle() 로 모양대로 오려내기(반지름이 변함), 오른쪽 mask-image 로 투명도 그라데이션 */
+.mk { width: 112px; height: 92px; border-radius: 0; }
+.mk.cl { animation: cl 3.2s ease-in-out infinite; }
+.mk.ms { -webkit-mask-image: linear-gradient(#000 35%, transparent); mask-image: linear-gradient(#000 35%, transparent); }
+@keyframes cl { 0%, 15% { clip-path: circle(20% at 50% 50%); } 55%, 75% { clip-path: circle(72% at 50% 50%); } 100% { clip-path: circle(20% at 50% 50%); } }
+
+/* 19 블렌드 모드: 위에 놓인 원에 mix-blend-mode 를 주면 아래 색과 섞이는 방식이 달라진다 */
+.bm .fr { height: 124px; isolation: isolate; background: #fef3c7; }
+.bm .c { position: absolute; width: 90px; height: 90px; border-radius: 50%; top: 17px; }
+.bm .c1 { background: #f472b6; left: 60px; }
+.bm .c2 { background: #22d3ee; left: 110px; }
+.bm:has(#bm2:checked) .c2 { mix-blend-mode: multiply; }
+.bm:has(#bm3:checked) .c2 { mix-blend-mode: screen; }
+.bm:has(#bm4:checked) .c2 { mix-blend-mode: difference; }
+.bm .d-chip { padding: 3px 10px; font-size: 11px; }
+
+/* 20 리소그래프: 두 색 원을 mix-blend-mode: multiply 로 겹치고, 살짝 어긋남(translate)과 점 질감(radial-gradient 덧씌움) */
+.rz { background: #f4ecd8; }
+.rz .c { position: absolute; width: 92px; height: 92px; border-radius: 50%; top: 28px; mix-blend-mode: multiply; }
+.rz .p { background: #ff5fa2; left: 58px; }
+.rz .b { background: #2b6fd6; left: 102px; animation: mis 3.2s ease-in-out infinite; }
+.rz::after { content: ""; position: absolute; inset: 0; background: radial-gradient(rgba(60,40,20,.28) .7px, transparent .9px) 0 0 / 3px 3px; mix-blend-mode: multiply; }
+@keyframes mis { 0%, 60%, 100% { transform: none; } 75% { transform: translate(5px, -4px); } }
+
+/* 21 사이버펑크: 어두운 남보라 바탕 + 형광색 text-shadow, clip-path: polygon 으로 모서리를 사선 절단, repeating-linear-gradient 주사선 */
+.cy { background: #0d0221; display: grid; place-items: center; align-content: center; gap: 14px; }
+.cy::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 1px 3px); pointer-events: none; }
+.cy h4 { margin: 0; font: 800 28px var(--font); color: #22f2ff; text-shadow: 3px 0 #ff2bd6; animation: gj 3.2s steps(1) infinite; }
+.cyb { padding: 8px 22px; background: #facc15; color: #0d0221; font-weight: 800; font-size: 13px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+@keyframes gj { 0%, 92%, 100% { transform: none; text-shadow: 3px 0 #ff2bd6; } 94% { transform: translateX(-5px); text-shadow: -4px 0 #ff2bd6; } 97% { transform: translateX(3px); } }
+
+/* 22 레트로 퓨처리즘: 크림색 바탕에 청록·주황 두 색, 타원 테두리(border-radius:50% + scaleY)를 각도만 달리해 원자 모양으로 돌린다 */
+.rf { background: #f6ead2; display: grid; place-items: center; }
+.atom { position: relative; width: 104px; height: 104px; animation: spn 12s linear infinite; }
+.atom .r { position: absolute; inset: 0; border: 3px solid #0f766e; border-radius: 50%; }
+.atom .r:nth-child(1) { transform: rotate(0deg) scaleY(.36); }
+.atom .r:nth-child(2) { transform: rotate(60deg) scaleY(.36); }
+.atom .r:nth-child(3) { transform: rotate(-60deg) scaleY(.36); }
+.atom .core { position: absolute; left: 36px; top: 36px; width: 32px; height: 32px; border-radius: 50%; background: #ea580c; }
+.star { position: absolute; right: 24px; top: 16px; width: 26px; height: 26px; background: #ea580c; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
+@keyframes spn { to { transform: rotate(360deg); } }
+
+/* 23 코티지코어: 크림 종이 + 세이지 그린. 깅엄 체크는 repeating-linear-gradient 두 겹, 물결 가장자리는 radial-gradient 반복 */
+.ct { background: #fbf3e4; display: grid; place-items: center; }
+.ctc { width: 190px; height: 124px; border-radius: 10px; overflow: hidden; background: #fffaf0; box-shadow: 0 2px 8px rgba(120,90,50,.22); text-align: center; transition: transform .3s; color: #5b4636; }
+.ctc:hover { transform: rotate(-2deg); }
+.ctc .gh { height: 34px; background: repeating-linear-gradient(0deg, rgba(126,154,112,.45) 0 6px, transparent 6px 12px), repeating-linear-gradient(90deg, rgba(126,154,112,.45) 0 6px, transparent 6px 12px), #fffaf0; }
+.ctc .sc { height: 8px; background: radial-gradient(circle at 8px 0, #7e9a70 7px, transparent 8px) 0 0 / 16px 8px; }
+.ctc h4 { margin: 12px 0 2px; font-size: 18px; }
+.ctc p { margin: 0; font-size: 11px; color: #8a6f58; }
+
+/* 24 맥시멀리즘: 줄무늬·체크·겹친 그림자를 일부러 한 화면에 쌓는다. repeating-linear-gradient / conic-gradient 패턴 + 여러 겹 text-shadow */
+.mx { background: repeating-linear-gradient(45deg, #ff6b9d 0 10px, #ffd93d 10px 20px); display: grid; place-items: center; }
+.mxb { width: 150px; height: 84px; border: 4px solid #111; background: conic-gradient(#111 25% , #fff 0 50%, #111 0 75%, #fff 0) 0 0 / 20px 20px; transform: rotate(-6deg); display: grid; place-items: center; }
+.mxb b { font: 900 40px/1 var(--font); color: #fff; text-shadow: 3px 3px 0 #111, 6px 6px 0 #22d3ee; }
+.mxs { position: absolute; right: 16px; bottom: 12px; width: 54px; height: 54px; border-radius: 50%; background: #6d28d9; border: 3px dashed #fde047; display: grid; place-items: center; color: #fff; font-weight: 900; font-size: 12px; animation: spn 6s linear infinite; }
+
+/* 25 모던 럭셔리: 검정 바탕 + 가는 금색 선(1px border) + 세리프 + 넓은 letter-spacing, 금색은 background-clip:text 그라데이션이 천천히 흐른다 */
+.lx { background: #0c0c0c; display: grid; place-items: center; align-content: center; }
+.lx::before { content: ""; position: absolute; inset: 8px; border: 1px solid rgba(212,175,55,.55); }
+.lxt { font-size: 22px; letter-spacing: .42em; text-indent: .42em; background: linear-gradient(100deg, #8a6d1d 20%, #f5e3a3 40%, #c9a227 60%, #8a6d1d 80%) 0 0 / 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gold 5s linear infinite; }
+.lxl { width: 40px; height: 1px; background: #c9a227; margin: 14px 0 12px; }
+.lxs { font-size: 10px; letter-spacing: .34em; text-indent: .34em; color: #9a9a9a; }
+@keyframes gold { to { background-position: -150% 0; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">레이아웃과 스타일</a><span class="sep">›</span>
+  <span>시각 효과와 그래픽 스타일</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>시각 효과와 그래픽 스타일 25가지</h1>
+    <p class="lead">화면의 분위기를 만드는 효과의 이름</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term added" id="gradient-types">
+      <div class="demo">
+        <div class="d-row" style="gap:12px;align-items:flex-start">
+          <div class="d-col" style="align-items:center"><div class="sw li" role="img" aria-label="직선 그라데이션"></div><span class="d-cap">선형</span></div>
+          <div class="d-col" style="align-items:center"><div class="sw ra" role="img" aria-label="원형 그라데이션"></div><span class="d-cap">원형</span></div>
+          <div class="d-col" style="align-items:center"><div class="sw co" role="img" aria-label="돌아가는 원뿔 그라데이션"></div><span class="d-cap">원뿔</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">그라데이션 3종 <span class="en">Linear · Radial · Conic gradient</span></h2>
+        <p class="desc">색이 서서히 바뀌는 효과이고, 번지는 방향으로 이름이 갈립니다. 한 방향으로 흐르면 선형, 한 점에서 바깥으로 퍼지면 원형, 한 점을 중심으로 시계 방향으로 돌면 원뿔(콘)입니다.</p>
+        <p class="when"><b>언제 쓰나</b>선형은 버튼·배너 배경, 원형은 빛이 번진 느낌이나 아바타 배경, 원뿔은 도넛 차트와 진행 링.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>히어로 배경에 인디고에서 핑크로 가는 135도 선형 그라데이션을 깔고, 오른쪽 위에는 흐린 원형 그라데이션을 하나 더 얹어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>그라데이션 위에 글자를 올리면 한쪽은 읽히고 한쪽은 안 읽히는 일이 잦습니다. 가장 밝은 지점과 가장 어두운 지점 양쪽에서 명도 대비 4.5:1을 확인하세요. 두 색이 보색에 가깝게 떨어지면 중간이 탁한 회색으로 죽으니 중간 색을 하나 끼워 넣는 편이 낫습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="mesh-gradient">
+      <div class="demo"><div class="fr mesh" role="img" aria-label="천천히 움직이는 메시 그라데이션"></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">메시 그라데이션 <span class="en">Mesh gradient</span></h2>
+        <p class="desc">색 덩어리 여러 개를 여기저기 놓고 서로 부드럽게 번지게 한 배경. 그물(mesh)처럼 색의 지점이 여럿이라는 뜻입니다. 선 하나를 따라 흐르는 선형 그라데이션과 달리 얼룩진 수채화처럼 보입니다.</p>
+        <p class="when"><b>언제 쓰나</b>앱 소개 페이지 배경, 온보딩 화면, 음악·감성 서비스의 카드 배경.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>배경에 파스텔 핑크, 라벤더, 민트가 번지는 메시 그라데이션을 깔고 8초 주기로 천천히 움직이게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>CSS로는 겹친 원형 그라데이션으로 흉내를 내는 것이라 진짜 메시 도구로 만든 것만큼 매끄럽지 않습니다. 정교한 결과가 필요하면 이미지로 내보내 쓰되, 화면 폭이 큰 이미지는 용량이 커지니 압축하세요. 움직임을 넣으면 배터리를 쓰므로 '모션 줄이기' 설정에서는 멈춰야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="aurora">
+      <div class="demo"><div class="fr aur" role="img" aria-label="천천히 일렁이는 오로라 빛"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">오로라 배경 <span class="en">Aurora background</span></h2>
+        <p class="desc">어두운 바탕 위에서 초록·보라·청록 빛이 커튼처럼 일렁이는 배경. 메시 그라데이션이 밝고 부드러운 색 얼룩이라면 오로라는 어두운 바탕에서 빛이 번지고 움직이는 쪽을 가리킵니다.</p>
+        <p class="when"><b>언제 쓰나</b>AI 서비스 랜딩 페이지, 개발자 도구 소개, 다크 모드 히어로 영역.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>히어로 배경을 짙은 남색으로 하고 초록·보라·청록 빛이 천천히 일렁이는 오로라 배경을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>큰 영역에 blur를 크게 주는 효과라 저사양 폰에서는 스크롤이 끊깁니다. 움직이는 부분은 가능하면 화면 첫 영역 한 곳에만 쓰세요. 최근 몇 년 사이 AI 서비스 사이트가 모두 쓰는 스타일이라, 오래 가는 브랜드 인상이 필요하다면 유행 수명이 짧을 수 있다는 점을 감안하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="duotone">
+      <div class="demo">
+        <div class="d-pair" style="width:290px">
+          <div class="side"><div class="scene" role="img" aria-label="원본 사진"></div><span class="d-cap">원본</span></div>
+          <span class="mid">vs</span>
+          <div class="side"><div class="duo" role="img" aria-label="두 색으로 바뀐 사진"><div class="scene"></div></div><span class="d-cap">듀오톤</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">듀오톤 <span class="en">Duotone</span></h2>
+        <p class="desc">사진의 어두운 곳과 밝은 곳을 딱 두 색으로 바꾸는 효과. 흑백(그레이스케일)은 검정과 흰색 사이인데 듀오톤은 그 두 끝을 원하는 색으로 갈아 끼운 것입니다.</p>
+        <p class="when"><b>언제 쓰나</b>제각각인 사진들을 브랜드 색으로 통일할 때. 인물 사진 배너, 기사 썸네일, 행사 포스터.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>팀원 사진들을 남색과 핑크의 듀오톤으로 통일해서 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>사진 속 피부색과 음식 색이 사라지므로 상품의 실제 색이 중요한 쇼핑몰에는 맞지 않습니다. 밝은 쪽 색과 어두운 쪽 색의 명도 차가 작으면 사진이 뿌옇게 뭉개지니, 차이를 충분히 벌리세요. 그 위에 글자를 올리려면 별도의 어두운 막(스크림)이 필요합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="drop-shadow">
+      <div class="demo">
+        <div class="d-pair" style="width:290px">
+          <div class="side"><div class="sh dr">떠 있음</div><span class="d-cap">드롭 섀도</span></div>
+          <span class="mid">vs</span>
+          <div class="side"><div class="sh in">파여 있음</div><span class="d-cap">이너 섀도</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">드롭 섀도 <span class="vs">vs</span> 이너 섀도 <span class="en">Drop shadow vs Inner shadow</span></h2>
+        <p class="desc">그림자가 요소 바깥에 생겨 떠 있어 보이면 드롭 섀도, 안쪽에 생겨 파인 것처럼 보이면 이너 섀도입니다. 앞의 것은 "누를 수 있는 카드", 뒤의 것은 "입력칸이나 눌린 상태"라는 느낌을 줍니다.</p>
+        <p class="when"><b>이렇게 구분</b>위로 솟아 보여야 하면 드롭 섀도, 안으로 들어가 있어야 하면 이너 섀도.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드에는 은은한 드롭 섀도를, 검색 입력칸과 눌린 버튼에는 이너 섀도를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>그림자 하나만 진하게 쓰면 촌스럽습니다. 짙고 작은 것과 옅고 넓은 것 두 겹을 쓰면 훨씬 자연스럽습니다. 다크 모드에서는 검은 그림자가 안 보이므로 그림자 대신 밝은 테두리나 배경 명도 차이로 높이를 표현하세요. 같은 화면에서 그림자의 방향과 번짐이 제각각이면 빛이 여러 개인 것처럼 어색합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="glow">
+      <div class="demo"><div class="fr glw"><div class="gwrap"><i class="gl"></i><span class="gb">구독하기</span></div></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">글로 <span class="en">Glow</span></h2>
+        <p class="desc">요소 둘레로 같은 색의 빛이 번지는 효과. 그림자가 아래로 떨어지는 어둠이라면 글로는 사방으로 퍼지는 빛입니다. 어두운 배경에서만 제대로 보입니다.</p>
+        <p class="when"><b>언제 쓰나</b>다크 모드의 주 버튼, 게임·음악 앱의 활성 상태, 알림이 막 도착했을 때의 강조.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>다크 모드의 주 버튼 뒤에 같은 색의 글로를 넣고 2.4초 주기로 은은하게 깜빡이게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>밝은 배경에서는 번진 빛이 그냥 얼룩진 그림자로 보입니다. 모든 버튼에 글로를 주면 강조가 사라지니 화면에서 가장 중요한 한 곳에만 쓰세요. 깜빡이는 글로는 눈이 쉬이 피로해지고, 빛 번짐이 글자와 겹치면 흐려 보이므로 글자 대비를 따로 확인해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="backdrop-blur">
+      <div class="demo">
+        <div class="wrap bb">
+          <div class="fr"><i class="o1"></i><i class="o2"></i><div class="pn">패널</div></div>
+          <label class="d-cap t"><input type="checkbox"> 블러를 꺼 보세요</label>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">블러 배경 <span class="en">Backdrop blur</span></h2>
+        <p class="desc">반투명한 면 "뒤에 있는" 것만 흐리게 만드는 효과. 요소 자기 자신을 흐리게 하는 블러와 다르게 그 뒤의 내용이 비쳐 보이되 흐려집니다. 유리 질감이나 상단 바에서 많이 쓰입니다.</p>
+        <p class="when"><b>언제 쓰나</b>스크롤하면 뒤의 콘텐츠가 비치는 상단 바와 하단 탭, 이미지 위에 놓이는 글자 패널.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상단 바에 반투명 흰 배경과 10px 블러 배경을 주고, 블러가 지원되지 않는 브라우저에서는 불투명한 흰색으로 대체해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>블러는 뒤 화면을 매 프레임 다시 흐려 그려서 비용이 큽니다. 넓은 면, 여러 겹 중첩, 움직이는 배경 위에서는 저사양 기기가 버벅이니 면적을 작게 쓰세요. 뒤가 밝으면 글자가 묻히기 쉬워서 패널 자체의 흰색 비율을 충분히 두고 글자 대비를 확인해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="outline-style">
+      <div class="demo">
+        <div class="ol"><div class="oc">선만 있는 카드</div><div class="ot">AB</div><span class="d-cap">마우스를 올려 보세요</span></div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">아웃라인 스타일 <span class="en">Outline style</span></h2>
+        <p class="desc">면을 채우지 않고 윤곽선만으로 모양과 글자를 그리는 스타일. 이미 있는 아웃라인 버튼이나 선 아이콘은 그 일부이고, 이 용어는 카드·도형·큰 글자까지 같은 방식으로 맞추는 화면 전체의 그래픽 규칙을 말합니다.</p>
+        <p class="when"><b>언제 쓰나</b>가볍고 현대적인 인상이 필요한 포트폴리오, 큰 제목 장식, 기능 소개 아이콘 세트.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>소개 카드를 배경 없이 2px 아웃라인으로만 그리고, 마우스를 올리면 안쪽을 채워줘</q></p>
+        <p class="senior"><b>20년차 메모</b>얇은 선과 가는 글자 윤곽은 작은 크기에서 읽히지 않습니다. 윤곽 글자는 40px 이상의 장식 제목에만 쓰세요. 선만 있는 화면은 어디가 눌리는 요소인지 구분이 약하니 눌림 가능한 요소는 선 굵기나 색으로 차이를 두어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="monochrome">
+      <div class="demo">
+        <div class="mc">
+          <div class="row"><i style="--h:350;--l:55%"></i><i style="--h:35;--l:52%"></i><i style="--h:150;--l:42%"></i><i style="--h:200;--l:50%"></i><i style="--h:280;--l:55%"></i></div>
+          <label class="d-cap t"><input type="checkbox"> 한 색으로 모으기</label>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">모노크롬 <span class="en">Monochrome</span></h2>
+        <p class="desc">색 하나의 밝고 어두운 단계만으로 화면을 구성하는 스타일. 흑백만 뜻하지 않고 "파랑 하나로만" 같은 단색 계열도 포함합니다. 색상은 하나, 밝기만 여러 단계라는 점이 핵심입니다.</p>
+        <p class="when"><b>언제 쓰나</b>차분하고 세련된 브랜드, 도구형 앱, 사진이 주인공이어서 UI 색을 눌러야 하는 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>인디고 하나로만 구성된 모노크롬 화면으로 만들고, 명도 단계는 50부터 900까지 아홉 단계로 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>색이 하나라 성공·오류·경고를 색으로 구분할 수 없습니다. 상태 표시용 색은 예외로 따로 두거나 아이콘과 문구로 보완해야 합니다. 비슷한 단계의 밝기끼리 붙이면 경계가 흐려지므로 단계 사이를 충분히 벌리세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="pastel-tone">
+      <div class="demo">
+        <div class="pst">
+          <div class="row"><i style="--h:350">핑크</i><i style="--h:35">살구</i><i style="--h:150">민트</i><i style="--h:205">하늘</i></div>
+          <label class="d-cap t"><input type="checkbox"> 진하게 비교해 보세요</label>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">파스텔 톤 <span class="en">Pastel tone</span></h2>
+        <p class="desc">흰색이 섞인 듯 채도가 낮고 밝은 색들. 부드럽고 친근하며 어린이 서비스, 육아, 웰니스, 메신저에 어울립니다. 색이 선명하고 진한 원색 팔레트와 정반대 느낌입니다.</p>
+        <p class="when"><b>언제 쓰나</b>친근하고 편안한 분위기가 중요한 서비스. 카드 배경, 일러스트, 태그 색.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>배경과 태그는 파스텔 톤으로 하되, 글자와 아이콘은 진한 남색으로 해서 대비를 확보해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>파스텔 배경 위에 파스텔 글자를 올리면 읽을 수 없습니다. 글자는 반드시 진한 색으로 하고 버튼처럼 눌러야 하는 요소는 파스텔을 쓰지 마세요. 밝은 모니터에서는 예뻐도 야외의 폰 화면에서는 색이 날아가 구분이 사라지는 일이 흔합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="neon-color">
+      <div class="demo"><div class="fr nn"><div class="neon">OPEN</div><div class="neonb">NEON</div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">네온 컬러 <span class="en">Neon color</span></h2>
+        <p class="desc">형광에 가깝게 채도가 극도로 높은 분홍·청록·연두를 어두운 바탕에서 빛나게 쓰는 스타일. 글로가 빛 번짐이라는 기법이라면 네온 컬러는 그 빛에 쓰는 색 선택을 가리킵니다.</p>
+        <p class="when"><b>언제 쓰나</b>게임, 음악 페스티벌, 나이트라이프, 사이버펑크 분위기의 소개 페이지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>짙은 남색 배경에 형광 분홍 글자와 청록 테두리의 네온 컬러로 간판 같은 제목을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>빛나는 글자를 긴 문장에 쓰면 눈이 아프고 읽는 속도가 느려집니다. 제목과 짧은 라벨까지만 쓰세요. 깜빡임은 초당 3회 이상이 되면 광과민성 발작 위험이 있어 접근성 기준에서 금지하는 수준이므로 느리게, 그리고 모션 줄이기 설정에서는 멈추게 해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="illustration-styles">
+      <div class="demo">
+        <div class="il">
+          <div><div class="ob fl"><b></b><i></i></div>플랫</div>
+          <div><div class="ob ln"><b></b><i></i></div>라인</div>
+          <div><div class="ob d3"><b></b><i></i></div>3D</div>
+          <div><div class="iso"><i class="t"></i><i class="l"></i><i class="r"></i></div>아이소메트릭</div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">일러스트 스타일 4종 <span class="en">Flat · Line · 3D · Isometric</span></h2>
+        <p class="desc">같은 물체도 그리는 방식에 따라 인상이 달라집니다. 색 면만 쓰면 플랫, 선만 쓰면 라인, 입체감과 그림자를 넣으면 3D, 비스듬한 입체 시점으로 그리면 아이소메트릭입니다.</p>
+        <p class="when"><b>언제 쓰나</b>빈 화면 삽화, 온보딩, 기능 소개, 블로그 대표 이미지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>온보딩 삽화는 플랫 스타일로, 같은 색 세 가지만 써서 통일된 세트로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>삽화 한 장씩은 예뻐도 출처가 다른 스타일이 섞이면 서비스가 조잡해 보입니다. 한 서비스에서는 한 가지 스타일만 정하세요. 3D와 아이소메트릭은 제작 비용이 크고 이미지 용량이 무거워 고치기도 어렵고, 선 굵기를 통일하지 않은 라인 일러스트도 흔한 실수입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="emoji-sticker">
+      <div class="demo"><div class="fr stf" role="img" aria-label="흔들리는 스티커 세 개"><span>🎉</span><span>⭐</span><span>💬</span></div></div>
+      <div class="body">
+        <p class="num">13</p>
+        <h2 class="term-name">이모지·스티커 스타일 <span class="en">Emoji · Sticker style</span></h2>
+        <p class="desc">이모지나 두꺼운 흰 테두리의 그림을 화면에 붙여 장난스럽고 친근한 말투를 만드는 스타일. 이모지는 기기마다 그림이 달라지고, 스티커는 직접 그린 일관된 이미지라는 점이 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>메신저, 커뮤니티, 이벤트 배너, 완료 화면의 축하 장면, 청소년·MZ 대상 서비스.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>완료 화면에 흰 테두리가 둘린 스티커 스타일 이미지 세 개를 살짝 기울여 붙이고, 가끔 흔들리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>이모지는 운영체제마다 생김새가 달라 같은 화면이 폰마다 다르게 보입니다. 브랜드 일관성이 필요하면 이미지로 따로 만든 스티커를 쓰세요. 이모지를 아이콘 대신 쓰면 스크린 리더가 이름을 읽어 버려 문맥이 어색해지고, 은행·공공·의료 서비스에는 톤이 가벼워 어울리지 않습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="dot-grid-pattern">
+      <div class="demo">
+        <div class="d-row" style="gap:12px"><div class="pt dot" role="img" aria-label="점 패턴 배경"></div><div class="pt grd" role="img" aria-label="격자 패턴 배경"></div></div>
+      </div>
+      <div class="body">
+        <p class="num">14</p>
+        <h2 class="term-name">도트·그리드 패턴 배경 <span class="en">Dot / Grid pattern background</span></h2>
+        <p class="desc">점이나 가는 격자선을 배경에 반복해 깐 효과. 방안지, 노트처럼 "도구", "설계도" 느낌을 줍니다. 레이아웃에서 쓰는 그리드(열 나누기)와 이름이 같지만 이쪽은 순수한 배경 장식입니다.</p>
+        <p class="when"><b>언제 쓰나</b>개발자 도구·노트·화이트보드 서비스, 히어로 영역 배경, 캔버스 편집 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>히어로 배경에 14px 간격의 옅은 도트 패턴을 깔고, 가장자리로 갈수록 사라지게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>패턴이 진하면 그 위 글자와 싸워서 눈이 피로해집니다. 패턴 색은 바탕과 겨우 구분될 정도로 옅게 하세요. 모아레(줄무늬가 겹치며 생기는 물결)가 생기지 않도록 고해상도 화면에서도 확인하고, 이미지 파일 대신 그라데이션으로 그리면 용량을 아낄 수 있습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="blob">
+      <div class="demo"><div class="blob" role="img" aria-label="천천히 모양이 변하는 덩어리"></div></div>
+      <div class="body">
+        <p class="num">15</p>
+        <h2 class="term-name">블롭 <span class="en">Blob</span></h2>
+        <p class="desc">원도 사각형도 아닌, 물방울처럼 둥글게 일그러진 유기적인 덩어리. 반듯한 도형들 사이에서 부드럽고 살아 있는 느낌을 줍니다. 배경 장식이나 이미지를 오려내는 틀로 씁니다.</p>
+        <p class="when"><b>언제 쓰나</b>랜딩 페이지의 배경 장식, 프로필 사진 틀, 일러스트 뒤의 색 덩어리, 음성 AI의 말하는 표시.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>히어로 뒤에 분홍에서 보라로 가는 블롭 모양 배경을 넣고, 6초에 한 번 모양이 천천히 바뀌게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>블롭은 본문 영역을 침범하면 글줄 끝이 어색하게 잘려 보입니다. 장식은 가장자리에 두고 글자 영역은 반듯하게 유지하세요. 블롭마다 모양이 다르면 통일감이 사라지니 모양은 서너 가지로 정해 재사용하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="squircle">
+      <div class="demo">
+        <div class="d-pair" style="width:290px">
+          <div class="side"><div class="sq rr"></div><span class="d-cap">둥근 사각</span></div>
+          <span class="mid">vs</span>
+          <div class="side"><div class="sq sk"></div><span class="d-cap">스퀴클</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">16</p>
+        <h2 class="term-name">둥근 사각형 <span class="vs">vs</span> 스퀴클 <span class="en">Rounded rectangle vs Squircle</span></h2>
+        <p class="desc">모서리를 원호로 깎으면 둥근 사각형, 직선에서 곡선으로 완만하게 이어지게 하면 스퀴클(원과 사각형의 중간, 초타원)입니다. 같은 둥글기라도 스퀴클이 모서리가 더 매끄럽고 큼직해 보입니다.</p>
+        <p class="when"><b>이렇게 구분</b>웹의 일반 상자는 둥근 사각형으로 충분하고, 앱 아이콘이나 큰 카드처럼 모서리를 끝까지 매끈하게 보이고 싶으면 스퀴클.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>앱 아이콘 틀을 스퀴클 모양으로 만들고, 일반 카드는 24px 둥근 사각형으로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>CSS의 border-radius는 스퀴클이 아닌 원호라서 완전히 같은 모양을 내려면 따로 곡선을 그려야 합니다. 요즘 일부 브라우저는 코너 모양 속성을 시험적으로 지원하지만 아직 어디서나 되지 않으니 대체 모양을 두세요. 육안으로 구분하기 어려운 차이이므로 모든 화면에 비용을 들일 필요는 없습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="vignette">
+      <div class="demo">
+        <div class="wrap vg">
+          <div class="vs" role="img" aria-label="풍경 사진"></div>
+          <label class="d-cap t"><input type="checkbox"> 비네트를 켜 보세요</label>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">17</p>
+        <h2 class="term-name">비네트 <span class="en">Vignette</span></h2>
+        <p class="desc">사진이나 배경의 가장자리를 어둡게 눌러 시선을 가운데로 모으는 효과. 오래된 카메라 렌즈에서 모서리가 어두워지던 현상을 일부러 흉내 낸 것입니다.</p>
+        <p class="when"><b>언제 쓰나</b>사진이 큰 히어로, 영상 위에 글자를 올리는 화면, 영화·여행 같은 분위기를 내고 싶은 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>히어로 사진 가장자리에 검은색 비네트를 40% 정도로 얹어서 가운데 글자가 돋보이게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>어둡게 눌러서 글자를 읽히게 하는 용도라면 비네트보다 글자 뒤의 스크림이 더 효과적입니다. 비네트는 가운데 사진이 흐릿하게 되기 쉬워 사진 자체가 밝지 않으면 칙칙해집니다. 세로가 긴 폰 화면에서는 가장자리가 위아래로 눌려 모양이 달라지니 모바일에서 따로 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="mask-clip">
+      <div class="demo">
+        <div class="d-pair" style="width:290px">
+          <div class="side"><div class="scene mk cl"></div><span class="d-cap">클리핑</span></div>
+          <span class="mid">vs</span>
+          <div class="side"><div class="scene mk ms"></div><span class="d-cap">마스킹</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">18</p>
+        <h2 class="term-name">클리핑 <span class="vs">vs</span> 마스킹 <span class="en">Clipping vs Masking</span></h2>
+        <p class="desc">둘 다 이미지를 원하는 모양으로 오려 보여주는 기법인데, 경계가 단칼이면 클리핑, 서서히 투명해지면 마스킹입니다. 클리핑은 가위로 자른 가장자리, 마스킹은 흐릿하게 사라지는 가장자리를 만듭니다.</p>
+        <p class="when"><b>이렇게 구분</b>원·별·사선처럼 모양대로 딱 자르려면 클리핑, 이미지 아래쪽이 배경으로 녹아들게 하려면 마스킹.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>배너 이미지를 사선으로 클리핑하고, 아래쪽은 배경색으로 서서히 사라지도록 마스킹해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>클리핑한 요소는 눈에 보이지 않는 부분에도 눌림 영역이 남거나 그림자·테두리가 같이 잘리는 일이 많습니다. 그림자는 바깥 요소로 따로 만드세요. 마스킹은 투명한 부분 뒤 배경 색에 따라 얼룩이 보일 수 있고, 사용자가 올리는 사진에는 모양에 맞춰 잘리기 때문에 주인공 위치를 확인해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="blend-mode">
+      <div class="demo">
+        <div class="wrap bm">
+          <div class="fr"><i class="c c1"></i><i class="c c2"></i></div>
+          <div class="rc"><label class="d-chip"><input type="radio" name="bm" id="bm1" checked>normal</label><label class="d-chip"><input type="radio" name="bm" id="bm2">multiply</label><label class="d-chip"><input type="radio" name="bm" id="bm3">screen</label><label class="d-chip"><input type="radio" name="bm" id="bm4">difference</label></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">19</p>
+        <h2 class="term-name">블렌드 모드 <span class="en">Blend mode</span></h2>
+        <p class="desc">겹친 두 색을 섞는 규칙을 고르는 기능. 기본(normal)은 위의 색이 아래를 덮고, 곱하기(multiply)는 겹치면 더 어두워지며, 스크린(screen)은 더 밝아지고, 차이(difference)는 두 색의 차이를 뒤집어 보여줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>사진에 색을 입히는 듀오톤, 종이 질감 입히기, 글자를 배경에 녹이는 포스터 느낌의 제목.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>제목 글자를 사진 위에 올리고 블렌드 모드 difference를 적용해서 배경이 밝든 어둡든 글자가 보이게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>블렌드 모드는 뒤 배경이 바뀌면 결과 색도 바뀌어 디자인 툴 시안과 실제 화면의 색이 어긋나기 쉽습니다. 어떤 배경 위에서도 글자가 읽혀야 하는 곳에는 쓰지 말고 고정된 색 막을 쓰세요. 일부 오래된 브라우저와 앱 내 웹뷰에서 다르게 보이는 경우가 있어 실기기 확인이 필수입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="risograph">
+      <div class="demo"><div class="fr rz" role="img" aria-label="두 색이 어긋나게 겹친 리소그래프풍 원"><i class="c p"></i><i class="c b"></i></div></div>
+      <div class="body">
+        <p class="num">20</p>
+        <h2 class="term-name">리소그래프 느낌 <span class="en">Risograph look</span></h2>
+        <p class="desc">리소그래프(디지털 공판 인쇄기)로 찍은 인쇄물처럼 형광에 가까운 두세 가지 잉크 색, 거친 점 질감, 색이 살짝 어긋난 겹침을 흉내 내는 스타일입니다. 겹친 곳이 섞여 제3의 색이 되는 것이 특징입니다.</p>
+        <p class="when"><b>언제 쓰나</b>독립 서점, 전시, 소규모 브랜드, 에디토리얼 느낌의 소개 페이지, 포스터형 배너.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>핑크와 파랑 두 색만 써서 겹치면 곱하기로 섞이는 리소그래프 느낌의 일러스트 배경을 만들고, 한 색은 살짝 어긋나게 놓아줘</q></p>
+        <p class="senior"><b>20년차 메모</b>일부러 어긋난 겹침은 글자에 쓰면 읽는 속도가 느려지고 시각 약자에게는 번져 보입니다. 본문에는 쓰지 말고 큰 도형과 제목에만 쓰세요. 두 색이 겹치는 색은 바로 정해지지 않으니 색 조합을 먼저 시험 인쇄하듯 확인하고, 질감 이미지를 큰 크기로 깔면 용량이 늘어납니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="cyberpunk">
+      <div class="demo"><div class="fr cy"><h4>CYBER</h4><div class="cyb">ENTER</div></div></div>
+      <div class="body">
+        <p class="num">21</p>
+        <h2 class="term-name">사이버펑크 <span class="en">Cyberpunk</span></h2>
+        <p class="desc">어두운 도시의 밤, 형광 핑크와 청록, 각진 모서리, 주사선과 글리치 같은 잡음을 섞은 미래 디스토피아풍 스타일. 이미 있는 네온 컬러와 글리치 효과를 한 분위기로 묶어낸 종합 스타일입니다.</p>
+        <p class="when"><b>언제 쓰나</b>게임, e스포츠, 암호화폐·보안 서비스의 티저 페이지, 해커톤·콘서트 홍보 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>사이버펑크 스타일로 짙은 남보라 배경, 청록 제목에 분홍 그림자, 모서리를 사선으로 자른 노란 버튼, 옅은 주사선을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>분위기는 강하지만 오래 읽는 문서나 폼에는 맞지 않아 눈이 피로해집니다. 소개 페이지만 사이버펑크로 하고 실제 사용 화면은 차분하게 가는 구성이 일반적입니다. 글리치 움직임은 모션에 민감한 사용자를 위해 줄이기 설정에서 꺼야 하고 사선 모서리는 입력칸에 쓰면 눌림 영역 감각이 흐려집니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="retro-futurism">
+      <div class="demo"><div class="fr rf" role="img" aria-label="돌아가는 원자 모양 장식"><div class="atom"><i class="r"></i><i class="r"></i><i class="r"></i><i class="core"></i></div><i class="star"></i></div></div>
+      <div class="body">
+        <p class="num">22</p>
+        <h2 class="term-name">레트로 퓨처리즘 <span class="en">Retro-futurism</span></h2>
+        <p class="desc">1950~60년대 사람들이 상상한 미래의 모습을 그대로 쓰는 스타일. 둥근 모서리, 원자·로켓·별 모양, 크림색 바탕에 청록과 주황을 씁니다. 네온과 격자의 이미 있는 베이퍼웨이브가 80~90년대 감성이라면 이쪽은 우주 시대의 낙관입니다.</p>
+        <p class="when"><b>언제 쓰나</b>과학 전시, 카페·잡화 브랜드, 우주·미래 주제의 캠페인 페이지, 일러스트 중심의 행사 안내.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>크림색 바탕에 청록과 주황 두 색만 쓰는 레트로 퓨처리즘 스타일로, 원자 모양 장식과 별 모양을 배치해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>복고 장식은 많이 얹을수록 가볍게 보이므로 장식은 서너 개로 제한하고 여백으로 숨을 주세요. 크림색 바탕은 밝은 흰색보다 대비가 낮아 청록 글자의 명도 대비를 따로 재야 합니다. 시대 양식 전체를 흉내 내기보다 색과 모양 중 한두 요소만 빌리면 촌스럽지 않습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="cottagecore">
+      <div class="demo"><div class="fr ct"><div class="ctc serif"><div class="gh"></div><div class="sc"></div><h4>오늘의 잼</h4><p>손으로 끓인 딸기잼 · 마우스를 올려 보세요</p></div></div></div>
+      <div class="body">
+        <p class="num">23</p>
+        <h2 class="term-name">코티지코어·내추럴 <span class="en">Cottagecore · Natural</span></h2>
+        <p class="desc">시골 오두막, 정원, 수공예를 떠올리게 하는 따뜻한 스타일. 크림색 종이, 이끼 같은 초록, 깅엄 체크, 물결 가장자리, 세리프 글자를 쓰고, 면이 매끈한 디지털 느낌보다 손으로 만든 느낌을 냅니다.</p>
+        <p class="when"><b>언제 쓰나</b>수제 베이커리·꽃집·핸드메이드 마켓, 차·잼 브랜드, 식물·자연 콘텐츠, 정원 일기 앱.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>크림색 종이 느낌 배경에 세이지 그린과 깅엄 체크를 포인트로 쓰고, 제목은 세리프, 카드 가장자리는 물결 모양으로 코티지코어 스타일로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>자연스러운 연한 색을 쓰다 보면 글자 대비가 낮아지기 쉬우니 글자는 갈색이라도 충분히 어둡게 하세요. 장식이 많아 질감 이미지를 쓰면 로딩이 무거워집니다. 기술 제품이나 금융처럼 정확하고 빠른 인상이 필요한 서비스에는 맞지 않습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="maximalism">
+      <div class="demo"><div class="fr mx" role="img" aria-label="무늬와 색이 가득 찬 맥시멀리즘 구성"><div class="mxb"><b>MORE</b></div><div class="mxs">NEW</div></div></div>
+      <div class="body">
+        <p class="num">24</p>
+        <h2 class="term-name">맥시멀리즘 <span class="en">Maximalism</span></h2>
+        <p class="desc">"많을수록 좋다"는 스타일. 강렬한 색, 겹치는 무늬, 큼직한 글자, 장식을 일부러 빽빽하게 채웁니다. 여백으로 정돈하는 미니멀과 정반대 방향이지만 아무렇게나 어지럽히는 것과는 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>패션·음악·크리에이티브 브랜드, 이벤트 페이지, 개성이 서비스의 얼굴인 포트폴리오.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>맥시멀리즘 스타일로 체크와 줄무늬 무늬를 겹쳐 쓰고, 제목은 큰 글자에 여러 겹 그림자를 주고, 색은 네 가지로 제한해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>맥시멀리즘이 성공하려면 요란한 가운데도 규칙이 있어야 합니다. 색 수나 모양 어휘를 제한하고, 읽어야 하는 글은 단색 바탕에 따로 두세요. 장식 무늬가 움직이는 화면은 전정기관 질환이 있는 사용자에게 어지럼증을 일으킬 수 있고, 정보를 빠르게 찾는 업무 도구에는 부담스럽습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="modern-luxury">
+      <div class="demo"><div class="fr lx"><div class="lxt serif">LUMIÈRE</div><div class="lxl"></div><div class="lxs">PARIS · SEOUL</div></div></div>
+      <div class="body">
+        <p class="num">25</p>
+        <h2 class="term-name">모던 럭셔리 <span class="en">Modern luxury</span></h2>
+        <p class="desc">검정이나 아주 짙은 바탕, 가는 금색 선, 우아한 세리프 글자, 넓은 자간과 넉넉한 여백으로 고급스러움을 표현하는 스타일. 화려하게 채우기보다 비워서 값비싸 보이게 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>호텔·주얼리·프리미엄 화장품·고급 레스토랑, 멤버십 서비스, 한정판 제품 소개.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검정 바탕에 가는 금색 테두리, 큰 자간의 세리프 제목, 아주 넓은 여백으로 모던 럭셔리 느낌의 소개 화면을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>금색 글자는 검정 위에서도 작으면 읽기 어렵고, 가는 세리프는 작은 폰에서 획이 끊겨 보입니다. 본문은 흰색에 가까운 밝은 회색의 일반 글자를 쓰세요. 여백과 느린 움직임이 고급스러움의 핵심이라 로딩이 느리거나 광고 배너가 끼면 한순간에 무너집니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

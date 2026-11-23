@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="메뉴 여닫는 모션 6가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>메뉴 모션 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 작은 화면 틀 */
+.mb { position: relative; width: 240px; height: 176px; overflow: hidden; border-radius: 14px; background: #fff; border: 2px solid #c9cfe6; }
+.mb .d-svg { width: 16px; height: 16px; }
+.tx { font-size: 12px; font-weight: 700; }
+
+/* 01 푸시 백: 페이지 한 장을 작게(scale) + 오른쪽으로(translateX) 밀어 뒤의 메뉴를 드러낸다 */
+.pb { background: #1e1b4b; }
+.pb .menu { position: absolute; left: 14px; top: 26px; display: grid; gap: 12px; color: #c7d2fe; }
+.pb .page { position: absolute; inset: 0; background: #fff; padding: 12px; display: grid; gap: 8px; align-content: start; transform-origin: left center; animation: pb 4.5s ease-in-out infinite; }
+.pb .page .d-bar:first-child { width: 20px; height: 12px; background: #3b3f5c; border-radius: 3px; }
+.pb .page .hero { height: 60px; border-radius: 8px; background: var(--p-soft); }
+@keyframes pb { 0%, 12% { transform: none; border-radius: 0; } 32%, 66% { transform: translateX(130px) scale(.78); border-radius: 18px; } 86%, 100% { transform: none; border-radius: 0; } }
+
+/* 02 케밥 팝오버: 점 3개가 각자 목표 위치로 날아가(translate) 팝오버 항목의 아이콘이 된다 */
+.kb .head { height: 34px; padding: 10px 12px; }
+.kb .dot { position: absolute; right: 18px; top: 13px; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); animation: kdot 4s ease-in-out infinite; }
+.kb .dot:nth-of-type(1) { --x: -119px; --y: 47px; }
+.kb .dot:nth-of-type(2) { top: 21px; --x: -119px; --y: 67px; }
+.kb .dot:nth-of-type(3) { top: 29px; --x: -119px; --y: 87px; }
+@keyframes kdot { 0%, 15% { transform: none; opacity: 1; } 42% { transform: translate(var(--x), var(--y)) scale(1.5); opacity: 1; } 50%, 85% { transform: translate(var(--x), var(--y)) scale(1.5); opacity: 0; } 95%, 100% { transform: none; opacity: 1; } }
+.kb .pop { position: absolute; right: 8px; top: 40px; width: 150px; padding: 6px; border-radius: 12px; background: #fff; box-shadow: 0 8px 22px rgba(30,27,75,.22); border: 1px solid var(--line); transform-origin: top right; animation: kpop 4s ease-in-out infinite; }
+.kb .pop div { height: 28px; display: flex; align-items: center; gap: 10px; padding-left: 4px; font-size: 12px; font-weight: 700; }
+.kb .pop i { width: 12px; height: 12px; border-radius: 4px; background: var(--p); }
+@keyframes kpop { 0%, 30% { opacity: 0; transform: scale(.6); } 48%, 85% { opacity: 1; transform: none; } 95%, 100% { opacity: 0; transform: scale(.6); } }
+
+/* 03 구이 메뉴: 동그라미들에 SVG goo 필터를 걸어 끈적한 방울처럼 떨어졌다 붙게 한다 */
+.gk { position: absolute; inset: 0; filter: url(#goo2); }
+.gk i, .gi b { position: absolute; left: calc(50% - 17px); bottom: 24px; width: 34px; height: 34px; border-radius: 50%; background: var(--p); animation: gs 3.6s ease-in-out infinite; }
+.gk i.c { left: calc(50% - 24px); bottom: 18px; width: 48px; height: 48px; animation: none; }
+.gi b { background: none; display: grid; place-items: center; color: #fff; }
+.gi b.c { left: calc(50% - 17px); bottom: 24px; animation: none; }
+.gk i:nth-child(1), .gi b:nth-child(1) { --x: -78px; --y: -14px; } .gk i:nth-child(2), .gi b:nth-child(2) { --x: -40px; --y: -60px; }
+.gk i:nth-child(3), .gi b:nth-child(3) { --x: 40px; --y: -60px; } .gk i:nth-child(4), .gi b:nth-child(4) { --x: 78px; --y: -14px; }
+.gi { position: absolute; inset: 0; }
+.gi b:not(.c) { animation-name: gsi; }
+@keyframes gsi { 0%, 15% { transform: none; opacity: 0; } 45%, 70% { transform: translate(var(--x), var(--y)); opacity: 1; } 100% { transform: none; opacity: 0; } }
+@keyframes gs { 0%, 15% { transform: none; } 45%, 70% { transform: translate(var(--x), var(--y)); } 100% { transform: none; } }
+
+/* 04 폴드 다운: perspective 안에서 줄마다 rotateX(-90도→0)로 접힌 종이가 펼쳐지듯 연다 */
+.fd { perspective: 420px; padding: 14px; display: grid; gap: 4px; align-content: start; }
+.fd .r { height: 34px; border-radius: 8px; padding: 0 12px; display: flex; align-items: center; font-size: 12px; font-weight: 700; color: #fff; transform-origin: top; animation: fd 4.4s ease-in-out infinite; animation-delay: calc(var(--i) * .16s); }
+@keyframes fd { 0%, 4% { transform: rotateX(-90deg); opacity: 0; } 22%, 78% { transform: none; opacity: 1; } 94%, 100% { transform: rotateX(-90deg); opacity: 0; } }
+
+/* 05 버튼 투 패널: 동그란 + 버튼의 가로·세로·모서리를 키워 패널로 만들고 옵션을 늦게 보이게 한다 */
+.bp .panel { position: absolute; right: 14px; bottom: 14px; width: 44px; height: 44px; border-radius: 22px; background: var(--p); overflow: hidden; animation: bp 4.4s ease-in-out infinite; }
+.bp .panel .plus { position: absolute; right: 0; bottom: 0; width: 44px; height: 44px; display: grid; place-items: center; color: #fff; animation: bpp 4.4s ease-in-out infinite; }
+.bp .panel .opts { position: absolute; left: 14px; top: 12px; display: grid; gap: 10px; color: #fff; animation: bpo 4.4s ease-in-out infinite; white-space: nowrap; }
+@keyframes bp { 0%, 12% { width: 44px; height: 44px; border-radius: 22px; } 36%, 72% { width: 170px; height: 118px; border-radius: 16px; } 92%, 100% { width: 44px; height: 44px; border-radius: 22px; } }
+@keyframes bpp { 0%, 12% { opacity: 1; transform: none; } 24%, 82% { opacity: 0; transform: rotate(45deg); } 95%, 100% { opacity: 1; transform: none; } }
+@keyframes bpo { 0%, 30% { opacity: 0; transform: translateY(8px); } 46%, 68% { opacity: 1; transform: none; } 76%, 100% { opacity: 0; } }
+
+/* 06 커맨드 팔레트: 위에서 내려오는 검색창 + 글자 수만큼 steps 로 입력되는 글자 + 순서대로 뜨는 결과 */
+.cp { background: #e7e9f5; }
+.cp .box { position: absolute; left: 20px; right: 20px; top: 16px; background: #fff; border-radius: 12px; box-shadow: 0 10px 28px rgba(30,27,75,.25); overflow: hidden; animation: cpb 5s ease-out infinite; }
+.cp .in { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.cp .typed { display: inline-block; overflow: hidden; white-space: nowrap; width: 0; border-right: 2px solid var(--p); font-size: 13px; font-weight: 700; animation: cpt 5s steps(5) infinite; }
+.cp .res { padding: 7px 12px; font-size: 12px; font-weight: 600; opacity: 0; animation: cpr 5s ease-out infinite; animation-delay: calc(var(--i) * .2s); }
+.cp .res:first-of-type { background: var(--p-soft); }
+@keyframes cpb { 0% { opacity: 0; transform: translateY(-24px); } 10%, 88% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; transform: translateY(-24px); } }
+@keyframes cpt { 0%, 14% { width: 0; } 38%, 100% { width: 5.2em; } }
+@keyframes cpr { 0%, 38% { opacity: 0; transform: translateY(6px); } 48%, 86% { opacity: 1; transform: none; } 96%, 100% { opacity: 0; } }
+
+/* 07 드로어: 옆에서 밀려 나오는 패널(translateX) 뒤로 화면을 어둡게 덮는다 */
+.dr .dim { position: absolute; inset: 0; background: #1e1b4b; animation: drd 4.5s ease-in-out infinite; }
+.dr .side { position: absolute; left: 0; top: 0; bottom: 0; width: 130px; background: #fff; padding: 14px; display: grid; gap: 14px; align-content: start; animation: drs 4.5s ease-in-out infinite; }
+@keyframes drs { 0%, 12% { transform: translateX(-100%); } 30%, 70% { transform: none; } 88%, 100% { transform: translateX(-100%); } }
+@keyframes drd { 0%, 12% { opacity: 0; } 30%, 70% { opacity: .45; } 88%, 100% { opacity: 0; } }
+.dr .page { padding: 12px; display: grid; gap: 8px; align-content: start; }
+
+/* 08 메가 메뉴: 상단 메뉴에 올리면 가로로 넓은 패널이 내려오고 열 단위로 묶여 있다 */
+.mm .nav { display: flex; gap: 14px; padding: 10px 14px; font-size: 12px; font-weight: 700; border-bottom: 1px solid var(--line); }
+.mm .nav .on { color: var(--p); animation: mmn 4.5s infinite; }
+.mm .big { position: absolute; left: 0; right: 0; top: 36px; background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 10px 20px rgba(30,27,75,.15); padding: 12px 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; transform-origin: top; animation: mmb 4.5s ease-in-out infinite; }
+.mm .big div { display: grid; gap: 6px; align-content: start; }
+.mm .big b { font-size: 11px; color: var(--mute); }
+@keyframes mmb { 0%, 14% { opacity: 0; transform: translateY(-10px) scaleY(.7); } 30%, 72% { opacity: 1; transform: none; } 88%, 100% { opacity: 0; transform: translateY(-10px) scaleY(.7); } }
+@keyframes mmn { 0%, 14% { color: var(--ink); } 25%, 75% { color: var(--p); } 88%, 100% { color: var(--ink); } }
+
+/* 09 컨텍스트 메뉴: 눌린 자리(커서 위치)에서 바로 메뉴가 커져 나온다 */
+.cm .cur { position: absolute; left: 150px; top: 120px; width: 18px; height: 18px; color: var(--ink); animation: cmc 4.5s ease-in-out infinite; }
+.cm .cur svg { width: 18px; height: 18px; fill: var(--ink); stroke: #fff; stroke-width: 1.5; }
+.cm .menu { position: absolute; left: 62px; top: 40px; width: 110px; padding: 5px; border-radius: 10px; background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 20px rgba(30,27,75,.22); transform-origin: top left; animation: cmm 4.5s ease-out infinite; }
+.cm .menu div { height: 24px; padding: 0 8px; display: flex; align-items: center; font-size: 12px; font-weight: 600; border-radius: 6px; }
+.cm .menu div.hot { animation: cmh 4.5s infinite; }
+@keyframes cmc { 0%, 6% { transform: translate(60px, 50px); } 22%, 80% { transform: none; } 100% { transform: translate(60px, 50px); } }
+@keyframes cmm { 0%, 26% { opacity: 0; transform: scale(.7); } 36%, 82% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; } }
+@keyframes cmh { 0%, 52% { background: none; color: inherit; } 58%, 80% { background: var(--p); color: #fff; } 100% { background: none; } }
+.cm .cur { left: 62px; top: 40px; }
+
+/* 10 모핑 햄버거: 막대 세 개를 회전·이동·투명도로 X 모양으로 바꾼다 */
+.hb { display: grid; gap: 7px; width: 48px; height: 48px; place-content: center; border-radius: 14px; background: #fff; box-shadow: 0 2px 8px rgba(30,27,75,.15); }
+.hb i { display: block; width: 24px; height: 3px; border-radius: 2px; background: var(--ink); animation: hb 3.6s ease-in-out infinite; }
+.hb i:nth-child(1) { --r: 45deg; --y: 10px; } .hb i:nth-child(2) { --r: 0deg; --y: 0; animation-name: hbm; } .hb i:nth-child(3) { --r: -45deg; --y: -10px; }
+@keyframes hb { 0%, 15% { transform: none; } 35%, 65% { transform: translateY(var(--y)) rotate(var(--r)); } 85%, 100% { transform: none; } }
+@keyframes hbm { 0%, 15% { opacity: 1; transform: none; } 35%, 65% { opacity: 0; transform: scaleX(.2); } 85%, 100% { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<!-- 03 구이 메뉴용 goo 필터 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="goo2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation="6"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"/></filter>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4z"/><path d="M10 21h4"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/><path d="M4 8l8 6 8-6"/></symbol>
+  <symbol id="i-cursor" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-2 6z"/></symbol>
+</defs></svg>
+
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">모션과 제스처</a><span class="sep">›</span>
+  <span>메뉴 모션</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>메뉴 여닫는 모션 6가지</h1>
+    <p class="lead">메뉴가 열리는 방식이 앱의 첫인상을 만듭니다</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="push-back">
+      <div class="demo"><div class="mb pb" role="img" aria-label="페이지가 작아지며 오른쪽으로 밀려 뒤의 메뉴가 보이는 모습">
+        <div class="menu tx"><span>홈</span><span>검색</span><span>알림</span><span>설정</span></div>
+        <div class="page"><div class="d-bar"></div><div class="hero"></div><div class="d-bar dark" style="width:70%"></div><div class="d-bar"></div><div class="d-bar" style="width:55%"></div></div>
+      </div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">푸시 백 <span class="en">Push Back</span></h2>
+        <p class="desc">지금 보던 페이지가 뒤로 물러나듯 작아지며 한쪽으로 밀리고, 그 뒤에 숨어 있던 메뉴가 드러납니다. 메뉴가 페이지 위에 얹히는 드로어와 달리 페이지 자체가 움직이는 점이 다릅니다.</p>
+        <p class="when"><b>어울리는 곳</b>모바일 앱의 메인 메뉴, 메뉴 항목이 적고 브랜드 느낌을 주고 싶은 서비스.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>햄버거 버튼을 누르면 현재 페이지가 80% 크기로 줄며 오른쪽으로 밀리고 뒤에서 메뉴가 나오는 푸시 백 모션을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>밀려난 페이지를 다시 눌러야 닫히는 건지, 어디를 눌러도 되는지 정해 두지 않으면 사용자가 갇힌 기분을 느낍니다. 페이지가 통째로 변형되어 스크롤 위치와 고정 헤더가 어긋나기 쉬우니 개발자와 꼭 시연해 보세요. 키보드 사용자를 위해 닫기 버튼과 Esc 도 같이 설계합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="kebab-popover">
+      <div class="demo"><div class="mb kb" role="img" aria-label="세로 점 세 개가 날아가 팝오버 메뉴의 아이콘이 되는 모습">
+        <div class="head"><div class="d-bar dark" style="width:50px"></div></div>
+        <i class="dot"></i><i class="dot"></i><i class="dot"></i>
+        <div class="pop"><div><i></i>이름 바꾸기</div><div><i></i>공유</div><div><i></i>삭제</div></div>
+      </div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">케밥 팝오버 <span class="en">Kebab Popover</span></h2>
+        <p class="desc">세로 점 세 개(⋮) 버튼을 누르면 점들이 날아가 작은 메뉴창의 아이콘이 됩니다. 케밥은 꼬치 모양에서 따온 이름이고, 가로 점 세 개는 <strong>미트볼 메뉴</strong>라고 부릅니다.</p>
+        <p class="when"><b>어울리는 곳</b>목록의 각 행, 카드 모서리처럼 부가 동작이 많아 버튼을 다 늘어놓을 수 없는 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드 오른쪽 위 케밥 버튼을 누르면 점 세 개가 각 메뉴 항목의 아이콘으로 날아가는 케밥 팝오버 모션을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>점 세 개 뒤에 삭제까지 숨기면 중요한 기능을 아무도 못 찾습니다. 자주 쓰는 한두 개는 밖으로 꺼내세요. 점 버튼은 눈에는 작아 보여도 눌리는 영역은 44pt/48dp 이상을 확보해야 하고, 화면 가장자리에서는 팝오버가 잘리지 않게 열리는 방향을 바꿔야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="gooey-menu">
+      <div class="demo"><div class="mb" style="background:var(--stage)" role="img" aria-label="둥근 버튼들이 방울처럼 떨어져 나왔다 다시 붙는 모습">
+        <div class="gk"><i></i><i></i><i></i><i></i><i class="c"></i></div>
+        <div class="gi">
+          <b><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></b><b><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></b>
+          <b><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-bell"/></svg></b><b><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-mail"/></svg></b>
+          <b class="c"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-plus"/></svg></b>
+        </div>
+      </div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">구이 메뉴 <span class="en">Gooey Menu</span></h2>
+        <p class="desc">둥근 버튼들이 끈적한 방울처럼 늘어나며 떨어져 나왔다가 다시 붙는 메뉴. 가까운 도형을 하나로 이어 붙이는 <strong>구이(gooey) 효과</strong>를 씁니다.</p>
+        <p class="when"><b>어울리는 곳</b>화면 모서리의 플로팅 액션 버튼, 놀이 요소가 있는 앱, 공유·좋아요 같은 가벼운 동작 모음.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>가운데 + 버튼을 누르면 4개의 아이콘 버튼이 끈적한 방울처럼 떨어져 나오는 구이 메뉴를 SVG goo 필터로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>필터가 도형을 흐렸다가 선명하게 만드는 방식이라 안의 글자나 아이콘까지 뭉개집니다. 아이콘은 필터 바깥에 따로 올려야 합니다. 라벨 없는 아이콘만으로는 뜻을 알 수 없으니 5개를 넘기지 말고, 저사양 기기에서는 필터가 버벅이니 꼭 실제 기기로 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="fold-down">
+      <div class="demo"><div class="mb fd" role="img" aria-label="줄이 접힌 종이처럼 하나씩 펼쳐지는 메뉴">
+        <div class="r" style="--i:0;background:#4f46e5">프로필</div><div class="r" style="--i:1;background:#6366f1">보관함</div>
+        <div class="r" style="--i:2;background:#818cf8">설정</div><div class="r" style="--i:3;background:#a5b4fc;color:#1e1b4b">로그아웃</div>
+      </div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">폴드 다운 <span class="en">Fold Down</span></h2>
+        <p class="desc">메뉴 줄이 위에서부터 접힌 종이가 펼쳐지듯 하나씩 열립니다. 각 줄이 위쪽 모서리를 축으로 앞으로 돌아 내려오는 <strong>rotateX</strong> 움직임으로 만듭니다.</p>
+        <p class="when"><b>어울리는 곳</b>항목이 3~5개로 짧은 드롭다운, 사용자 메뉴, 순서대로 눈에 들어와야 하는 목록.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>메뉴를 열면 각 항목이 0.1초 간격으로 위에서부터 rotateX로 접혔다 펼쳐지는 폴드 다운 모션을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>항목이 10개가 넘으면 마지막 줄이 열릴 때까지 1초 가까이 걸려 사용자가 답답해합니다. 간격을 줄이거나 짧은 메뉴에만 쓰세요. 접힌 동안 눌러지는 투명한 줄이 남아 오작동하지 않도록 상태(숨김)도 챙겨야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="button-to-panel">
+      <div class="demo"><div class="mb bp" style="background:var(--stage)" role="img" aria-label="더하기 버튼이 커져 옵션 패널이 되는 모습">
+        <div class="panel"><div class="plus"><svg class="d-svg" viewBox="0 0 24 24" style="width:22px;height:22px"><use href="#i-plus"/></svg></div>
+          <div class="opts tx"><span>새 글 쓰기</span><span>사진 올리기</span><span>링크 붙이기</span></div></div>
+      </div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">버튼 투 패널 <span class="en">Button to Panel</span></h2>
+        <p class="desc">+ 버튼이 그 자리에서 커져 패널이 되고, 안의 옵션이 뒤따라 서서히 나타납니다. 새 창이 뜨는 게 아니라 버튼이 변신한다는 점에서 팝오버와 다릅니다.</p>
+        <p class="when"><b>어울리는 곳</b>화면 구석의 플로팅 버튼, 글쓰기·추가 같은 만들기 메뉴.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>오른쪽 아래 + 버튼을 누르면 그 자리에서 둥근 모서리 패널로 커지고 옵션이 페이드 인 되는 버튼 투 패널 모션을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>패널이 커지는 도중에 옵션이 먼저 보이면 글자가 튀어나와 지저분합니다. 패널이 거의 다 커진 뒤 옵션을 늦게 띄우세요. 크기를 직접 바꾸는 방식은 성능이 나쁠 수 있어 개발자가 transform 으로 근사할 수 있는지 먼저 확인합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="command-palette">
+      <div class="demo"><div class="mb cp" role="img" aria-label="검색창이 내려오고 검색어가 입력되며 결과가 뜨는 모습">
+        <div class="box">
+          <div class="in"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg><span class="typed">다크 모드</span></div>
+          <div class="res" style="--i:2">다크 모드 켜기</div><div class="res" style="--i:3">다크 모드 예약</div><div class="res" style="--i:4">테마 설정 열기</div>
+        </div>
+      </div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">커맨드 팔레트 <span class="en">Command Palette</span></h2>
+        <p class="desc">단축키로 불러내는 검색창 하나로 앱의 모든 기능을 찾아 실행합니다. 입력하는 대로 결과가 걸러지며, 메뉴를 하나하나 찾아 들어갈 필요가 없습니다.</p>
+        <p class="when"><b>어울리는 곳</b>기능이 아주 많은 업무 도구, 개발자·디자이너용 앱, 키보드로 일하는 사용자가 많은 서비스.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>Cmd+K 를 누르면 위에서 검색창이 내려오고 입력에 따라 결과가 순서대로 나타나는 커맨드 팔레트를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>일반 사용자는 이런 창이 있는지조차 모릅니다. 단축키 힌트를 화면 어딘가에 눈에 보이게 두세요. 결과가 없을 때의 안내와 최근 쓴 명령 목록이 없으면 처음 연 사용자는 빈 입력창 앞에서 멈춥니다. 방향키와 엔터로 고를 수 있어야 하고 스크린 리더용 역할(role) 지정도 필요합니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">메뉴 모션을 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="drawer">
+      <div class="demo"><div class="mb dr" role="img" aria-label="옆에서 밀려 나오는 드로어 패널">
+        <div class="page"><div class="d-bar dark" style="width:40%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div><div class="d-bar"></div></div>
+        <div class="dim"></div>
+        <div class="side tx"><span>홈</span><span>내 글</span><span>저장함</span><span>설정</span></div>
+      </div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">드로어 <span class="en">Drawer · Side sheet</span></h2>
+        <p class="desc">서랍처럼 화면 옆에서 밀려 나오는 패널. 푸시 백과 달리 페이지는 그대로 있고 그 위에 패널이 얹히며, 나머지 영역은 어둡게 덮습니다. <strong>내비게이션 드로어</strong>라고도 부릅니다.</p>
+        <p class="when"><b>어울리는 곳</b>모바일 앱의 전체 메뉴, 쇼핑몰의 필터 패널, 장바구니 미리보기.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>햄버거 버튼을 누르면 왼쪽에서 폭 280px 드로어가 밀려 나오고 뒤는 어둡게 덮는 모션을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>어두운 영역을 눌러 닫는 것은 기본이고, 열린 동안 뒤 화면이 스크롤되지 않게 막는 것을 자주 빠뜨립니다. 열면 포커스가 드로어 안으로 들어가고 닫으면 열었던 버튼으로 돌아와야 합니다. 안드로이드는 뒤로 가기 버튼으로 닫히는 동작도 기대합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="mega-menu">
+      <div class="demo"><div class="mb mm" role="img" aria-label="상단 메뉴에서 넓은 패널이 내려오는 메가 메뉴">
+        <div class="nav"><span>홈</span><span class="on">상품</span><span>이벤트</span><span>고객센터</span></div>
+        <div class="d-bar" style="margin:14px;width:60%"></div><div class="d-bar" style="margin:14px"></div>
+        <div class="big"><div><b>의류</b><i class="d-bar"></i><i class="d-bar"></i><i class="d-bar"></i></div><div><b>신발</b><i class="d-bar"></i><i class="d-bar"></i></div><div><b>잡화</b><i class="d-bar"></i><i class="d-bar"></i><i class="d-bar"></i></div></div>
+      </div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">메가 메뉴 <span class="en">Mega Menu</span></h2>
+        <p class="desc">상단 메뉴에 올리거나 누르면 가로로 넓은 패널이 내려와 여러 항목을 열 단위로 한꺼번에 보여줍니다. 한 줄짜리 드롭다운보다 훨씬 많은 선택지를 담을 수 있습니다.</p>
+        <p class="when"><b>어울리는 곳</b>상품 분류가 많은 쇼핑몰, 문서가 많은 서비스 사이트, 기업 사이트의 데스크톱 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상단 메뉴의 상품을 누르면 3열로 분류된 넓은 메가 메뉴가 위에서 내려오게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>마우스를 올리면 열리는 방식은 대각선으로 움직이다 패널이 닫혀 짜증을 줍니다. 닫히기까지 약간의 여유를 주거나 클릭으로 열게 하세요. 터치 화면에는 올림(hover)이 없어 모바일에서는 아코디언이나 드로어로 바꿔야 하고, 키보드로도 열고 닫을 수 있어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="context-menu">
+      <div class="demo"><div class="mb cm" role="img" aria-label="커서를 둔 자리에서 메뉴가 커져 나오는 컨텍스트 메뉴">
+        <div style="padding:12px;display:grid;gap:8px"><div class="d-bar dark" style="width:45%"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div></div>
+        <div class="menu"><div>복사</div><div>붙여넣기</div><div class="hot">삭제</div></div>
+        <div class="cur"><svg viewBox="0 0 24 24"><use href="#i-cursor"/></svg></div>
+      </div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">컨텍스트 메뉴 <span class="en">Context Menu</span></h2>
+        <p class="desc">마우스 오른쪽 클릭이나 길게 누르기로 그 자리에서 열리는 메뉴. 지금 선택한 대상에만 해당하는 동작을 모아 보여주므로 <strong>우클릭 메뉴</strong>라고도 합니다.</p>
+        <p class="when"><b>어울리는 곳</b>파일 목록, 표의 셀, 편집기의 선택한 글, 드래그로 만든 도형.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>목록 항목을 오른쪽 클릭하면 커서 위치에서 컨텍스트 메뉴가 커져 나오고 화면 밖으로 넘치면 방향을 바꾸게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>컨텍스트 메뉴 안에만 있는 기능은 우클릭을 모르는 사용자에게 존재하지 않는 기능입니다. 같은 동작을 눈에 보이는 버튼에도 두세요. 모바일에는 우클릭이 없으니 길게 누르기와 케밥 버튼으로 대신하고, 브라우저 기본 메뉴를 막을 때는 붙여넣기처럼 필요한 기본 기능이 사라지지 않는지 확인합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="morphing-menu">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="hb" role="img" aria-label="햄버거가 X로 바뀌는 버튼"><i></i><i></i><i></i></div><span class="d-cap">막대 세 개가 X로 변했다 돌아옵니다</span></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">모핑 <span class="en">Morphing icon</span></h2>
+        <p class="desc">메뉴 아이콘 하나가 상태에 따라 다른 모양으로 이어서 변하는 것. 햄버거(≡)가 닫기(X)로 바뀌는 것이 가장 흔한 예이며, 같은 버튼이 열기와 닫기를 겸한다는 신호입니다.</p>
+        <p class="when"><b>어울리는 곳</b>햄버거 메뉴 버튼, 재생과 일시정지 전환, 검색과 닫기 전환.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>햄버거 버튼을 누르면 막대 세 개가 0.3초 동안 X로 모핑되고 다시 누르면 돌아오게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>아이콘만 바뀌고 버튼의 접근성 이름이 계속 "메뉴 열기"로 남아 있는 경우가 많습니다. 열림 상태에 맞춰 "메뉴 닫기"로 바꾸고 aria-expanded 값도 같이 갱신하세요. 모션은 0.2~0.3초면 충분하고, 그 이상은 눈에 거슬립니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

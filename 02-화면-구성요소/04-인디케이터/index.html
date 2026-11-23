@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="인디케이터 이름 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>인디케이터 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 01 프로그레스 바: 길이가 차오르고 숫자도 같이 올라간다(@property 정수 + counter) */
+@property --n { syntax: "<integer>"; inherits: false; initial-value: 0; }
+.pr { width: 230px; display: grid; gap: 6px; }
+.pr .trk { height: 8px; border-radius: 99px; background: #d5daea; overflow: hidden; }
+.pr .trk i { display: block; height: 100%; background: var(--p); border-radius: 99px; transform-origin: left; animation: prFill 4s ease-out infinite; }
+.pr b { justify-self: end; color: var(--p); animation: prNum 4s ease-out infinite; counter-reset: n var(--n); }
+.pr b::after { content: counter(n) "%"; }
+@keyframes prFill { 0% { transform: scaleX(0); } 70%, 100% { transform: scaleX(.74); } }
+@keyframes prNum { 0% { --n: 0; } 70%, 100% { --n: 74; } }
+
+/* 02 스텝 인디케이터: 버튼을 누르면 클래스를 바꿔 한 칸씩 채운다(작은 JS) */
+.sx { display: flex; align-items: center; }
+.sx b { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; border: 2px solid #c9cfe6; background: #fff; color: var(--mute); font-size: 12px; transition: .25s; }
+.sx b.done { border-color: var(--p); background: var(--p); color: #fff; }
+.sx i { width: 34px; height: 2px; background: #c9cfe6; transition: .25s; }
+.sx i.done { background: var(--p); }
+
+/* 03 페이지 인디케이터: scroll-snap 으로 한 장씩 멈추고, 점은 JS로 따라간다 */
+.pgs { width: 200px; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 12px; scrollbar-width: none; }
+.pgs::-webkit-scrollbar { display: none; }
+.pgs div { flex: none; width: 200px; height: 96px; scroll-snap-align: center; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 18px; }
+.dt { display: flex; gap: 6px; }
+.dt i { width: 8px; height: 8px; border-radius: 50%; background: #c9cfe6; transition: .2s; }
+.dt i.on { background: var(--p); transform: scale(1.3); }
+
+/* 04 스토리 바: 마스크로 4칸으로 자른 줄 위에서 흰 띠가 왼쪽부터 찬다(고정폭 안쪽 + 늘어나는 바깥) */
+.sbar { position: relative; width: 240px; height: 4px; }
+.sbar, .sbar i { -webkit-mask: repeating-linear-gradient(90deg, #000 0 calc(25% - 3px), transparent 0 25%); mask: repeating-linear-gradient(90deg, #000 0 calc(25% - 3px), transparent 0 25%); }
+.sbar { background: rgba(255,255,255,.35); border-radius: 2px; }
+.sbar .fill { position: absolute; inset: 0 auto 0 0; overflow: hidden; width: 0; animation: story 8s linear infinite; -webkit-mask: none; mask: none; }
+.sbar .fill i { display: block; width: 240px; height: 4px; background: #fff; }
+@keyframes story { 0% { width: 0; } 95%, 100% { width: 100%; } }
+.story { width: 240px; height: 150px; padding: 10px; border-radius: 14px; background: linear-gradient(160deg, #475569, #1e293b); color: #fff; display: grid; align-content: space-between; }
+
+/* 05 스크롤 진행 바: 글이 스크롤된 비율을 맨 위 막대 길이로 보여준다(작은 JS) */
+.sp { width: 220px; height: 150px; position: relative; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.sp .bar { position: absolute; left: 0; top: 0; right: 0; height: 4px; background: var(--p); transform-origin: left; transform: scaleX(0); z-index: 2; }
+.sp .txt { height: 100%; overflow-y: scroll; padding: 14px 12px; display: grid; gap: 8px; align-content: start; }
+
+/* 06 원형 진행률: conic-gradient 각도를 0 에서 74% 까지 */
+@property --a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.rg { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--p) var(--a), #d5daea 0); animation: rg 4s ease-out infinite; }
+.rg::before { content: ""; grid-area: 1/1; width: 64px; height: 64px; border-radius: 50%; background: var(--stage); }
+.rg b { grid-area: 1/1; font-size: 17px; }
+@keyframes rg { 0% { --a: 0deg; } 70%, 100% { --a: 266deg; } }
+
+/* 07 강도 표시기: 입력한 글자를 검사해 칸을 채우고 색을 바꾼다(작은 JS) */
+.st { width: 230px; display: grid; gap: 6px; }
+.st .segs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.st .segs i { height: 5px; border-radius: 3px; background: #d5daea; transition: background .2s; }
+.st[data-s="1"] .segs i:nth-child(-n+1) { background: var(--danger); }
+.st[data-s="2"] .segs i:nth-child(-n+2) { background: #f59e0b; }
+.st[data-s="3"] .segs i:nth-child(-n+3) { background: #84cc16; }
+.st[data-s="4"] .segs i:nth-child(-n+4) { background: var(--ok); }
+.st .lbl { font-size: 12px; font-weight: 700; color: var(--mute); }
+
+/* 08 탭 인디케이터: 라디오 선택에 맞춰 밑줄이 옆으로 미끄러진다(transform + :has) */
+.tabs { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); width: 230px; border-bottom: 1px solid var(--line); }
+.tabs label { padding: 10px 0; text-align: center; font-weight: 700; color: var(--mute); cursor: pointer; }
+.tabs input { position: absolute; opacity: 0; }
+.tabs label:has(:checked) { color: var(--ink); }
+.tabs label:has(:focus-visible) { outline: 3px solid var(--p); }
+.tabs .u { position: absolute; left: 0; bottom: -1px; width: 33.333%; height: 3px; background: var(--p); border-radius: 2px; transition: transform .25s cubic-bezier(.3,.9,.3,1); }
+.tabs:has(label:nth-child(2) :checked) .u { transform: translateX(100%); }
+.tabs:has(label:nth-child(3) :checked) .u { transform: translateX(200%); }
+
+/* 09 홈 인디케이터: 아래 막대를 위로 쓸면 앱 화면이 작아진다(단순화) */
+.hm { width: 120px; height: 180px; padding: 5px; border: 3px solid #1f2937; border-radius: 22px; background: #1f2937; overflow: hidden; position: relative; }
+.hm .app { position: absolute; inset: 5px 5px 5px; border-radius: 16px; background: linear-gradient(160deg, #6366f1, #3b82f6); transform-origin: 50% 100%; animation: appShrink 3.6s ease-in-out infinite; }
+.hm .pill { position: absolute; left: 50%; bottom: 10px; width: 44px; height: 4px; margin-left: -22px; border-radius: 3px; background: #fff; animation: pillUp 3.6s ease-in-out infinite; z-index: 2; }
+@keyframes pillUp { 0%, 20%, 90%, 100% { transform: none; } 40%, 70% { transform: translateY(-34px); } }
+@keyframes appShrink { 0%, 20%, 90%, 100% { transform: none; border-radius: 16px; } 40%, 70% { transform: scale(.6) translateY(-10px); border-radius: 22px; } }
+
+/* 추가: 타이핑 인디케이터 — 점 세 개가 차례로 튄다 */
+.ty { display: inline-flex; gap: 4px; padding: 10px 14px; border-radius: 16px; background: #e5e7eb; }
+.ty i { width: 7px; height: 7px; border-radius: 50%; background: #6b7280; animation: bounce 1.2s ease-in-out infinite; }
+.ty i:nth-child(2) { animation-delay: .15s; } .ty i:nth-child(3) { animation-delay: .3s; }
+@keyframes bounce { 0%, 60%, 100% { transform: none; } 30% { transform: translateY(-5px); } }
+/* 추가: 빵부스러기 — 현재 위치 앞에 지나온 길을 > 로 이어 붙인다 */
+.bc { display: flex; align-items: center; gap: 6px; font-weight: 600; flex-wrap: wrap; }
+.bc a { color: var(--p); text-decoration: none; }
+.bc span.cur { color: var(--ink); font-weight: 800; }
+.bc .sp2 { color: var(--mute); }
+/* 추가: 상태 점 — 색 점 하나로 지금 상태를 알린다 */
+.sd { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.sd i { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 rgba(22,163,74,.5); animation: ping 2s ease-out infinite; }
+.sd.off i { background: #9ca3af; animation: none; }
+@keyframes ping { 70%, 100% { box-shadow: 0 0 0 8px rgba(22,163,74,0); } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">화면 구성요소</a><span class="sep">›</span>
+  <span>인디케이터</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>인디케이터 이름 9가지</h1>
+    <p class="lead">로딩 막대에도 이름이 있어요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="progress-bar">
+      <div class="demo">
+        <div class="pr" role="img" aria-label="74퍼센트까지 차오르는 프로그레스 바"><div class="trk"><i></i></div><b></b></div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">프로그레스 바 <span class="en">Progress bar</span></h2>
+        <p class="desc">가로 막대가 차오르며 전체 중 얼마나 됐는지 보여줍니다. 숫자(%)를 곁들이는 경우가 많습니다. 끝이 어디인지 아는 <strong>확정형</strong>이 기본입니다.</p>
+        <p class="when"><b>언제 쓰나</b>파일 업로드, 앱 설치, 강의 수강처럼 전체 분량이 정해진 작업.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>업로드 진행률을 오른쪽에 퍼센트가 붙은 프로그레스 바로 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>첫 1초에 확 차오르다 99%에서 한참 멈추는 막대는 오히려 불안을 키웁니다. 실제 진행에 맞춰 부드럽게 움직이게 하고, 끝나면 100%에서 잠깐 머문 뒤 사라지게 하세요. 색의 대비가 약하면 막대가 어디까지 찼는지 안 보입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="step-indicator">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:12px">
+          <div class="sx" id="sx"><b class="done">1</b><i class="done"></i><b>2</b><i></i><b>3</b><i></i><b>4</b></div>
+          <button class="d-btn soft" type="button" id="sxbtn">다음 단계</button>
+          <span class="d-cap">눌러 보세요</span>
+        </div>
+        <script>
+        (function () {
+          var n = 1, c = document.querySelectorAll('#sx b'), l = document.querySelectorAll('#sx i');
+          document.getElementById('sxbtn').onclick = function () {
+            n = n % 4 + 1;
+            c.forEach(function (e, k) { e.className = k < n ? 'done' : ''; });
+            l.forEach(function (e, k) { e.className = k < n - 1 ? 'done' : ''; });
+          };
+        })();
+        </script>
+      </div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">스텝 인디케이터 <span class="en">Step indicator</span></h2>
+        <p class="desc">번호 붙은 동그라미를 선으로 이어 "전체 몇 단계 중 지금 몇 번째"인지 보여줍니다. 막대처럼 연속적이지 않고 <strong>칸이 끊어져 있는</strong> 점이 프로그레스 바와 다릅니다. 스테퍼라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>가입, 결제, 신청서처럼 단계가 3~5개로 나뉜 입력 흐름.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>결제 화면 위에 4단계 스텝 인디케이터를 넣고 지금 단계까지 파란색으로 채워줘</q></p>
+        <p class="senior"><b>20년차 메모</b>스텝이 5개를 넘으면 모바일 폭에 안 맞아 동그라미가 눌립니다. 현재 단계 이름만 쓰는 축약형으로 바꿀 계획을 처음부터 세우세요. 단계 선이 색만으로 구분되면 색약 사용자는 못 읽으니 체크 아이콘을 함께 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="page-indicator">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:10px">
+          <div class="pgs" id="pgs" tabindex="0" aria-label="옆으로 넘기는 세 장"><div style="background:#6366f1">1</div><div style="background:#0ea5e9">2</div><div style="background:#10b981">3</div></div>
+          <div class="dt" id="dt" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+          <span class="d-cap">옆으로 밀어 보세요</span>
+        </div>
+        <script>
+        (function () {
+          var s = document.getElementById('pgs'), d = document.querySelectorAll('#dt i');
+          s.addEventListener('scroll', function () {
+            var k = Math.round(s.scrollLeft / 200);
+            d.forEach(function (e, i) { e.className = i === k ? 'on' : ''; });
+          });
+        })();
+        </script>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">페이지 인디케이터 <span class="en">Page indicator</span></h2>
+        <p class="desc">옆으로 넘기는 여러 장 중 <strong>몇 번째 장을 보고 있는지</strong>를 점으로 알려줍니다. 앞뒤 순서 정보는 주지만 "얼마나 남았는지"를 퍼센트로 말하진 않습니다. 페이지 점이라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>이미지 슬라이드, 앱 소개 화면, 홈 화면의 위젯 묶음.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>사진 슬라이더 아래에 페이지 인디케이터를 넣고, 현재 장의 점만 진하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>점이 너무 작아서 누르려는 사람은 놓치기 일쑤입니다. 점은 "보는 용"으로 두고 넘기는 건 화살표 버튼이나 스와이프로 하세요. 슬라이드가 자동으로 넘어가면 사용자가 읽는 도중 지나가 버리니 멈춤 버튼도 필요합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="story-progress">
+      <div class="demo">
+        <div class="story"><div class="sbar" role="img" aria-label="칸마다 차례로 차오르는 스토리 바"><div class="fill"><i></i></div></div><span style="font-weight:700">오늘의 포트폴리오 팁</span></div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">스토리 바 <span class="en">Story progress</span></h2>
+        <p class="desc">인스타그램 스토리 위쪽에 있는 가는 막대 줄. 장마다 칸이 나뉘어 있고 지금 보는 칸이 <strong>시간에 따라 저절로 차오릅니다</strong>. 페이지 점과 달리 자동 재생 시간을 보여줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>스토리, 짧은 소개 영상, 자동으로 넘어가는 튜토리얼처럼 장마다 정해진 시간이 있는 콘텐츠.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>화면 위쪽에 인스타 스토리 같은 스토리 바를 넣고, 5초마다 다음 칸으로 넘어가게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>누르고 있으면 멈추고, 왼쪽을 누르면 이전, 오른쪽을 누르면 다음이라는 규칙이 사실상 표준이라 이걸 지키지 않으면 어색합니다. 글이 많은 장에는 시간을 더 주세요. 모션을 줄이는 설정을 켠 사용자는 자동 재생을 끌 수 있어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="scroll-progress">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:8px">
+          <div class="sp"><div class="bar" id="spbar"></div><div class="txt" id="sptxt"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div><div class="d-bar"></div><div class="d-bar" style="width:85%"></div><div class="d-bar"></div><div class="d-bar" style="width:50%"></div><div class="d-bar"></div><div class="d-bar"></div><div class="d-bar" style="width:75%"></div><div class="d-bar"></div><div class="d-bar" style="width:60%"></div><div class="d-bar"></div><div class="d-bar"></div><div class="d-bar" style="width:40%"></div></div></div>
+          <span class="d-cap">글을 아래로 스크롤해 보세요</span>
+        </div>
+        <script>
+        (function () {
+          var t = document.getElementById('sptxt'), b = document.getElementById('spbar');
+          t.addEventListener('scroll', function () { b.style.transform = 'scaleX(' + t.scrollTop / (t.scrollHeight - t.clientHeight) + ')'; });
+        })();
+        </script>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">스크롤 진행 바 <span class="en">Scroll progress</span></h2>
+        <p class="desc">긴 글을 읽는 동안 화면 맨 위에 붙어서 <strong>글 전체 중 어디까지 내려왔는지</strong>를 알려주는 가는 막대. 일을 한 비율이 아니라 읽은 위치를 나타냅니다.</p>
+        <p class="when"><b>언제 쓰나</b>블로그 글, 기사, 약관처럼 세로로 긴 문서.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>글 상세 화면 맨 위에 2px 두께의 스크롤 진행 바를 고정하고, 스크롤한 만큼 길어지게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>짧은 페이지에는 쓸모가 없고 오히려 장식이 됩니다. 전체 길이가 화면의 서너 배 이상일 때만 쓰세요. 맨 위 고정 메뉴와 겹쳐 가려지는 일이 잦으니 위치를 메뉴 바로 아래로 잡을지 정해 두어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="progress-ring">
+      <div class="demo">
+        <div class="rg" role="img" aria-label="74퍼센트까지 차오르는 원형 진행률"><b>74%</b></div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">원형 진행률 <span class="en">Progress ring</span></h2>
+        <p class="desc">둥근 고리가 시계 방향으로 채워지는 진행 표시. 막대는 가로 공간이 필요하지만 링은 <strong>작은 네모 안에 쏙 들어갑니다</strong>. 서큘러 프로그레스라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>대시보드 카드, 앱 아이콘 위, 사진 업로드 썸네일 위처럼 좁은 자리.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이미지 업로드 중에는 썸네일 위에 가운데 퍼센트가 적힌 원형 진행률을 올려줘</q></p>
+        <p class="senior"><b>20년차 메모</b>돌기만 하는 원은 "스피너"이고 진행률이 정해져 채워지는 원이 "링"입니다. 구분 없이 쓰면 사용자는 얼마나 남았는지 알 수 없다고 느낍니다. 링 두께는 너무 얇으면 작은 화면에서 안 보이니 최소 4px 이상으로 잡으세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="strength-meter">
+      <div class="demo">
+        <div class="st" id="st" data-s="0">
+          <label class="d-cap" for="pw">비밀번호</label>
+          <input class="d-input" id="pw" type="text" placeholder="입력하면 강도가 바뀝니다" autocomplete="off">
+          <div class="segs" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <span class="lbl" id="stl" aria-live="polite">입력해 보세요</span>
+        </div>
+        <script>
+        (function () {
+          var st = document.getElementById('st'), l = document.getElementById('stl'), w = ['입력해 보세요', '약해요', '보통이에요', '좋아요', '아주 강해요'];
+          document.getElementById('pw').addEventListener('input', function () {
+            var v = this.value, s = 0;
+            if (v.length) { s = 1; if (v.length >= 8) s++; if (/[a-z]/.test(v) && /[A-Z0-9]/.test(v)) s++; if (/[^a-zA-Z0-9]/.test(v) && v.length >= 8) s++; }
+            st.dataset.s = s; l.textContent = w[s];
+          });
+        })();
+        </script>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">강도 표시기 <span class="en">Strength meter</span></h2>
+        <p class="desc">비밀번호를 칠 때 칸이 채워지며 "약함, 보통, 강함"을 알려주는 표시. 다른 인디케이터가 일의 진행을 보여준다면 이건 <strong>입력한 값의 품질</strong>을 즉시 보여줍니다. 패스워드 스트렝스 미터라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>회원가입, 비밀번호 변경 화면의 비밀번호 입력칸 바로 아래.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>비밀번호 입력칸 아래에 4칸짜리 강도 표시기를 넣고, 입력할 때마다 길이와 문자 종류에 따라 색과 문구가 바뀌게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>"Password1!"처럼 규칙은 다 맞는데 쉽게 뚫리는 비밀번호를 강하다고 알려주는 단순한 검사가 흔한 함정입니다. 실제 서비스에서는 검증 라이브러리를 쓰고, 어떻게 하면 더 강해지는지 한 줄 힌트를 주세요. 색과 글자를 함께 보여줘야 색 구분이 어려운 사용자도 읽습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="tab-indicator">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:12px">
+          <div class="tabs" role="radiogroup" aria-label="탭 메뉴"><label><input type="radio" name="tb" checked>홈</label><label><input type="radio" name="tb">쇼핑</label><label><input type="radio" name="tb">혜택</label><span class="u"></span></div>
+          <span class="d-cap">탭을 눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">탭 인디케이터 <span class="en">Tab indicator</span></h2>
+        <p class="desc">탭 메뉴에서 <strong>지금 선택된 탭 아래에 붙는 밑줄</strong>입니다. 탭을 바꾸면 밑줄이 옆으로 미끄러지듯 따라갑니다. 글자색만 바꾸는 것보다 현재 위치가 훨씬 분명해집니다.</p>
+        <p class="when"><b>언제 쓰나</b>상단 탭(홈/쇼핑/혜택), 목록 필터 탭, 설정 화면의 구역 전환.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상단 탭 바에 선택된 탭 아래로 파란 탭 인디케이터가 슬라이드하며 이동하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>탭 글자 수가 달라 폭이 다를 때 밑줄을 칸 전체 폭으로 그릴지 글자 폭에 맞출지 먼저 정해야 개발자와 어긋나지 않습니다. 탭이 화면을 넘치면 가로 스크롤이 되는데, 이때 선택된 탭이 화면 밖에 있지 않게 자동으로 끌어와야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="home-indicator">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:6px">
+          <div class="hm" role="img" aria-label="아래 막대를 위로 쓸면 앱 화면이 작아지는 모습"><div class="app"></div><div class="pill"></div></div>
+          <span class="d-cap">단순화한 예시: 막대를 위로 쓸어 올립니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">홈 인디케이터 <span class="en">Home indicator</span></h2>
+        <p class="desc">아이폰처럼 홈 버튼이 없는 기기에서 화면 맨 아래 가운데에 보이는 <strong>가느다란 막대</strong>. 위로 쓸면 홈으로 가거나 앱 전환이 됩니다. 앱이 그리는 것이 아니라 기기 운영체제가 그립니다.</p>
+        <p class="when"><b>언제 쓰나</b>디자인할 때 이 막대 자리를 비워 두어야 하는 하단 버튼, 하단 탭, 입력창 배치를 계획할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>하단 고정 버튼이 홈 인디케이터와 겹치지 않도록 아래 안전 영역(safe area)을 비워줘</q></p>
+        <p class="senior"><b>20년차 메모</b>이 막대는 내가 만드는 UI가 아니라 피해야 하는 영역입니다. 하단 버튼이 막대 위에 겹치면 눌릴 때 쓸기 동작과 충돌합니다. 웹 앱에서는 CSS의 <code>env(safe-area-inset-bottom)</code>으로 이 여백을 받아 와야 합니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">실무에서 인디케이터를 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="typing-indicator">
+      <div class="demo">
+        <div class="d-col" style="align-items:flex-start;gap:6px"><span class="d-cap">상대방이 입력 중</span><div class="ty" role="img" aria-label="입력 중 표시"><i></i><i></i><i></i></div></div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">타이핑 인디케이터 <span class="en">Typing indicator</span></h2>
+        <p class="desc">채팅에서 상대가 글을 쓰고 있을 때 말풍선 안에 점 세 개가 차례로 튀는 표시. 완성된 진행률이 아니라 <strong>"지금 무언가 하는 중"</strong>이라는 생명 신호입니다.</p>
+        <p class="when"><b>언제 쓰나</b>메신저, 고객센터 채팅, AI 챗봇이 답을 준비하는 동안.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>AI 챗봇이 답을 준비하는 동안 말풍선 안에 점 세 개 타이핑 인디케이터를 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>답이 30초 넘게 걸리는데 점만 계속 튀면 사용자는 고장났다고 느낍니다. 일정 시간이 지나면 문구를 바꾸거나 취소 방법을 알려 주세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="breadcrumb">
+      <div class="demo">
+        <nav class="bc" aria-label="현재 위치"><a href="#breadcrumb">홈</a><span class="sp2">&rsaquo;</span><a href="#breadcrumb">디자인</a><span class="sp2">&rsaquo;</span><span class="cur" aria-current="page">포트폴리오</span></nav>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">빵부스러기 <span class="en">Breadcrumb</span></h2>
+        <p class="desc">지금 페이지가 사이트 구조의 어디쯤인지 "홈 &rsaquo; 디자인 &rsaquo; 포트폴리오"로 보여주는 위치 표시. 이 사전 위쪽에 있는 경로도 같은 것입니다. <strong>현재 위치 인디케이터</strong>의 한 종류입니다.</p>
+        <p class="when"><b>언제 쓰나</b>카테고리가 여러 단계로 깊은 쇼핑몰, 문서 사이트, 관리자 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상품 상세 화면 위에 홈 > 카테고리 > 상품 순서의 빵부스러기를 넣고 앞 단계는 눌러서 이동되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모바일에서는 길이가 길어 두 줄로 꺾이기 쉽습니다. 가운데를 "..."으로 줄이고 바로 앞 단계만 남기는 방식이 흔합니다. 현재 페이지는 링크가 아니라는 점도 구분해 주세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="status-dot">
+      <div class="demo">
+        <div class="d-col" style="gap:12px"><div class="sd"><i></i>온라인</div><div class="sd off"><i></i>오프라인</div></div>
+      </div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">상태 점 <span class="en">Status dot</span></h2>
+        <p class="desc">색 점 하나로 사용자·기기·서버의 상태(접속 중, 자리 비움, 오류)를 알려주는 표시. 읽지 않음 숫자를 세는 뱃지와 달리 <strong>상태의 종류</strong>를 말합니다.</p>
+        <p class="when"><b>언제 쓰나</b>프로필 사진 모서리의 접속 상태, 서버 상태 페이지, 연결된 기기 목록.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>친구 목록의 프로필 사진 오른쪽 아래에 접속 중이면 초록, 아니면 회색인 상태 점을 달아줘</q></p>
+        <p class="senior"><b>20년차 메모</b>점의 색만으로 상태를 구분하면 빨강과 초록을 구별 못하는 사용자는 읽을 수 없습니다. 옆에 글자를 붙이거나 모양(채운 점, 빈 점)을 달리하세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

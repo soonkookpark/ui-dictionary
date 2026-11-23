@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="헷갈리는 UI 짝, 비슷해 보여도 — 움직이는 예시로 보는 UI 용어 사전">
+<title>UI 짝 3탄 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+
+.mp { width: 112px; height: 150px; padding: 8px; display: grid; gap: 6px; align-content: start; }
+.sc { position: absolute; inset: 0; background: rgba(30,27,75,.45); opacity: 0; animation: scr 3.4s ease-in-out infinite; }
+@keyframes scr { 0%, 12%, 80%, 100% { opacity: 0; } 25%, 65% { opacity: 1; } }
+/* 01 드롭다운 메뉴/셀렉트: 메뉴는 <details> 로 동작 목록을 펼치고, 셀렉트는 네이티브 <select> */
+.dm { position: relative; }
+.dm summary { list-style: none; cursor: pointer; }
+.dm summary::-webkit-details-marker { display: none; }
+.dm .lst { position: absolute; top: calc(100% + 4px); left: 0; width: 96px; padding: 4px; border-radius: 10px; background: #fff; border: 1px solid var(--line); box-shadow: 0 6px 18px rgba(30,27,75,.18); z-index: 2; }
+.dm .lst div { padding: 6px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+.dm .lst div:hover { background: var(--p-soft); }
+.sel { width: 100%; min-height: 36px; padding: 0 8px; border: 1.5px solid #c9cfe6; border-radius: 8px; background: #fff; font: 13px var(--font); color: var(--ink); }
+/* 02 버튼/링크: 모양이 아니라 '하는 일'이 다르다. 링크는 밑줄 글자 */
+.lnk { color: var(--p); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+/* 03 플로팅 라벨: 비어 있으면 칸 안에 크게, 포커스·입력 시 위로 작게(:placeholder-shown + transform) */
+.fl { position: relative; width: 100%; }
+.fl input { width: 100%; height: 46px; padding: 16px 10px 0; border: 1.5px solid #c9cfe6; border-radius: 8px; background: #fff; font: 14px var(--font); color: var(--ink); }
+.fl input:focus { outline: none; border-color: var(--p); box-shadow: 0 0 0 3px var(--p-soft); }
+.fl label { position: absolute; left: 11px; top: 12px; color: var(--mute); font-size: 14px; transform-origin: left top; transition: transform .15s; pointer-events: none; }
+.fl input:focus + label, .fl input:not(:placeholder-shown) + label { transform: translateY(-8px) scale(.72); color: var(--p); font-weight: 700; }
+.fx { width: 100%; display: grid; gap: 3px; }
+.fx label { font-size: 11px; font-weight: 700; color: var(--mute); }
+/* 04 햄버거/케밥: 같은 3개 요소를 가로줄로 그리느냐 세로 점으로 그리느냐 */
+.ic { display: grid; gap: 5px; justify-items: center; }
+/* 05 앱 바/탭 바 */
+.ab { position: absolute; left: 0; right: 0; top: 0; height: 26px; background: #fff; border-bottom: 1px solid #c9cfe6; display: flex; align-items: center; gap: 4px; padding: 0 6px; font-size: 10px; font-weight: 800; }
+.ab span { flex: 1; }
+.ab svg { width: 12px; height: 12px; }
+.tbr { position: absolute; left: 0; right: 0; bottom: 0; height: 32px; background: #fff; border-top: 1px solid #c9cfe6; display: flex; justify-content: space-around; align-items: center; font-size: 8px; font-weight: 700; color: var(--mute); }
+.tbr b { display: grid; justify-items: center; gap: 2px; }
+.tbr b::before { content: ""; width: 12px; height: 12px; border-radius: 4px; background: #c4cbe3; }
+.tbr b.on { color: var(--p); }
+.tbr b.on::before { background: var(--p); }
+/* 06 카드/리스트: 같은 데이터를 격자로 펼치느냐 한 줄씩 쌓느냐 */
+.cg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; }
+.cg div { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 5px; box-shadow: 0 2px 6px rgba(30,27,75,.08); display: grid; gap: 4px; }
+.cg i { height: 28px; border-radius: 5px; background: #b9c3ec; }
+.ls { width: 100%; background: #fff; border-radius: 8px; border: 1px solid var(--line); }
+.ls div { display: flex; gap: 6px; align-items: center; padding: 5px 7px; border-bottom: 1px solid var(--line); }
+.ls div:last-child { border: 0; }
+.ls i { width: 14px; height: 14px; border-radius: 4px; background: #b9c3ec; flex: none; }
+/* 07 아바타/썸네일 */
+.av { width: 46px; height: 46px; border-radius: 50%; background: #c4cbe3; display: grid; place-items: center; color: #fff; overflow: hidden; }
+.av svg { width: 30px; height: 30px; fill: #fff; stroke: none; }
+.th { width: 74px; height: 46px; border-radius: 6px; background: linear-gradient(160deg, #9ec5ff 0 45%, #2f6fe0 45% 70%, #153e99 70%); }
+/* 08 배너/팝업: 배너는 화면 흐름 안에 박혀 있고, 팝업은 위에 떠서 뒤를 막는다 */
+.bn { height: 22px; border-radius: 5px; background: var(--p-soft); color: var(--p); font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; }
+.pp { position: absolute; left: 12px; right: 12px; top: 42px; padding: 10px; border-radius: 10px; background: #fff; display: grid; gap: 6px; text-align: center; font-size: 10px; font-weight: 800; opacity: 0; animation: ppa 3.4s ease-in-out infinite; }
+@keyframes ppa { 0%, 12%, 80%, 100% { opacity: 0; transform: scale(.85); } 25%, 65% { opacity: 1; transform: none; } }
+/* 09 FAB/아이콘 버튼: 둥둥 뜬 색 있는 큰 원 vs 바에 박힌 맨 아이콘 */
+.fabb { width: 56px; height: 56px; border-radius: 50%; background: var(--p); color: #fff; display: grid; place-items: center; border: 0; box-shadow: 0 6px 14px rgba(79,70,229,.45); cursor: pointer; }
+.fabb svg { width: 24px; height: 24px; }
+.ibt { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 0; background: none; color: var(--ink); cursor: pointer; }
+.ibt:hover { background: rgba(30,27,75,.08); }
+/* 추가: 컨텍스트 메뉴, 버튼 위계, 아바타 겹치기 */
+.ctx { width: 190px; height: 120px; border: 1.5px dashed #c9cfe6; border-radius: 12px; display: grid; place-items: center; position: relative; color: var(--mute); font-weight: 600; user-select: none; }
+.ctx .m { position: absolute; display: none; width: 90px; padding: 4px; background: #fff; border-radius: 8px; border: 1px solid var(--line); box-shadow: 0 6px 18px rgba(30,27,75,.2); color: var(--ink); font-size: 12px; }
+.ctx .m div { padding: 5px 8px; border-radius: 5px; }
+.ctx .m div:hover { background: var(--p-soft); }
+.ctx.open .m { display: block; }
+.stack { display: flex; }
+.stack .av { width: 36px; height: 36px; border: 3px solid var(--stage); margin-left: -10px; }
+.stack .av:first-child { margin-left: 0; }
+.stack .av.n { background: var(--p); font-size: 11px; font-weight: 800; }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">헷갈리는 짝</a><span class="sep">›</span>
+  <span>UI 짝 3탄</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>UI 짝 3탄</h1>
+    <p class="lead">비슷해 보여도 하는 일이 달라요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="dropdown-menu-vs-select">
+      <div class="demo"><div class="d-pair"><div class="side"><details class="dm"><summary class="d-btn ghost">더보기</summary><div class="lst"><div>수정</div><div>삭제</div><div>공유</div></div></details><span class="d-cap">동작을 고름</span></div><div class="mid">vs</div><div class="side"><select class="sel" aria-label="정렬"><option>최신순</option><option>인기순</option></select><span class="d-cap">값을 고름</span></div></div><div style="height:70px"></div><span class="d-cap" style="position:absolute;bottom:8px">눌러 보세요</span></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">드롭다운 메뉴 <span class="vs">vs</span> 셀렉트 <span class="en">Dropdown menu vs Select</span></h2>
+        <p class="desc">펼쳐진 목록에서 고르면 무언가를 실행하는 것이 드롭다운 메뉴, 고르면 칸에 값이 채워지는 것이 셀렉트입니다.</p>
+        <p class="when"><b>이렇게 구분</b>수정·삭제·공유처럼 일을 시키면 드롭다운 메뉴, 정렬 기준·국가·직무처럼 입력칸의 값을 정하면 셀렉트.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>더보기 버튼에는 수정·삭제 드롭다운 메뉴를, 정렬 기준은 셀렉트로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>둘 다 '아래로 펼쳐지는 목록'이라 이름을 섞어 쓰는 바람에 개발자가 폼 입력을 메뉴 부품으로 만드는 일이 잦습니다. 셀렉트는 폼에 값이 담겨 제출돼야 하고, 메뉴는 클릭하면 바로 동작이 실행돼야 합니다. 메뉴 항목이 위험한 동작(삭제)이면 맨 아래에 구분선을 두고 빨강으로 떼어 놓으세요.</p>
+      </div>
+    </article>
+    <article class="term" id="button-vs-link">
+      <div class="demo"><div class="d-pair"><div class="side"><button class="d-btn" type="button">저장하기</button><span class="d-cap">무언가를 한다</span></div><div class="mid">vs</div><div class="side"><a class="lnk" href="#button-vs-link" onclick="return false">이용약관 보기</a><span class="d-cap">다른 곳으로 간다</span></div></div><span class="d-cap" style="position:absolute;bottom:8px">눌러 보세요</span></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">버튼 <span class="vs">vs</span> 링크 <span class="en">Button vs Link</span></h2>
+        <p class="desc">누르면 저장·전송처럼 무언가가 실행되면 버튼, 누르면 다른 화면이나 페이지로 옮겨 가면 링크입니다. 모양이 아니라 하는 일로 가릅니다.</p>
+        <p class="when"><b>이렇게 구분</b>저장·결제·삭제처럼 상태를 바꾸면 버튼, 약관·상세 페이지·외부 사이트처럼 이동하면 링크.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>저장은 버튼으로, 이용약관 보기는 밑줄이 있는 링크로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>버튼처럼 생긴 링크, 링크처럼 생긴 버튼이 가장 흔한 혼동입니다. 이동인데 버튼 부품으로 만들면 새 탭으로 열기·주소 복사가 안 되고 검색 엔진도 못 따라갑니다. 반대로 동작인데 링크로 만들면 스크린 리더가 '이동'으로 읽어 사용자가 헷갈립니다.</p>
+      </div>
+    </article>
+    <article class="term" id="floating-label">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="fl"><input id="fl1" placeholder=" "><label for="fl1">이메일</label></div><span class="d-cap">칸 안에서 위로 올라감</span></div><div class="mid">vs</div><div class="side"><div class="fx"><label for="fx1">이메일</label><input class="d-input" id="fx1" placeholder="name@mail.com"></div><span class="d-cap">처음부터 위에 고정</span></div></div><span class="d-cap" style="position:absolute;bottom:8px">칸을 눌러 보세요</span></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">플레이스홀더 <span class="vs">vs</span> 라벨 (플로팅 라벨) <span class="en">Placeholder vs Label · Floating label</span></h2>
+        <p class="desc">라벨이 칸 안에 플레이스홀더처럼 앉아 있다가 입력을 시작하면 위로 작게 올라가는 방식이 플로팅 라벨, 처음부터 칸 위에 고정된 일반 라벨과 비교하면 공간을 아낍니다.</p>
+        <p class="when"><b>이렇게 구분</b>화면이 좁고 칸이 적은 로그인·검색 폼이면 플로팅 라벨, 칸이 많고 설명이 긴 신청서면 고정 라벨.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>입력칸은 비어 있을 때는 라벨이 칸 안에, 포커스되면 위로 올라가는 플로팅 라벨로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>플로팅 라벨은 올라간 뒤 글자가 아주 작아져 읽기 어렵고, 예시 문구(플레이스홀더)를 같이 보여주기도 까다롭습니다. 자동완성이 값을 채운 상태를 놓치면 라벨과 글자가 겹쳐 보이는 버그도 자주 납니다. 항목이 많은 긴 폼에서는 그냥 고정 라벨이 더 안전합니다.</p>
+      </div>
+    </article>
+    <article class="term" id="hamburger-vs-kebab">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ic"><div class="d-icon" role="img" aria-label="햄버거"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></div></div><span class="d-cap">가로줄 3개: 전체 메뉴</span></div><div class="mid">vs</div><div class="side"><div class="ic"><div class="d-icon" role="img" aria-label="케밥"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></div></div><span class="d-cap">세로 점 3개: 이 항목의 동작</span></div></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">햄버거 <span class="vs">vs</span> 케밥 <span class="en">Hamburger vs Kebab</span></h2>
+        <p class="desc">가로줄 세 개(햄버거)는 앱 전체의 메뉴를 여는 것이고, 세로 점 세 개(케밥)는 바로 옆 항목에 쓸 수 있는 동작을 여는 것입니다.</p>
+        <p class="when"><b>이렇게 구분</b>화면 왼쪽 위에서 사이트 전체 메뉴가 나오면 햄버거, 카드·글 오른쪽에서 수정·신고 같은 항목별 동작이 나오면 케밥.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>왼쪽 상단에는 전체 메뉴를 여는 햄버거 아이콘을, 각 게시글 오른쪽에는 케밥 아이콘을 달아줘</q></p>
+        <p class="senior"><b>20년차 메모</b>햄버거 안에 숨긴 메뉴는 눈에 안 띄어서 쓰는 사람이 확 줄어듭니다. 핵심 메뉴는 하단 탭으로 꺼내 놓으세요. 케밥은 이름 그대로 점이 세로여야 하며, 가로 점(미트볼)과 섞으면 사용자가 위치로 의미를 찾지 못합니다.</p>
+      </div>
+    </article>
+    <article class="term" id="appbar-vs-tabbar">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="d-phone mp"><div class="ab"><svg class="d-svg" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span>설정</span><svg class="d-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg><svg class="d-svg" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></div><div style="height:18px"></div><div class="d-bar dark" style="width:70%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div></div><span class="d-cap">제목과 이 화면의 도구</span></div><div class="mid">vs</div><div class="side"><div class="d-phone mp"><div style="height:18px"></div><div class="d-bar dark" style="width:70%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div><div class="tbr"><b class="on">홈</b><b>검색</b><b>MY</b></div></div><span class="d-cap">다른 영역으로 이동</span></div></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">앱 바 <span class="vs">vs</span> 탭 바 <span class="en">App bar vs Tab bar</span></h2>
+        <p class="desc">앱 바(Top app bar)는 제목과 그 화면에서 쓰는 도구(검색, 더보기)를 담고, 탭 바는 앱의 큰 영역 사이를 오가는 길입니다. 앞 페이지의 '상단 바 vs 탭 바'와 위치 차이가 같되, 여기서는 앱 바가 품은 도구 아이콘에 주목합니다.</p>
+        <p class="when"><b>이렇게 구분</b>화면 이름과 오른쪽 도구가 필요하면 앱 바, 홈·검색·내 정보로 옮겨 가는 것이면 탭 바.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>앱 바에는 뒤로 가기, 제목, 검색·더보기 아이콘을 넣고 하단에는 홈·검색·MY 탭 바를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>앱 바 오른쪽에 아이콘을 3개 넘게 늘어놓으면 제목이 잘립니다. 넘치는 건 케밥으로 묶으세요. 탭 바에서 현재 위치는 색만이 아니라 아이콘 채움이나 굵기로도 구분해야 색 구분이 어려운 사용자도 알 수 있습니다.</p>
+      </div>
+    </article>
+    <article class="term" id="card-vs-list">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="cg"><div><i></i><span class="d-bar"></span></div><div><i></i><span class="d-bar"></span></div></div><span class="d-cap">사진이 크고 훑어봄</span></div><div class="mid">vs</div><div class="side"><div class="ls"><div><i></i><span class="d-bar" style="flex:1"></span></div><div><i></i><span class="d-bar" style="flex:1"></span></div><div><i></i><span class="d-bar" style="flex:1"></span></div></div><span class="d-cap">텍스트를 줄줄이 비교</span></div></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">카드 <span class="vs">vs</span> 리스트 <span class="en">Card vs List</span></h2>
+        <p class="desc">그림이 크고 하나하나가 독립된 조각처럼 보이면 카드, 같은 모양의 줄이 위아래로 쌓여 한눈에 비교하면 리스트입니다.</p>
+        <p class="when"><b>이렇게 구분</b>숙소·상품처럼 사진이 결정적이면 카드, 설정·대화 목록·주문 내역처럼 제목과 짧은 정보를 빠르게 훑으면 리스트.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>추천 숙소는 사진이 큰 카드 격자로, 내 주문 내역은 한 줄씩 보이는 리스트로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>카드 안에 정보를 많이 넣으면 크기만 커진 리스트가 됩니다. 카드는 사진과 핵심 두세 가지만, 나머지는 상세에서 보여주세요. 리스트는 줄 전체가 눌리는 영역이어야 하는데 제목 글자만 눌리게 만드는 실수가 많습니다.</p>
+      </div>
+    </article>
+    <article class="term" id="avatar-vs-thumbnail">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="av" role="img" aria-label="사람 아바타"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" fill="#fff"/></svg></div><span class="d-cap">사람·계정을 대표(원형)</span></div><div class="mid">vs</div><div class="side"><div class="th" role="img" aria-label="썸네일"></div><span class="d-cap">콘텐츠를 대표(직사각)</span></div></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">아바타 <span class="vs">vs</span> 썸네일 <span class="en">Avatar vs Thumbnail</span></h2>
+        <p class="desc">사람이나 계정을 나타내는 작은 동그란 그림이면 아바타, 영상·글·상품 같은 콘텐츠의 축소 미리보기면 썸네일입니다.</p>
+        <p class="when"><b>이렇게 구분</b>프로필·댓글 작성자·채팅 상대는 아바타, 영상 목록의 미리보기 화면이나 상품 사진 축소본은 썸네일.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>댓글에는 원형 아바타를, 영상 목록에는 16:9 비율의 썸네일을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>프로필 사진이 없는 사용자를 위한 기본 아바타(이니셜이나 실루엣)를 빼먹으면 깨진 이미지 아이콘이 뜹니다. 썸네일은 비율을 고정해야 목록이 들쭉날쭉해지지 않고, 아바타는 원으로 잘렸을 때 얼굴이 가운데 오는지 확인하세요.</p>
+      </div>
+    </article>
+    <article class="term" id="banner-vs-popup">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="d-phone mp"><div class="bn">이벤트 진행 중<b>x</b></div><div class="d-bar dark" style="width:70%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div></div><span class="d-cap">화면 안에 자리 잡음</span></div><div class="mid">vs</div><div class="side"><div class="d-phone mp"><div class="d-bar dark" style="width:70%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div><div class="sc"></div><div class="pp">이벤트 진행 중<div class="d-btn" style="min-height:22px;font-size:9px">닫기</div></div></div><span class="d-cap">위에 떠서 가로막음</span></div></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">배너 <span class="vs">vs</span> 팝업 <span class="en">Banner vs Popup</span></h2>
+        <p class="desc">화면의 한 자리를 차지하고 계속 머물면서 흐름을 막지 않으면 배너, 위에 떠서 뒤를 가리고 닫아야 넘어가면 팝업입니다.</p>
+        <p class="when"><b>이렇게 구분</b>이벤트·공지를 보여주되 방해하고 싶지 않으면 배너, 꼭 알려야 하거나 결정을 받아야 하면 팝업.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>홈 상단에 닫기 가능한 이벤트 배너를 넣고, 중요한 공지만 앱 진입 시 팝업으로 띄워줘</q></p>
+        <p class="senior"><b>20년차 메모</b>홍보를 팝업으로 띄우면 닫기 버튼부터 찾게 되고, 앱을 열 때마다 뜨면 삭제 사유가 됩니다. 닫기 버튼은 작게 숨기지 말고 44pt 이상으로 분명하게 두고 '오늘 하루 보지 않기'를 주세요. 배너가 닫힌 뒤 그 자리가 빈 채로 남지 않게 아래 내용이 올라오도록 처리해야 합니다.</p>
+      </div>
+    </article>
+    <article class="term" id="fab-vs-icon-button">
+      <div class="demo"><div class="d-pair"><div class="side"><button class="fabb" type="button" aria-label="새 글"><svg class="d-svg" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><span class="d-cap">화면의 대표 행동</span></div><div class="mid">vs</div><div class="side"><button class="ibt" type="button" aria-label="검색"><svg class="d-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg></button><span class="d-cap">곁다리 도구</span></div></div><span class="d-cap" style="position:absolute;bottom:8px">마우스를 올려 보세요</span></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">FAB <span class="vs">vs</span> 아이콘 버튼 <span class="en">FAB vs Icon button</span></h2>
+        <p class="desc">FAB(플로팅 액션 버튼)는 그 화면에서 가장 중요한 행동 하나를 색 있는 큰 원으로 띄워 놓은 것이고, 아이콘 버튼은 배경 없이 바 안에 두는 평범한 도구입니다.</p>
+        <p class="when"><b>이렇게 구분</b>새 글·새 채팅처럼 화면의 주인공 행동이면 FAB, 검색·공유·필터 같은 보조 도구면 아이콘 버튼.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>목록 화면 오른쪽 아래에 새 글 FAB를, 상단 바에는 검색 아이콘 버튼을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>FAB는 한 화면에 하나만 있어야 합니다. 둘이 되면 어느 게 주인공인지 사라집니다. 아이콘 버튼은 그림만으로 뜻이 전달되는지 의심하고 접근성 라벨(aria-label)을 꼭 달아야 하며, 보이는 모양이 24dp여도 누르는 영역은 48dp를 확보하세요.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">짝 용어와 함께 실무에서 같이 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="context-menu">
+      <div class="demo"><div class="ctx" id="cx3" tabindex="0">이 안에서 우클릭<div class="m" role="menu"><div>복사</div><div>이름 바꾸기</div><div>삭제</div></div></div><script>(function(){var c=document.getElementById("cx3"),m=c.querySelector(".m");c.oncontextmenu=function(e){e.preventDefault();var r=c.getBoundingClientRect();m.style.left=Math.min(e.clientX-r.left,95)+"px";m.style.top=Math.min(e.clientY-r.top,60)+"px";c.classList.add("open")};document.addEventListener("click",function(){c.classList.remove("open")})})()</script><span class="d-cap" style="position:absolute;bottom:8px">점선 안에서 마우스 오른쪽 버튼</span></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">컨텍스트 메뉴 <span class="en">Context menu</span></h2>
+        <p class="desc">마우스 오른쪽 버튼이나 길게 누르기로 불러내는, 누른 바로 그 자리의 동작 목록입니다. 케밥이 눈에 보이는 입구라면 컨텍스트 메뉴는 보이지 않는 입구입니다.</p>
+        <p class="when"><b>언제 쓰나</b>파일 탐색기, 표의 행, 이미지처럼 객체에 바로 손대는 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>목록 항목을 오른쪽 클릭하거나 모바일에서 길게 누르면 컨텍스트 메뉴가 열리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>보이지 않는 입구라서 처음 쓰는 사람은 존재를 모릅니다. 같은 동작을 케밥으로도 열 수 있게 해 두세요. 터치 화면에는 오른쪽 클릭이 없다는 점도 개발과 맞춰야 합니다.</p>
+      </div>
+    </article>
+    <article class="term added" id="button-hierarchy">
+      <div class="demo"><div class="d-col" style="align-items:center"><button class="d-btn" type="button">결제하기</button><button class="d-btn soft" type="button">장바구니</button><button class="d-btn ghost" type="button" style="border:0;background:none;color:var(--p)">취소</button></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">버튼 위계 <span class="en">Primary · Secondary · Text button</span></h2>
+        <p class="desc">버튼의 중요도를 모양으로 나눈 것입니다. 색이 꽉 찬 버튼(프라이머리)이 가장 중요하고, 연한 배경(세컨더리), 글자만 있는 텍스트 버튼 순으로 약해집니다.</p>
+        <p class="when"><b>언제 쓰나</b>한 화면에 버튼이 둘 이상일 때 어느 것이 주된 행동인지 알려줄 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>화면마다 프라이머리 버튼은 하나만 두고 나머지는 세컨더리와 텍스트 버튼으로 구분해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>프라이머리가 두 개 있으면 사용자는 둘 사이에서 고민합니다. 텍스트 버튼은 링크와 모양이 같아서 동작인지 이동인지 헷갈리니 위치와 문구로 구분하세요.</p>
+      </div>
+    </article>
+    <article class="term added" id="avatar-group">
+      <div class="demo"><div class="stack"><div class="av"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" fill="#fff"/></svg></div><div class="av" style="background:#a5b4fc"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" fill="#fff"/></svg></div><div class="av" style="background:#fdba74"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" fill="#fff"/></svg></div><div class="av n">+5</div></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">아바타 그룹 <span class="en">Avatar group · Stack</span></h2>
+        <p class="desc">여러 사람의 아바타를 살짝 겹쳐 놓고 나머지는 '+5'로 줄여 표시하는 방식입니다. 참여자 수를 한 줄로 보여줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>공동 문서 참여자, 모임 멤버, 팀 목록처럼 여러 사람이 한 대상에 묶일 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>참여자 아바타는 겹쳐 놓고 세 명을 넘으면 +N 으로 줄여서 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>+N 을 누르면 전체 목록이 열려야 하는데 그냥 장식으로 두는 경우가 많습니다. 겹친 아바타는 개별로 누르기 어려우니 터치 대상은 그룹 전체로 잡으세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

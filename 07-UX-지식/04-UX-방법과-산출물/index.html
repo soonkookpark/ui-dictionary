@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="UX 방법과 산출물 29가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>UX 방법과 산출물 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* 공통: 차례로 나타나기. --i 번호만큼 늦게 시작하고 중간에 쉰다 */
+.rv { animation: rv 6s infinite both; animation-delay: calc(var(--i) * .6s); }
+@keyframes rv { 0%, 3% { opacity: 0; transform: translateY(6px); } 10%, 82% { opacity: 1; transform: none; } 94%, 100% { opacity: 0; } }
+/* 공통: 차례로 강조. 1초씩 돌아가며 색이 켜진다 */
+.hl { animation: hl 5s infinite; animation-delay: calc(var(--i) * 1s); }
+@keyframes hl { 0%, 18% { background: var(--p); color: #fff; border-color: var(--p); } 20%, 100% { background: #fff; } }
+/* 공통: 차례로 두근거리기 */
+.pu { animation: pu 4s infinite; animation-delay: calc(var(--i) * .6s); }
+@keyframes pu { 0%, 20%, 100% { transform: scale(1); } 10% { transform: scale(1.18); } }
+/* 공통: 선 그리기 (pathLength=100 인 선에 쓴다) */
+.dr { stroke-dasharray: 100; animation: dr 5s ease-in-out infinite; animation-delay: calc(var(--i, 0) * .5s); }
+@keyframes dr { 0% { stroke-dashoffset: 100; } 40%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 100; } }
+.t { font-size: 11px; } .t10 { font-size: 10px; line-height: 1.3; }
+/* 01 디자인 씽킹: 칩 5개가 .hl 로 차례로 켜진다 */
+/* 02 더블 다이아몬드: SVG 선을 stroke-dashoffset 으로 그려 나간다 */
+.dd polygon { fill: var(--p-soft); stroke: var(--p); stroke-width: 2; }
+/* 04 공감 지도: 2x2 격자(grid)에 칸마다 .hl 강조 */
+.em { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 290px; position: relative; }
+.em > div { padding: 6px 8px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; height: 54px; }
+.em b { display: block; font-size: 11px; } .em span { font-size: 10px; color: var(--mute); }
+.em .hl span { color: inherit; }
+.em i { position: absolute; left: calc(50% - 15px); top: calc(50% - 15px); width: 30px; height: 30px; border-radius: 50%; background: var(--p); border: 3px solid var(--stage); }
+/* 05 어피니티: 포스트잇이 흩어진 자리에서 묶음 자리로 transform 으로 이동 */
+.af { display: flex; gap: 12px; }
+.af .g { width: 138px; padding: 6px; border: 2px dashed #c9cfe6; border-radius: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; position: relative; padding-top: 22px; }
+.af .g em { position: absolute; top: 3px; left: 8px; font-style: normal; font-size: 10px; font-weight: 800; color: var(--p); animation: lab 6s infinite; }
+@keyframes lab { 0%, 40% { opacity: 0; } 55%, 85% { opacity: 1; } 100% { opacity: 0; } }
+.sn { height: 34px; border-radius: 3px; background: #fde68a; font-size: 9px; padding: 3px; line-height: 1.2; box-shadow: 0 2px 4px rgba(0,0,0,.15); animation: gather 6s ease-in-out infinite; }
+.sn.b { background: #bfdbfe; } .sn.c { background: #fbcfe8; }
+@keyframes gather { 0%, 12% { transform: translate(var(--x), var(--y)) rotate(var(--r)); } 45%, 85% { transform: none; } 100% { transform: translate(var(--x), var(--y)) rotate(var(--r)); } }
+/* 06~08 문장 틀: 칩이 .rv 로 차례로 채워진다 */
+.fill { display: inline-block; padding: 1px 8px; border-radius: 6px; background: var(--p-soft); color: var(--p); font-weight: 700; }
+.row3 { display: grid; grid-template-columns: 54px 1fr; gap: 6px; align-items: center; }
+/* 09 스토리보드: 컷 4개가 차례로 나타난다 */
+.sb { display: flex; gap: 6px; }
+.sb > div { width: 68px; height: 96px; border: 2px solid #3b3f5c; background: #fff; display: grid; grid-template-rows: 1fr auto; padding: 4px; }
+.sb svg { width: 100%; height: 100%; stroke: var(--p); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sb span { font-size: 10px; text-align: center; line-height: 1.25; border-top: 1px solid var(--line); padding-top: 3px; }
+/* 10 서비스 블루프린트: 4개 가로줄(lane) x 3열 격자, 열마다 .hl 로 흐름을 따라간다 */
+.bp { display: grid; grid-template-columns: 46px repeat(3, 72px); gap: 4px; position: relative; }
+.bp b { font-size: 10px; align-self: center; } .bp > div { border: 1.5px solid var(--line); border-radius: 6px; background: #fff; font-size: 10px; padding: 3px 4px; line-height: 1.25; min-height: 34px; display: grid; align-items: center; }
+.bp .vis { grid-column: 1 / -1; border: 0; border-top: 2px dashed var(--danger); height: 0; min-height: 0; padding: 0; border-radius: 0; background: none; }
+/* 11 이해관계자 지도: 2x2 칸 안에서 점이 두근거린다 */
+.sm { position: relative; width: 210px; height: 160px; border-left: 2px solid #3b3f5c; border-bottom: 2px solid #3b3f5c; display: grid; grid-template: 1fr 1fr / 1fr 1fr; margin-left: 18px; }
+.sm > span { font-size: 10px; color: var(--mute); padding: 4px 6px; border: 1px dashed var(--line); }
+.sm i { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: var(--p); }
+.sm i em { position: absolute; left: 18px; top: -1px; font-style: normal; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.sm .ax { position: absolute; font-size: 10px; font-weight: 700; color: var(--mute); border: 0; padding: 0; }
+/* 12 경쟁사 분석: 표 칸에 ●/○ 가 차례로 나타난다 */
+.cmp { display: grid; grid-template-columns: 90px repeat(3, 56px); gap: 4px 4px; text-align: center; font-size: 11px; align-items: center; }
+.cmp .h { font-weight: 800; color: var(--p); } .cmp .l { text-align: left; }
+.cmp .o { color: var(--p); font-size: 14px; } .cmp .x { color: #b6bccf; font-size: 14px; }
+/* 13 UX 감사: 얇은 선이 위에서 아래로 훑고 지나간다 */
+.au { position: relative; width: 250px; display: grid; gap: 6px; overflow: hidden; }
+.au > div { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font-size: 11px; }
+.au em { font-style: normal; font-weight: 800; font-size: 10px; padding: 1px 8px; border-radius: 99px; }
+.au .w { background: #fee2e2; color: var(--danger); } .au .g { background: #dcfce7; color: var(--ok); }
+.au .scan { position: absolute; left: 0; right: 0; top: 0; height: 3px; padding: 0; border: 0; background: var(--p); box-shadow: 0 0 10px var(--p); animation: scan 3.6s ease-in-out infinite; }
+@keyframes scan { 0% { transform: translateY(0); } 80%, 100% { transform: translateY(150px); } }
+/* 14 컨텍스추얼 인쿼리: 사용자의 화면에서 커서가 움직이고 관찰 메모가 쌓인다 */
+.ci { display: flex; gap: 10px; align-items: flex-start; }
+.ci .scr { width: 150px; height: 120px; background: #fff; border: 2px solid #c9cfe6; border-radius: 10px; position: relative; padding: 8px; display: grid; gap: 6px; align-content: start; }
+.ci .cur { position: absolute; width: 0; height: 0; border-left: 10px solid transparent; border-top: 14px solid var(--p); left: 20px; top: 70px; animation: cwalk 6s ease-in-out infinite; }
+@keyframes cwalk { 0%, 10% { transform: translate(0, 0); } 35% { transform: translate(90px, -50px); } 60% { transform: translate(30px, -20px); } 85%, 100% { transform: translate(100px, 10px); } }
+.ci .nt { width: 110px; display: grid; gap: 5px; font-size: 10px; }
+.ci .nt span { background: #fde68a; padding: 3px 6px; border-radius: 3px; line-height: 1.25; }
+/* 15 포커스 그룹: 둘러앉은 사람 원이 돌아가며 말한다(scale) */
+.fg { position: relative; width: 220px; height: 150px; }
+.fg .tb { position: absolute; left: 45px; top: 40px; width: 130px; height: 70px; border-radius: 50%; background: #fff; border: 2px solid var(--line); }
+.fg i { position: absolute; width: 26px; height: 26px; border-radius: 50%; background: #9ca3d6; }
+.fg i.m { background: var(--p); }
+/* 16 게릴라 테스트: 지나가는 사람 점들이 가로로 흐르고 가운데 자리의 한 명이 테스트한다 */
+.gr { position: relative; width: 290px; height: 130px; overflow: hidden; background: #fff; border-radius: 12px; border: 1px solid var(--line); }
+.gr .w { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #b6bccf; top: calc(var(--y) * 1px); left: -20px; animation: walk 6s linear infinite; animation-delay: calc(var(--i) * -1s); }
+@keyframes walk { to { transform: translateX(330px); } }
+.gr .tab { position: absolute; left: 105px; top: 64px; width: 80px; height: 50px; background: #fde68a; border-radius: 10px; font-size: 10px; font-weight: 700; display: grid; place-items: center; text-align: center; line-height: 1.3; }
+/* 17 씽크 얼라우드: 말풍선 글자가 steps 로 한 글자씩 나온다 */
+.ta { display: flex; gap: 10px; align-items: center; }
+.ta .bub { background: #fff; border: 1.5px solid var(--p); border-radius: 12px 12px 12px 2px; padding: 8px 10px; font-weight: 700; }
+.ta .bub span { display: inline-block; overflow: hidden; white-space: nowrap; width: 0; vertical-align: bottom; animation: say 5s steps(12) infinite; }
+@keyframes say { 0% { width: 0; } 60%, 90% { width: 11em; } 100% { width: 0; } }
+/* 18 5초 테스트: 숫자 띠를 steps 로 올려 카운트다운, 끝나면 화면을 가린다 */
+.f5 { position: relative; width: 200px; height: 130px; background: #fff; border: 2px solid #c9cfe6; border-radius: 10px; overflow: hidden; padding: 12px; display: grid; gap: 8px; align-content: start; }
+.f5 .cv { position: absolute; inset: 0; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; animation: cv 6s infinite; }
+@keyframes cv { 0%, 70% { opacity: 0; } 76%, 94% { opacity: 1; } 100% { opacity: 0; } }
+.f5 .cd { position: absolute; right: 8px; top: 6px; height: 18px; overflow: hidden; font-weight: 800; color: var(--danger); }
+.f5 .cd div { line-height: 18px; animation: cd 6s steps(5) infinite; }
+@keyframes cd { 0% { transform: translateY(0); } 70%, 100% { transform: translateY(-90px); } }
+/* 19 퍼스트 클릭: 커서가 이동해 누르면 파문(ripple)이 퍼진다 */
+.fc { position: relative; width: 220px; height: 140px; background: #fff; border: 2px solid #c9cfe6; border-radius: 10px; padding: 10px; display: grid; gap: 8px; align-content: start; }
+.fc .ripple { position: absolute; left: 150px; top: 94px; width: 14px; height: 14px; margin: -7px; border-radius: 50%; background: rgba(79,70,229,.35); animation: rip 4s infinite; }
+@keyframes rip { 0%, 45% { transform: scale(0); opacity: 0; } 50% { transform: scale(1); opacity: 1; } 75%, 100% { transform: scale(3); opacity: 0; } }
+.fc .cur { position: absolute; width: 0; height: 0; border-left: 10px solid transparent; border-top: 14px solid var(--ink); left: 150px; top: 94px; animation: fcm 4s ease-in-out infinite; }
+@keyframes fcm { 0% { transform: translate(-100px, -70px); } 45%, 100% { transform: translate(0, 0); } }
+/* 20 아이트래킹: 시선 경로가 그려지고 머문 곳에 원이 커진다 */
+.et circle { fill: rgba(220,38,38,.35); stroke: var(--danger); transform-box: fill-box; transform-origin: center; animation: fx 5s infinite; animation-delay: calc(var(--i) * .7s); }
+@keyframes fx { 0%, 10% { transform: scale(0); } 20%, 85% { transform: scale(1); } 100% { transform: scale(0); } }
+/* 21 세션 리플레이: 재생 막대가 차오르고 녹화된 커서가 움직인다 */
+.rp { width: 240px; background: #fff; border: 2px solid #c9cfe6; border-radius: 10px; overflow: hidden; }
+.rp .vw { position: relative; height: 100px; padding: 10px; display: grid; gap: 7px; align-content: start; }
+.rp .cur { position: absolute; width: 0; height: 0; border-left: 9px solid transparent; border-top: 13px solid var(--ink); left: 30px; top: 70px; animation: rpm 6s ease-in-out infinite; }
+@keyframes rpm { 0% { transform: translate(0, 0); } 30% { transform: translate(120px, -40px); } 55% { transform: translate(60px, -10px); } 80%, 100% { transform: translate(150px, 10px); } }
+.rp .ctl { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-top: 1px solid var(--line); background: #f8f9fe; }
+.rp .tr { flex: 1; height: 6px; background: #d5daea; border-radius: 99px; overflow: hidden; } .rp .tr i { display: block; height: 100%; background: var(--p); transform-origin: left; animation: rpf 6s linear infinite; }
+@keyframes rpf { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* 22 페이퍼 프로토타입: 종이 한 장을 옆으로 밀어 다음 화면 종이를 보여준다 */
+.pp { position: relative; width: 130px; height: 160px; }
+.pp .sheet { position: absolute; inset: 0; background: #fffdf2; border: 2px solid #3b3f5c; padding: 10px; display: grid; gap: 8px; align-content: start; box-shadow: 3px 3px 0 rgba(0,0,0,.15); }
+.pp .s1 { z-index: 2; animation: slide 4s ease-in-out infinite; transform: rotate(-1.5deg); }
+.pp .s2 { transform: rotate(1.5deg); }
+@keyframes slide { 0%, 35% { transform: rotate(-1.5deg); opacity: 1; } 60%, 90% { transform: translateX(150px) rotate(8deg); opacity: 0; } 100% { transform: rotate(-1.5deg); opacity: 1; } }
+.pp .sk { height: 10px; border: 1.5px solid #3b3f5c; border-radius: 3px; } .pp .bx { height: 44px; border: 1.5px solid #3b3f5c; position: relative; } .pp .bx::before, .pp .bx::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top right, transparent calc(50% - 1px), #3b3f5c 50%, transparent calc(50% + 1px)); } .pp .bx::after { transform: scaleX(-1); }
+/* 23 위저드 오브 오즈: 앞(사용자 화면)에서 질문이 가고 커튼 뒤 사람이 답을 보낸다 */
+.wz { display: flex; gap: 8px; align-items: center; }
+.wz .ph { width: 130px; height: 150px; background: #fff; border: 2px solid #c9cfe6; border-radius: 14px; padding: 8px; display: grid; gap: 6px; align-content: start; font-size: 10px; }
+.wz .m { padding: 4px 8px; border-radius: 10px; width: fit-content; max-width: 100%; line-height: 1.3; }
+.wz .u { background: var(--p); color: #fff; justify-self: end; } .wz .a { background: #e8ebf7; }
+.wz .cur { width: 110px; height: 150px; background: repeating-linear-gradient(90deg, #7c3aed 0 10px, #6d28d9 10px 20px); border-radius: 6px; display: grid; place-items: center; color: #fff; font-size: 10px; font-weight: 700; text-align: center; line-height: 1.4; }
+.wz .cur svg { width: 30px; height: 30px; fill: none; stroke: #fff; stroke-width: 2; animation: pu 2s infinite; }
+/* 24 베타 테스트: 공개 범위가 단계마다 넓어진다 */
+.bt { width: 250px; }
+.bt .tk { height: 12px; background: #d5daea; border-radius: 99px; overflow: hidden; } .bt .tk i { display: block; height: 100%; background: var(--p); width: 10%; animation: bt 6s steps(1, end) infinite; }
+@keyframes bt { 0% { width: 10%; } 30% { width: 40%; } 60%, 90% { width: 100%; } 100% { width: 10%; } }
+.bt .lb { display: flex; justify-content: space-between; font-size: 10px; margin-top: 4px; color: var(--mute); font-weight: 700; }
+.bt .tag { display: inline-block; padding: 1px 10px; border-radius: 99px; background: var(--warn); color: #fff; font-weight: 800; font-size: 11px; }
+/* 25 우선순위 매트릭스: 왼쪽 위 칸(효과 큼, 노력 적음)이 깜박인다 */
+.pm { position: relative; width: 200px; height: 160px; margin-left: 20px; border-left: 2px solid #3b3f5c; border-bottom: 2px solid #3b3f5c; display: grid; grid-template: 1fr 1fr / 1fr 1fr; }
+.pm > div { border: 1px dashed var(--line); font-size: 10px; padding: 4px 6px; color: var(--mute); }
+.pm .go { background: #dcfce7; color: var(--ok); font-weight: 800; animation: go 2.4s infinite; }
+@keyframes go { 50% { background: #86efac; } }
+.pm i { position: absolute; width: 20px; height: 20px; border-radius: 50%; background: var(--p); color: #fff; font-style: normal; font-weight: 800; font-size: 10px; display: grid; place-items: center; }
+.pm .ax { position: absolute; font-size: 10px; font-weight: 700; color: var(--mute); border: 0; padding: 0; background: none; }
+/* 26 MoSCoW: 열마다 카드가 위에서 나타난다 */
+.mo { display: grid; grid-template-columns: repeat(4, 68px); gap: 6px; }
+.mo > div { border-radius: 8px; background: #fff; border: 1px solid var(--line); min-height: 100px; padding: 5px; text-align: center; font-size: 10px; }
+.mo b { display: block; font-size: 11px; margin-bottom: 6px; } .mo .c { padding: 5px 2px; border-radius: 6px; background: var(--p-soft); color: var(--p); font-weight: 700; }
+/* 27 카노 모델: 세 곡선이 차례로 그려진다 */
+.kn path { fill: none; stroke-width: 3; stroke-linecap: round; }
+/* 28 디자인 크리틱: 핀이 차례로 꽂히고 옆에 의견이 붙는다 */
+.dc { display: flex; gap: 10px; align-items: flex-start; }
+.dc .art { position: relative; width: 120px; height: 130px; background: #fff; border-radius: 10px; border: 1px solid var(--line); padding: 8px; display: grid; gap: 6px; align-content: start; }
+.dc .pin { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: var(--danger); color: #fff; font-size: 10px; font-weight: 800; display: grid; place-items: center; }
+.dc .cm { width: 140px; display: grid; gap: 6px; font-size: 10px; } .dc .cm div { background: #fff; border-left: 3px solid var(--danger); border-radius: 4px; padding: 4px 6px; line-height: 1.3; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+/* 29 회고: 세 칸에 포스트잇이 차례로 붙는다 */
+.rt { display: grid; grid-template-columns: repeat(3, 92px); gap: 6px; }
+.rt > div { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 6px; min-height: 120px; display: grid; gap: 6px; align-content: start; }
+.rt b { font-size: 11px; } .rt .sn { animation: rv 6s infinite both; animation-delay: calc(var(--i) * .6s); height: auto; min-height: 30px; }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">UX 지식</a><span class="sep">›</span>
+  <span>UX 방법과 산출물</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>UX 방법과 산출물 29가지</h1>
+    <p class="lead">UX는 무엇을 하는지에 이름이 붙어 있어요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term added" id="design-thinking">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:12px;width:290px"><div class="d-row" style="gap:5px;flex-wrap:wrap;justify-content:center"><span class="d-chip hl" style="--i:0">공감</span><span class="d-chip hl" style="--i:1">문제 정의</span><span class="d-chip hl" style="--i:2">아이디어</span><span class="d-chip hl" style="--i:3">프로토타입</span><span class="d-chip hl" style="--i:4">테스트</span></div><span class="d-cap">앞으로 갔다가 다시 돌아가도 괜찮습니다</span></div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">디자인 씽킹 <span class="en">Design thinking</span></h2>
+        <p class="desc">사용자를 이해하는 데서 출발해 해결책을 만들고 검증하는 문제 해결 방식입니다. 공감, 문제 정의, 아이디어, 프로토타입, 테스트의 다섯 단계로 설명하는 것이 가장 흔하며, 일직선이 아니라 반복하는 과정입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>무엇을 만들지 아직 모를 때, 기능부터 정하지 않고 사람의 문제에서 출발하자고 팀을 설득할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>새 서비스 아이디어를 디자인 씽킹 다섯 단계에 맞춰 공감부터 테스트까지 할 일 목록으로 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>다섯 단계를 한 번씩 지나가면 끝이라고 오해하는 팀이 많습니다. 테스트에서 나온 결과가 다시 공감 단계로 돌아가야 의미가 있습니다. 포스트잇 워크숍을 열었다는 사실이 곧 디자인 씽킹을 했다는 뜻은 아닙니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="double-diamond">
+      <div class="demo"><svg class="dd" viewBox="0 0 290 130" width="290" height="130" role="img" aria-label="두 개의 다이아몬드"><polygon points="8,60 72,14 136,60 72,106" pathLength="100" class="dr"/><polygon points="154,60 218,14 282,60 218,106" pathLength="100" class="dr" style="--i:1"/><g font-size="11" fill="#1e1b4b" text-anchor="middle" font-weight="700"><text x="38" y="64">발견</text><text x="106" y="64">정의</text><text x="184" y="64">개발</text><text x="254" y="64">전달</text><text x="72" y="10" fill="#55607a">문제 찾기</text><text x="218" y="10" fill="#55607a">해결 찾기</text></g></svg></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">더블 다이아몬드 <span class="en">Double diamond</span></h2>
+        <p class="desc">넓게 펼쳤다가 좁히는 과정을 두 번 반복하는 모델입니다. 첫 번째 다이아몬드(발견, 정의)는 올바른 문제를 찾고, 두 번째(개발, 전달)는 그 문제의 올바른 해결책을 찾습니다. 영국 디자인 위원회가 널리 알렸습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>프로젝트 초반에 "지금은 넓히는 때인가, 좁히는 때인가"를 팀이 같은 말로 이야기해야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>프로젝트 계획서를 더블 다이아몬드의 발견, 정의, 개발, 전달 네 구간으로 나눠서 구간별 산출물을 적어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>첫 다이아몬드를 건너뛰고 곧바로 두 번째로 가면, 빨리 만든 해결책이 엉뚱한 문제에 맞는 일이 생깁니다. 넓히는 구간에서 일정 압박 때문에 아이디어를 일찍 하나로 줄이는 것이 가장 흔한 실패입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="design-sprint">
+      <div class="demo"><div class="d-col" style="width:290px;gap:10px"><div class="d-row" style="gap:5px"><div class="d-box hl" style="--i:0;width:54px;padding:6px 2px;text-align:center;border-radius:8px"><b>월</b><div class="t10">이해</div></div><div class="d-box hl" style="--i:1;width:54px;padding:6px 2px;text-align:center;border-radius:8px"><b>화</b><div class="t10">스케치</div></div><div class="d-box hl" style="--i:2;width:54px;padding:6px 2px;text-align:center;border-radius:8px"><b>수</b><div class="t10">결정</div></div><div class="d-box hl" style="--i:3;width:54px;padding:6px 2px;text-align:center;border-radius:8px"><b>목</b><div class="t10">제작</div></div><div class="d-box hl" style="--i:4;width:54px;padding:6px 2px;text-align:center;border-radius:8px"><b>금</b><div class="t10">테스트</div></div></div><span class="d-cap">5일 동안 아이디어에서 사용자 반응까지</span></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">디자인 스프린트 <span class="en">Design sprint</span></h2>
+        <p class="desc">5일 안에 문제를 정하고, 해결책을 그리고, 가짜 제품을 만들어 실제 사용자에게 보여주는 집중 워크숍입니다. 구글 벤처스에서 정리한 방법으로 알려져 있습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>큰 투자를 하기 전에 아이디어가 통하는지 일주일 안에 확인해야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>디자인 스프린트 5일 일정표를 요일별 활동과 준비물, 참여자 역할까지 포함해서 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>핵심 의사결정자가 5일 내내 자리를 지키지 못하면 스프린트가 성립하지 않습니다. 금요일에 만나는 사용자는 보통 다섯 명 안팎이라 숫자를 증명하는 자리가 아니라 방향을 확인하는 자리입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="empathy-map">
+      <div class="demo"><div class="em"><div class="hl" style="--i:0"><b>말한다</b><span>"너무 복잡해요"</span></div><div class="hl" style="--i:1"><b>생각한다</b><span>내가 잘못 눌렀나</span></div><div class="hl" style="--i:3"><b>행동한다</b><span>뒤로 가기를 반복</span></div><div class="hl" style="--i:2"><b>느낀다</b><span>답답함, 불안</span></div><i></i></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">공감 지도 <span class="en">Empathy map</span></h2>
+        <p class="desc">사용자를 가운데 두고 말한다, 생각한다, 행동한다, 느낀다 네 칸에 관찰한 내용을 채우는 한 장짜리 도표입니다. 말과 행동이 다르다는 점이 드러나는 것이 장점입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>인터뷰 직후 팀이 같은 사람을 떠올리게 하고 싶을 때, 페르소나를 만들기 전 재료를 모을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>인터뷰 메모를 바탕으로 말한다, 생각한다, 행동한다, 느낀다 네 칸짜리 공감 지도 초안을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>칸을 채우는 내용이 팀의 상상이면 그럴듯한 소설이 됩니다. 칸마다 실제 인터뷰나 관찰에서 나온 근거를 하나씩 붙이세요. "생각한다"와 "느낀다"는 비슷해지기 쉬우니, 느낌 칸에는 감정 단어만 적는 규칙을 두면 구분됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="affinity-diagram">
+      <div class="demo" style="min-height:240px"><div class="af"><div class="g"><em>길 찾기</em><div class="sn " style="--x:70px;--y:60px;--r:12deg">입구를 못 찾음</div><div class="sn " style="--x:-20px;--y:90px;--r:-10deg">지도가 작음</div><div class="sn " style="--x:60px;--y:-30px;--r:8deg">표지판 없음</div><div class="sn " style="--x:-30px;--y:50px;--r:-14deg">길을 헤맴</div></div><div class="g"><em>결제</em><div class="sn b" style="--x:-60px;--y:70px;--r:-9deg">입력이 많음</div><div class="sn b" style="--x:-90px;--y:10px;--r:15deg">카드 오류</div><div class="sn b" style="--x:-40px;--y:-30px;--r:-6deg">수수료 불안</div><div class="sn b" style="--x:-70px;--y:60px;--r:11deg">영수증 없음</div></div></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">어피니티 다이어그램 <span class="en">Affinity diagram</span></h2>
+        <p class="desc">관찰과 인터뷰에서 나온 메모를 한 장씩 적은 뒤 비슷한 것끼리 모아 이름을 붙이는 정리법입니다. 처음부터 분류 기준을 정하지 않고 메모가 스스로 묶이게 둡니다. <strong>KJ법</strong>이라고도 부릅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>인터뷰 열 건에서 나온 수백 개의 메모를 몇 개의 문제 묶음으로 줄여야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>인터뷰 메모 목록을 어피니티 다이어그램처럼 비슷한 것끼리 묶고 묶음마다 제목을 붙여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>묶음 이름을 먼저 정해 놓고 메모를 끼워 맞추면 분석이 아니라 확인 작업이 됩니다. 메모 한 장에는 한 가지 사실만 적어야 하고, 어느 묶음에도 안 들어가는 외톨이 메모를 버리지 마세요. 의외의 발견이 거기에 있는 경우가 많습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="hmw">
+      <div class="demo"><div class="d-col" style="width:270px;gap:10px"><div class="d-box rv" style="--i:0;background:#f3f4f8">불만: 결제 화면이 너무 복잡해요</div><svg class="d-svg rv" style="--i:1;align-self:center;color:var(--p)" viewBox="0 0 24 24"><path d="M12 4v16M6 14l6 6 6-6"/></svg><div class="d-box rv" style="--i:2;background:var(--p-soft);border-color:var(--p);font-weight:700">어떻게 하면 결제를 한 번에 끝내도록 도울 수 있을까?</div></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">HMW 질문 <span class="en">How might we</span></h2>
+        <p class="desc">문제를 "어떻게 하면 ~할 수 있을까?"라는 열린 질문으로 바꿔 쓰는 방식입니다. 불만이나 문제점을 그대로 두지 않고 아이디어를 부르는 문장으로 바꾸는 것이 목적입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>조사에서 찾은 문제를 아이디어 회의의 주제로 바꿀 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이 사용자 불만 다섯 개를 각각 HMW 질문으로 바꿔줘. 너무 넓지도 좁지도 않게</q></p>
+        <p class="senior"><b>20년차 메모</b>HMW가 너무 좁으면 해결책이 이미 문장에 들어 있고("어떻게 하면 버튼을 더 크게 만들까"), 너무 넓으면 아이디어가 흩어집니다. 한 문제당 서너 가지 크기로 써 보고 가운데를 고르세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="problem-statement">
+      <div class="demo"><div class="d-box" style="width:280px;line-height:2"><span class="fill rv" style="--i:0">바쁜 직장인</span>은 <span class="fill rv" style="--i:1">출근길 한 손 사용</span> 상황에서 <span class="fill rv" style="--i:2">빠른 예약</span>이 필요하다. 왜냐하면 <span class="fill rv" style="--i:3">내릴 곳이 곧이기</span> 때문이다.</div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">문제 정의문 <span class="en">Problem statement</span></h2>
+        <p class="desc">조사한 내용을 누가, 어떤 상황에서, 무엇이 필요하고, 왜 그런지의 한 문장으로 압축한 것입니다. 해결책이 아니라 문제를 적는 문장입니다. <strong>POV(관점) 문장</strong>이라고도 부릅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>팀이 서로 다른 문제를 푸는 중인 것 같을 때, 아이디어를 내기 전에 목표를 고정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>인터뷰 요약을 읽고 누가, 어떤 상황에서, 무엇이 필요하고, 왜인지가 들어간 문제 정의문을 세 가지 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>문장 안에 "~기능을 추가한다" 같은 해결책이 들어가면 그건 정의문이 아니라 요구사항입니다. 사용자 칸에 "모든 사용자"를 쓰면 아무도 위하지 않은 문장이 되니 한 종류의 사람으로 좁히세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="hypothesis">
+      <div class="demo"><div class="d-col" style="width:270px;gap:8px"><div class="row3 rv" style="--i:0"><span class="d-chip" style="text-align:center">믿음</span><div class="d-box" style="padding:7px 10px">체크아웃 단계를 줄이면</div></div><div class="row3 rv" style="--i:1"><span class="d-chip" style="text-align:center">기대</span><div class="d-box" style="padding:7px 10px">주문 완료율이 오를 것이다</div></div><div class="row3 rv" style="--i:2"><span class="d-chip" style="text-align:center">근거</span><div class="d-box" style="padding:7px 10px">이탈이 입력 단계에 몰렸다</div></div><div class="row3 rv" style="--i:3"><span class="d-chip" style="text-align:center">확인</span><div class="d-box" style="padding:7px 10px">일주일 A/B 테스트로 비교</div></div></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">가설 설정 <span class="en">Hypothesis</span></h2>
+        <p class="desc">"이렇게 하면 이런 결과가 나올 것이다, 왜냐하면 ~이기 때문이다"를 검증할 수 있게 적어 둔 추측입니다. 맞고 틀림을 숫자나 행동으로 확인할 수 있어야 합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>디자인을 바꾸기 전에 무엇을 보면 성공인지 미리 정해 두어야 할 때, A/B 테스트를 설계할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>체크아웃 입력 항목을 줄이는 안에 대해 믿음, 기대 결과, 근거, 확인 방법이 들어간 가설 설정 문장을 써줘</q></p>
+        <p class="senior"><b>20년차 메모</b>"사용성이 좋아질 것이다"는 가설이 아닙니다. 무엇이 얼마나 변하면 맞은 것인지 미리 못 박지 않으면 결과가 나온 뒤에 해석을 끼워 맞추게 됩니다. 틀렸다는 결과도 의미 있는 배움이라고 팀이 미리 합의해 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="storyboard">
+      <div class="demo"><div class="sb"><div class="rv" style="--i:0"><svg viewBox="0 0 60 50"><circle cx="30" cy="25" r="16"/><path d="M30 15v10l7 4"/></svg><span>버스를 놓침</span></div><div class="rv" style="--i:1"><svg viewBox="0 0 60 50"><rect x="18" y="6" width="24" height="38" rx="4"/><path d="M26 36h8"/></svg><span>앱을 연다</span></div><div class="rv" style="--i:2"><svg viewBox="0 0 60 50"><path d="M8 36h44M14 36V22h32v14"/><circle cx="20" cy="40" r="3"/><circle cx="40" cy="40" r="3"/></svg><span>도착 시간 확인</span></div><div class="rv" style="--i:3"><svg viewBox="0 0 60 50"><path d="M16 26l10 10 18-20"/></svg><span>안심하고 기다림</span></div></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">스토리보드 <span class="en">Storyboard</span></h2>
+        <p class="desc">사용자가 어떤 상황에서 서비스를 만나고 어떻게 문제가 풀리는지를 만화 컷처럼 4~6장으로 그린 것입니다. 화면만이 아니라 사람과 장소가 같이 들어갑니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>기능 설명보다 "언제 왜 필요한지"를 먼저 이해시켜야 하는 발표나 기획 공유.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>버스 도착 알림 기능을 사용자가 불편을 겪고 해결하는 네 컷 스토리보드로 장면 설명을 써줘</q></p>
+        <p class="senior"><b>20년차 메모</b>그림 실력은 상관없지만 컷마다 사용자의 감정이 바뀌는 지점이 없으면 그냥 화면 순서표가 됩니다. 한국 기획 현장에서 "스토리보드"는 화면 설계서를 뜻하기도 하니, 쓰기 전에 어느 쪽을 말하는지 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="service-blueprint">
+      <div class="demo"><div class="bp"><b>고객 행동</b><div class="hl" style="--i:0">앱으로 예약</div><div class="hl" style="--i:1">매장 방문</div><div class="hl" style="--i:2">수령·후기</div><b>접점</b><div class="hl" style="--i:0">예약 화면</div><div class="hl" style="--i:1">키오스크</div><div class="hl" style="--i:2">알림</div><div class="vis"></div><b>직원 행동</b><div class="hl" style="--i:0">확인 전화</div><div class="hl" style="--i:1">준비·안내</div><div class="hl" style="--i:2">후기 응대</div><b>시스템</b><div class="hl" style="--i:0">재고 DB</div><div class="hl" style="--i:1">주문 연동</div><div class="hl" style="--i:2">고객 DB</div></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">서비스 블루프린트 <span class="en">Service blueprint</span></h2>
+        <p class="desc">고객이 보는 화면 뒤에서 직원과 시스템이 무엇을 하는지를 한 장에 가로줄로 겹쳐 그린 지도입니다. 가운데 점선은 고객 눈에 보이는 영역과 안 보이는 영역의 경계(가시선)입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>오프라인과 앱이 섞인 서비스, 여러 부서가 얽힌 서비스에서 어디서 끊기는지 찾을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>매장 예약 서비스의 서비스 블루프린트를 고객 행동, 접점, 직원 행동, 지원 시스템 네 줄로 표로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>화면 디자이너가 고객 줄만 그리고 끝내는 경우가 많은데 진짜 가치는 아래 두 줄에서 나옵니다. 장애가 날 때 어느 부서가 맡는지 줄에서 바로 보이게 그려야 합니다. 부서 담당자와 같이 그리지 않으면 현실과 다른 지도가 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="stakeholder-map">
+      <div class="demo"><div class="sm"><span>만족 유지</span><span>밀착 관리</span><span>모니터링</span><span>계속 알림</span><i style="left:150px;top:22px" class="pu"><em style="left:-6px;top:16px">대표</em></i><i style="left:125px;top:46px;--i:1" class="pu"><em style="left:-6px;top:16px">개발</em></i><i style="left:30px;top:30px;--i:2;background:#9ca3d6" class="pu"><em>법무</em></i><i style="left:40px;top:110px;--i:3;background:#9ca3d6" class="pu"><em>고객</em></i><span class="ax" style="left:-18px;top:0;writing-mode:vertical-rl">영향력</span><span class="ax" style="right:0;bottom:-18px">관심도</span></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">이해관계자 지도 <span class="en">Stakeholder map</span></h2>
+        <p class="desc">프로젝트에 영향을 주거나 받는 사람을 영향력과 관심도 두 축 위에 배치한 지도입니다. 누구에게 얼마나 자주 어떻게 알릴지 정하는 데 씁니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>디자인 결정이 자꾸 뒤집힐 때, 프로젝트 초반에 누구의 동의가 필요한지 정리할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이 프로젝트의 이해관계자를 영향력과 관심도 기준 이해관계자 지도로 분류하고 소통 방식도 제안해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>영향력은 높은데 관심이 낮은 사람이 마지막에 나타나 뒤집는 것이 가장 비싼 사고입니다. 법무, 보안, CS처럼 화면에 직접 안 나오는 부서를 빠뜨리지 마세요. 사용자 본인도 이해관계자로 한 자리 있어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="competitor-analysis">
+      <div class="demo"><div class="cmp"><span></span><b class="h">우리</b><b class="h">A사</b><b class="h">B사</b><span class="l">간편 로그인</span><span class="x rv" style="--i:0">○</span><span class="o rv" style="--i:1">●</span><span class="o rv" style="--i:2">●</span><span class="l">실시간 알림</span><span class="o rv" style="--i:3">●</span><span class="o rv" style="--i:4">●</span><span class="x rv" style="--i:5">○</span><span class="l">오프라인 사용</span><span class="x rv" style="--i:6">○</span><span class="x rv" style="--i:7">○</span><span class="o rv" style="--i:8">●</span><span class="l">다국어</span><span class="o rv" style="--i:9">●</span><span class="x rv" style="--i:10">○</span><span class="x rv" style="--i:11">○</span></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">경쟁사 분석·벤치마킹 <span class="en">Competitor analysis · Benchmarking</span></h2>
+        <p class="desc">비슷한 서비스를 같은 기준표에 놓고 비교하는 작업입니다. 경쟁사 분석은 같은 시장의 상대를, 벤치마킹은 업종과 상관없이 잘하는 사례를 기준으로 삼아 배운다는 점이 다릅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>새 기능을 기획하기 전, 우리 서비스의 약한 곳과 비어 있는 자리를 찾을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>배달 앱 세 곳을 로그인, 결제, 재주문 흐름 기준으로 비교하는 경쟁사 분석 표를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>기능 있음/없음 표는 만들기 쉽지만 "있는데 쓰기 어렵다"를 잡지 못합니다. 실제로 써 보고 걸린 단계 수나 막힌 지점을 같이 적으세요. 경쟁사를 그대로 따라 만들면 그쪽의 실수까지 가져옵니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="ux-audit">
+      <div class="demo"><div class="au"><div>버튼 글자 대비 부족<em class="w">문제</em></div><div>오류 문구가 모호함<em class="w">문제</em></div><div>탭 이름이 분명함<em class="g">양호</em></div><div>빈 화면 안내 없음<em class="w">문제</em></div><div class="scan"></div></div></div>
+      <div class="body">
+        <p class="num">13</p>
+        <h2 class="term-name">UX 감사 <span class="en">UX audit</span></h2>
+        <p class="desc">이미 만들어진 화면을 기준 목록(휴리스틱, 접근성, 일관성 등)에 따라 처음부터 끝까지 훑으며 문제를 찾아 정리하는 점검입니다. 사용자를 모으지 않고 전문가가 직접 하므로 비교적 빠릅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>서비스 개편 전 현황을 파악할 때, 사용자 조사 비용이 부족하지만 개선할 곳을 먼저 추려야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이 서비스의 주문 흐름을 UX 감사 관점으로 점검하고 문제를 심각도별로 표로 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>감사만으로는 사용자가 "왜" 막히는지 알 수 없습니다. 발견한 문제는 심각도와 근거 화면을 같이 적어야 개발팀이 우선순위를 정할 수 있습니다. 한 사람의 취향이 문제 목록에 섞이지 않도록 기준표를 먼저 정하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="contextual-inquiry">
+      <div class="demo"><div class="ci"><div class="scr"><div class="d-bar dark" style="width:55%"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div><div class="d-btn" style="min-height:22px;width:60px;font-size:10px">저장</div><div class="cur"></div></div><div class="nt"><span class="rv" style="--i:0">엑셀로 옮겨 적음</span><span class="rv" style="--i:2">창 세 개를 번갈아 봄</span><span class="rv" style="--i:4">포스트잇을 모니터에 붙임</span></div></div></div>
+      <div class="body">
+        <p class="num">14</p>
+        <h2 class="term-name">컨텍스추얼 인쿼리 <span class="en">Contextual inquiry</span></h2>
+        <p class="desc">사용자가 실제로 일하는 장소에 찾아가 그 사람이 하는 일을 지켜보고 중간중간 이유를 묻는 현장 관찰입니다. 말로 하는 인터뷰에서는 안 나오는 임시방편과 환경을 보게 됩니다. <strong>현장 방문 조사</strong>라고도 부릅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>업무용 도구나 전문가용 화면처럼 사용 환경이 결과에 큰 영향을 줄 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>업무 프로그램 사용자의 현장 관찰 가이드를 컨텍스추얼 인쿼리 방식으로 질문과 관찰 포인트까지 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>관찰자가 질문을 너무 자주 하면 일하는 모습이 아니라 설명하는 모습을 보게 됩니다. 사진과 녹음은 반드시 사전에 동의를 받으세요. 직장에서는 화면에 보이는 고객 정보가 기록에 남지 않도록 특히 주의해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="focus-group">
+      <div class="demo"><div class="fg"><div class="tb"></div><i class="m" style="left:97px;top:56px"></i><i class="pu" style="left:97px;top:6px;--i:0"></i><i class="pu" style="left:180px;top:30px;--i:1"></i><i class="pu" style="left:180px;top:95px;--i:2"></i><i class="pu" style="left:97px;top:118px;--i:3"></i><i class="pu" style="left:14px;top:95px;--i:4"></i><i class="pu" style="left:14px;top:30px;--i:5"></i></div></div>
+      <div class="body">
+        <p class="num">15</p>
+        <h2 class="term-name">포커스 그룹 <span class="en">Focus group interview</span></h2>
+        <p class="desc">비슷한 조건의 사람 대여섯 명을 한자리에 모아 진행자의 질문에 자유롭게 이야기하게 하는 그룹 인터뷰입니다. 개인 인터뷰와 달리 서로의 말에 반응하며 생각이 넓어집니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>새 개념에 대한 반응이나 사람들이 쓰는 말을 넓게 들어보고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>새 구독 서비스 콘셉트를 보여주고 반응을 묻는 포커스 그룹 진행 질문지와 진행 순서를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>말이 많은 한 사람이 분위기를 끌고 가면 다른 사람의 생각이 사라집니다. 포커스 그룹은 사용성 문제를 찾는 용도가 아니라 태도와 기대를 듣는 용도입니다. 쓰기 쉬운지는 직접 써 보게 하는 테스트로 따로 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="guerrilla-testing">
+      <div class="demo"><div class="gr"><span class="w" style="--y:12;--i:0"></span><span class="w" style="--y:34;--i:1"></span><span class="w" style="--y:52;--i:2"></span><span class="w" style="--y:22;--i:3"></span><span class="w" style="--y:44;--i:4"></span><span class="w" style="--y:8;--i:5"></span><div class="tab">카페 한 켠<br>5분 · 커피 한 잔</div></div></div>
+      <div class="body">
+        <p class="num">16</p>
+        <h2 class="term-name">게릴라 테스트 <span class="en">Guerrilla testing</span></h2>
+        <p class="desc">카페나 도서관 같은 공공장소에서 지나가는 사람에게 부탁해 몇 분만 화면을 써 보게 하는 빠르고 가벼운 테스트입니다. 모집과 장소 비용이 거의 들지 않습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>초기 시안의 큰 막힘을 빠르게 걸러내고 싶을 때, 특별한 전문 지식이 필요 없는 서비스일 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>게릴라 테스트로 5분 안에 끝낼 수 있는 과업 세 개와 시작 멘트, 사례 선물 문구를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>지나가는 사람은 타깃 사용자가 아닐 수 있습니다. 전문 지식이 필요한 서비스나 민감한 서비스에는 맞지 않습니다. 촬영하거나 이름을 적기 전에 동의를 구하고, 결과를 통계처럼 말하지 마세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="think-aloud">
+      <div class="demo"><div class="ta"><div class="d-box" style="width:100px;display:grid;gap:6px"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-btn" style="min-height:24px;font-size:10px">저장</div></div><div class="bub"><span>음, 이건 저장 버튼인가?</span></div></div></div>
+      <div class="body">
+        <p class="num">17</p>
+        <h2 class="term-name">씽크 얼라우드 <span class="en">Think aloud</span></h2>
+        <p class="desc">화면을 쓰는 사람에게 머릿속 생각을 소리 내어 말하게 하는 사용성 테스트의 기본 진행 방식입니다. 어디서 헷갈리는지와 그 이유를 동시에 들을 수 있습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>사용성 테스트에서 사용자가 왜 그렇게 눌렀는지 이유까지 알고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>사용성 테스트 시작 때 씽크 얼라우드를 요청하는 안내 대본과 침묵이 길어질 때 하는 말을 써줘</q></p>
+        <p class="senior"><b>20년차 메모</b>말을 하면서 쓰면 평소보다 신중해져서 실제 속도나 행동이 달라질 수 있습니다. 진행자가 "그건 뭐죠?" 하고 물으면 사용자가 정답을 맞히려 하니, 가르치지 말고 "어떻게 생각하세요?"처럼 되물으세요. 시간 측정이 목적인 테스트에는 섞지 않는 편이 낫습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="five-second-test">
+      <div class="demo"><div class="f5"><div class="d-bar dark" style="width:70%;height:12px"></div><div class="d-bar" style="width:90%"></div><div class="d-bar" style="width:60%"></div><div class="d-btn" style="width:80px;min-height:26px">시작하기</div><div class="cd"><div>5<br>4<br>3<br>2<br>1<br>0</div></div><div class="cv">무엇이 기억나나요?</div></div></div>
+      <div class="body">
+        <p class="num">18</p>
+        <h2 class="term-name">5초 테스트 <span class="en">Five-second test</span></h2>
+        <p class="desc">화면을 딱 5초만 보여주고 가린 뒤 무엇이 기억나는지, 무슨 서비스 같은지 물어보는 테스트입니다. 첫인상에서 핵심 메시지가 전달되는지를 봅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>랜딩 페이지, 광고 배너, 앱 스토어 첫 화면처럼 한눈에 이해돼야 하는 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>랜딩 페이지 시안을 5초 테스트로 검증할 수 있게 보여줄 안내문과 사후 질문 세 개를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>질문을 "마음에 드나요"로 하면 안 됩니다. 기억나는 것, 어떤 서비스인지, 누가 쓸 것 같은지처럼 기억에서 꺼내는 질문이어야 합니다. 5초 안에 읽을 수 없는 긴 글이 핵심인 화면에는 맞지 않습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="first-click-test">
+      <div class="demo"><div class="fc"><div class="d-bar dark" style="width:50%;height:10px"></div><div class="d-row"><span class="d-chip">홈</span><span class="d-chip">내 주문</span><span class="d-chip">고객센터</span></div><div class="d-bar" style="width:75%"></div><div class="d-bar" style="width:55%"></div><div class="ripple"></div><div class="cur"></div></div></div>
+      <div class="body">
+        <p class="num">19</p>
+        <h2 class="term-name">퍼스트 클릭 테스트 <span class="en">First click test</span></h2>
+        <p class="desc">"주문 취소는 어디서 하나요?" 같은 과업을 주고 화면에서 가장 먼저 어디를 누르는지만 보는 테스트입니다. 첫 클릭이 맞아야 과업을 끝내기 쉽다고 보기 때문에 널리 쓰입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>메뉴 이름과 위치가 맞는지, 버튼이 찾기 쉬운지를 이미지 한 장으로 빠르게 확인할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>시안 이미지 세 장에 대해 과업별 퍼스트 클릭 테스트 시나리오와 정답 영역을 정의해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>첫 클릭이 틀려도 두 번째에 맞으면 괜찮다고 보는 팀이 있는데, 그 사이에 사용자는 이미 자신감을 잃습니다. 과업 문장에 화면 속 단어를 그대로 쓰면 찾기 놀이가 되니, 사용자 말로 풀어 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="eye-tracking">
+      <div class="demo"><svg class="et" viewBox="0 0 290 150" width="290" height="150" role="img" aria-label="시선이 머문 곳"><rect x="10" y="8" width="270" height="134" rx="10" fill="#fff" stroke="#c9cfe6"/><rect x="24" y="22" width="150" height="10" rx="5" fill="#3b3f5c"/><rect x="24" y="44" width="240" height="7" rx="3" fill="#d5daea"/><rect x="24" y="58" width="200" height="7" rx="3" fill="#d5daea"/><rect x="24" y="86" width="90" height="36" rx="8" fill="#4f46e5" opacity=".85"/><rect x="170" y="80" width="94" height="48" rx="8" fill="#e8ebf7"/><path d="M40 28 L120 30 L200 52 L70 62 L70 100 L215 100" fill="none" stroke="#dc2626" stroke-width="2" pathLength="100" class="dr"/><circle cx="40" cy="28" r="9" style="--i:0"/><circle cx="120" cy="30" r="14" style="--i:1"/><circle cx="200" cy="52" r="8" style="--i:2"/><circle cx="70" cy="62" r="7" style="--i:3"/><circle cx="70" cy="100" r="16" style="--i:4"/><circle cx="215" cy="100" r="6" style="--i:5"/></svg></div>
+      <div class="body">
+        <p class="num">20</p>
+        <h2 class="term-name">아이트래킹 <span class="en">Eye tracking</span></h2>
+        <p class="desc">특수 장비로 사용자의 시선이 어디에 얼마나 머무는지 기록하는 조사입니다. 머문 곳은 원의 크기로, 움직인 순서는 선으로 보여줍니다. 결과를 합쳐 색으로 표시하면 시선 히트맵이 됩니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>광고, 첫 화면, 상품 상세 등 어디가 눈에 띄고 어디가 무시되는지 알아야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>아이트래킹 조사를 하려면 어떤 과업과 화면, 분석 지표(첫 응시 시간, 응시 시간)가 필요한지 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>시선이 오래 머물렀다고 좋은 게 아닙니다. 이해하지 못해서 오래 보는 것일 수도 있습니다. 장비 비용이 크고 모집이 어려워 이 방법만으로 결정하기보다 사용성 테스트와 같이 해석하세요. 시선이 간 곳은 알려주지만 무엇을 생각했는지는 알려주지 않습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="session-replay">
+      <div class="demo"><div class="rp"><div class="vw"><div class="d-bar dark" style="width:55%"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div><div class="d-btn" style="min-height:24px;width:70px;font-size:10px">결제하기</div><div class="cur"></div></div><div class="ctl"><svg class="d-svg" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M7 4l12 8-12 8z" fill="currentColor"/></svg><div class="tr"><i></i></div><span class="d-cap">0:12</span></div></div></div>
+      <div class="body">
+        <p class="num">21</p>
+        <h2 class="term-name">세션 리플레이 <span class="en">Session replay</span></h2>
+        <p class="desc">실제 사용자가 서비스를 쓰는 동안의 클릭, 스크롤, 마우스 움직임을 기록해 영상처럼 다시 돌려보는 도구입니다. 숫자 분석으로는 보이지 않는 헤맴을 눈으로 봅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>결제 이탈처럼 숫자로는 막힌 곳은 알겠는데 이유를 모를 때, 오류가 재현되지 않을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>세션 리플레이 도구를 붙이되 비밀번호와 카드 번호 입력칸은 녹화에서 가려지도록 설정해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>개인정보가 그대로 녹화되기 쉽습니다. 입력칸 마스킹과 사용자 고지는 도입할 때 가장 먼저 정하세요. 몇 건 보고 전체가 그렇다고 결론 내리는 것도 위험하니, 숫자 분석으로 의심한 부분만 골라서 보세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="paper-prototype">
+      <div class="demo"><div class="pp"><div class="sheet s2"><div class="sk"></div><div class="sk" style="width:60%"></div><div class="bx"></div></div><div class="sheet s1"><div class="sk" style="width:70%"></div><div class="sk"></div><div class="sk" style="width:50%"></div><div class="sk" style="width:35%;margin-top:18px"></div></div></div></div>
+      <div class="body">
+        <p class="num">22</p>
+        <h2 class="term-name">페이퍼 프로토타입 <span class="en">Paper prototype</span></h2>
+        <p class="desc">종이에 화면을 그려 오려 놓고, 사용자가 손가락으로 누르면 사람이 다음 장으로 바꿔주는 가장 싼 프로토타입입니다. 코드나 디자인 도구 없이 흐름만 먼저 검증합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>디자인을 확정하기 전, 화면 흐름과 구성을 가장 빨리 확인하고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>로그인부터 주문 완료까지 페이퍼 프로토타입으로 만들 때 필요한 화면 목록과 장 넘김 규칙을 적어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>종이라서 색, 글자 크기 같은 시각 디자인은 평가할 수 없습니다. 사용자가 헷갈리는 것이 종이 때문인지 설계 때문인지 구분하지 못하면 잘못된 결론이 나옵니다. 사용자에게 "예쁘지 않아도 괜찮다"고 미리 말하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="wizard-of-oz">
+      <div class="demo"><div class="wz"><div class="ph"><div class="m u rv" style="--i:0">환불 문의요</div><div class="m a rv" style="--i:3">환불은 3일 안에 처리됩니다</div></div><div class="cur"><div><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 4-7 8-7s8 2 8 7"/></svg><br>커튼 뒤에서<br>사람이 직접 답함</div></div></div></div>
+      <div class="body">
+        <p class="num">23</p>
+        <h2 class="term-name">위저드 오브 오즈 <span class="en">Wizard of Oz</span></h2>
+        <p class="desc">사용자에게는 완성된 자동 기능처럼 보이지만 뒤에서는 사람이 직접 처리하는 실험 방식입니다. 오즈의 마법사가 커튼 뒤에서 조종하는 이야기에서 따온 이름입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>챗봇, 추천, 음성 인식처럼 만들기 비싼 기능이 정말 필요한지 개발 전에 확인할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>위저드 오브 오즈 방식으로 챗봇 검증 테스트를 하려면 사람이 대신 답하는 규칙과 사용자 안내문을 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>실험이 끝난 뒤 사용자에게 사람이 답했다는 사실을 알려주고 동의를 구하는 절차가 필요합니다. 사람은 하지만 기계는 못 하는 일을 시험하게 되는 함정도 있으니, 실제로 자동화할 수 있는 범위를 개발자와 먼저 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="beta-test">
+      <div class="demo"><div class="bt"><div class="d-row" style="justify-content:space-between;margin-bottom:8px"><span class="tag">BETA</span><span class="d-cap">공개 범위</span></div><div class="tk"><i></i></div><div class="lb"><span>사내</span><span>초대한 사용자</span><span>전체</span></div></div></div>
+      <div class="body">
+        <p class="num">24</p>
+        <h2 class="term-name">베타 테스트 <span class="en">Beta test</span></h2>
+        <p class="desc">정식 출시 전에 일부 사용자에게 먼저 열어 실제 환경에서 문제를 찾는 시험입니다. 팀 내부가 하는 시험은 알파, 외부 사용자를 포함하면 베타라고 부릅니다. 공개 범위를 조금씩 넓혀 가는 방식은 단계적 출시(롤아웃)라고 합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>큰 개편이나 새 기능을 전체 사용자에게 열기 전에 오류와 반응을 확인하고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>새 기능을 베타 테스트로 사용자 5퍼센트에게 먼저 열고 단계적으로 늘리는 계획과 중단 기준을 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>피드백을 받을 통로(버튼, 설문)가 없으면 베타는 그냥 느린 출시입니다. 자원해서 참여한 사용자는 평균 사용자보다 열정적이라 결과가 낙관적으로 나옵니다. 되돌리는 방법과 멈출 기준을 시작 전에 정하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="priority-matrix">
+      <div class="demo"><div class="pm"><div class="go">바로 하기</div><div>계획해서 하기</div><div>틈날 때</div><div>미루기</div><i style="left:30px;top:48px">A</i><i style="left:130px;top:34px">B</i><i style="left:40px;top:112px">C</i><i style="left:140px;top:120px">D</i><span class="ax" style="left:-20px;top:0;writing-mode:vertical-rl">효과 큼</span><span class="ax" style="right:0;bottom:-18px">노력 많음</span></div></div>
+      <div class="body">
+        <p class="num">25</p>
+        <h2 class="term-name">우선순위 매트릭스 <span class="en">Impact/Effort matrix</span></h2>
+        <p class="desc">해야 할 일을 효과(영향)와 노력(비용) 두 축으로 나눠 2x2 표에 올려 순서를 정하는 도구입니다. 효과가 크고 노력이 적은 왼쪽 위 칸이 가장 먼저 할 일입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>개선 아이디어는 많은데 시간은 부족할 때, 팀이 어떤 걸 먼저 할지 합의해야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>아이디어 열 개를 효과와 노력 기준 우선순위 매트릭스 표로 정리하고 바로 할 일 칸에 들어갈 후보를 골라줘</q></p>
+        <p class="senior"><b>20년차 메모</b>효과와 노력은 서로 다른 직군이 점수를 매겨야 합니다. 디자이너가 효과를, 개발자가 노력을 따로 적게 하세요. 왼쪽 위 칸만 계속 고르면 작은 개선만 쌓이고 큰 변화는 영영 못 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="moscow">
+      <div class="demo"><div class="mo"><div><b>Must</b><div class="c rv" style="--i:0">로그인</div></div><div><b>Should</b><div class="c rv" style="--i:1">검색</div></div><div><b>Could</b><div class="c rv" style="--i:2">다크 모드</div></div><div><b>Won't</b><div class="c rv" style="--i:3;background:#eef0f6;color:var(--mute)">채팅</div></div></div></div>
+      <div class="body">
+        <p class="num">26</p>
+        <h2 class="term-name">MoSCoW <span class="en">MoSCoW prioritization</span></h2>
+        <p class="desc">기능을 반드시 필요한 것(Must), 중요한 것(Should), 있으면 좋은 것(Could), 이번에는 안 하는 것(Won't)으로 네 칸에 나누는 우선순위 방법입니다. 이름은 이 네 단어에서 따온 것입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>출시 일정이 정해져 있어 이번 버전에 넣을 범위를 잘라야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이번 출시 기능 목록을 MoSCoW 방식으로 Must, Should, Could, Won't로 분류하고 이유를 한 줄씩 적어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모든 기능이 Must가 되는 일이 가장 흔합니다. Must가 일정을 가득 채우지 않도록 상한을 두는 팀도 있습니다. Won't는 영원히 안 한다는 뜻이 아니라 이번에는 안 한다는 뜻임을 같이 적으세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="kano-model">
+      <div class="demo"><svg class="kn" viewBox="0 0 290 180" width="290" height="180" role="img" aria-label="카노 모델 곡선"><path d="M30 10V170M30 90H275" stroke="#3b3f5c" stroke-width="2" fill="none"/><path d="M30 165C60 118 120 100 270 96" stroke="#16a34a" class="dr" pathLength="100"/><path d="M30 165L270 15" stroke="#4f46e5" class="dr" pathLength="100" style="--i:1"/><path d="M30 88C150 84 220 62 270 8" stroke="#ea580c" class="dr" pathLength="100" style="--i:2"/><g font-size="10" font-weight="700"><text x="196" y="116" fill="#16a34a">기본</text><text x="210" y="68" fill="#4f46e5">기대</text><text x="140" y="46" fill="#ea580c">감동</text><text x="232" y="106" fill="#55607a">충족 →</text><text x="34" y="14" fill="#55607a">만족 ↑</text></g></svg></div>
+      <div class="body">
+        <p class="num">27</p>
+        <h2 class="term-name">카노 모델 <span class="en">Kano model</span></h2>
+        <p class="desc">기능을 충족시켰을 때 만족이 어떻게 변하는지에 따라 기본(없으면 불만), 기대(많을수록 만족), 감동(없어도 괜찮지만 있으면 크게 만족)으로 나눠 보는 모델입니다. 일본의 노리아키 카노가 제안했습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>어떤 기능에 투자해야 사용자 만족이 오를지, 반대로 아무리 잘해도 소용없는 기능은 무엇인지 가릴 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>기능 목록을 카노 모델로 기본, 기대, 감동 속성으로 분류하는 설문 질문(있을 때와 없을 때)을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>감동 요소는 시간이 지나면 기대, 기본으로 내려갑니다. 지금의 감동이 1년 뒤에도 감동이라는 보장이 없습니다. 분류는 사용자 설문으로 해야 하는데, 팀원이 머릿속으로 나누면 대개 전부 감동이라고 우기게 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="design-critique">
+      <div class="demo"><div class="dc"><div class="art"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div><div class="d-btn" style="min-height:24px;font-size:10px;width:60px">신청</div><span class="pin rv" style="--i:0;left:70px;top:6px">1</span><span class="pin rv" style="--i:2;left:6px;top:88px">2</span><span class="pin rv" style="--i:4;left:70px;top:78px">3</span></div><div class="cm"><div class="rv" style="--i:0">1 제목이 목적을 설명하지 않아요</div><div class="rv" style="--i:2">2 버튼 대비가 낮아요</div><div class="rv" style="--i:4">3 이 선택지는 유지해도 좋아요</div></div></div></div>
+      <div class="body">
+        <p class="num">28</p>
+        <h2 class="term-name">디자인 크리틱 <span class="en">Design critique</span></h2>
+        <p class="desc">디자인 결과물을 동료들이 모여 목적에 비추어 의견을 주고받는 구조화된 피드백 시간입니다. 좋다 나쁘다가 아니라 목표에 맞는지를 말하는 것이 규칙입니다. 줄여서 크리틱이라고 합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>시안의 방향을 잡기 전, 혼자 보면 못 보는 문제를 팀이 같이 찾을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>디자인 크리틱을 시작하기 전 공유할 배경, 목표, 피드백 받고 싶은 부분을 한 장 소개문으로 써줘</q></p>
+        <p class="senior"><b>20년차 메모</b>"저는 이 색이 별로예요" 같은 취향 발언이 오가면 크리틱은 투표가 됩니다. 의견은 "사용자의 목표에 비추어"로 시작하게 하세요. 발표자는 변명 대신 받아 적고, 반영 여부는 따로 정리하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="retrospective">
+      <div class="demo"><div class="rt"><div><b>잘한 점</b><div class="sn rv" style="--i:0">테스트를 일찍 함</div></div><div><b>아쉬운 점</b><div class="sn b rv" style="--i:2">핸드오프가 늦음</div><div class="sn b rv" style="--i:3">문서가 여럿</div></div><div><b>시도할 것</b><div class="sn c rv" style="--i:4">주 1회 동기화</div></div></div></div>
+      <div class="body">
+        <p class="num">29</p>
+        <h2 class="term-name">회고 <span class="en">Retrospective</span></h2>
+        <p class="desc">프로젝트나 스프린트가 끝난 뒤 잘한 점, 아쉬운 점, 다음에 시도할 것을 팀이 함께 돌아보는 모임입니다. 추억하는 것이 아니라 다음에 무엇을 바꿀지 정하는 것이 목적입니다. 영어로는 Retro, 틀로는 KPT(Keep Problem Try)가 흔합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>프로젝트 종료 직후, 한 주기가 끝나는 정례 모임에서.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>프로젝트 회고 진행안을 잘한 점, 아쉬운 점, 시도할 것 세 칸으로 만들고 시간 배분도 알려줘</q></p>
+        <p class="senior"><b>20년차 메모</b>아쉬운 점만 길게 쏟아내고 "시도할 것"이 비어 있으면 불평 모임으로 끝납니다. 다음 회고 때 지난번에 정한 시도를 해봤는지 먼저 확인하세요. 사람을 탓하는 말은 상황과 과정을 탓하는 말로 바꿔 적게 하세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

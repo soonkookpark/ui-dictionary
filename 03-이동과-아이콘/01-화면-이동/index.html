@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="화면 이동 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>화면 이동 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 작은 휴대폰 틀. 안에 회색 막대로 내용을 흉내 낸다 */
+.ph { width: 170px; height: 210px; background: #fff; border: 2px solid #c9cfe6; border-radius: 16px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+.ph .hd { height: 34px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-bottom: 1px solid var(--line); font-weight: 700; font-size: 12px; }
+.ph .ct { flex: 1; padding: 10px; display: grid; gap: 8px; align-content: start; }
+.ph input[type=checkbox], .ph input[type=radio], .rd input { position: absolute; opacity: 0; pointer-events: none; }
+
+/* 01 하단 탭바: 아래에 붙은 줄, 선택된 칸만 주색(:has 로 체크된 칸 찾기) */
+.tb { flex: none; display: flex; border-top: 1px solid var(--line); background: #fff; }
+.tb label { flex: 1; display: grid; justify-items: center; gap: 1px; padding: 6px 0 5px; font-size: 10px; font-weight: 600; color: var(--mute); cursor: pointer; }
+.tb label:has(input:checked) { color: var(--p); }
+.tb label:has(:focus-visible) { outline: 3px solid var(--p); outline-offset: -3px; }
+.tb .d-svg { width: 20px; height: 20px; }
+
+/* 02 상단 탭: 밑줄 막대가 선택한 칸으로 미끄러진다(transform) */
+.tt { position: relative; display: flex; border-bottom: 1px solid var(--line); }
+.tt label { flex: 1; text-align: center; padding: 9px 0; font-size: 12px; font-weight: 700; color: var(--mute); cursor: pointer; }
+.tt label:has(input:checked) { color: var(--p); }
+.tt label:has(:focus-visible) { outline: 3px solid var(--p); outline-offset: -3px; }
+.tt .ind { position: absolute; left: 0; bottom: -1px; width: 33.333%; height: 3px; background: var(--p); border-radius: 3px; transition: transform .25s ease; }
+.tt:has(#tt2:checked) .ind { transform: translateX(100%); }
+.tt:has(#tt3:checked) .ind { transform: translateX(200%); }
+
+/* 03 드로어: 옆에서 밀려 나오는 패널 + 뒤를 어둡게 하는 막(scrim) */
+.scrim { position: absolute; inset: 0; background: rgba(30,27,75,.45); opacity: 0; pointer-events: none; transition: opacity .25s; }
+.drawer { position: absolute; top: 0; bottom: 0; left: 0; width: 120px; background: #fff; padding: 12px; display: grid; gap: 4px; align-content: start; transform: translateX(-102%); transition: transform .28s ease; box-shadow: 4px 0 16px rgba(30,27,75,.2); font-size: 12px; font-weight: 600; }
+.drawer span { padding: 7px 8px; border-radius: 8px; }
+.drawer span:first-child { background: var(--p-soft); color: var(--p); }
+#dr:checked ~ .scrim { opacity: 1; pointer-events: auto; }
+#dr:checked ~ .drawer { transform: none; }
+#dr:focus-visible ~ .hd label { outline: 3px solid var(--p); }
+.ph label.hit { display: grid; place-items: center; width: 28px; height: 28px; cursor: pointer; border-radius: 8px; }
+
+/* 04 브레드크럼: 글자 사이에 › 를 두고 마지막만 굵게 */
+.bc { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; }
+.bc a { color: var(--p); text-decoration: none; font-weight: 600; }
+.bc a:hover { text-decoration: underline; }
+.bc i { font-style: normal; color: var(--mute); }
+.bc b { color: var(--ink); }
+
+/* 05 고정 헤더: 스크롤 되는 상자 안에서 position: sticky 로 위에 붙는다 */
+.sc { width: 230px; height: 190px; overflow: auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.sc .sticky { position: sticky; top: 0; z-index: 1; padding: 9px 12px; background: var(--p); color: #fff; font-weight: 700; font-size: 12px; box-shadow: 0 2px 6px rgba(30,27,75,.2); }
+.sc .rows { padding: 10px 12px; display: grid; gap: 10px; }
+.sc .rows div { height: 34px; border-radius: 8px; background: #e6e9f5; }
+
+/* 06 플로팅 버튼: 내용 위에 떠 있는 동그라미. 누르면 +가 돌며 보조 버튼이 올라온다 */
+.fab { position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border-radius: 50%; background: var(--p); color: #fff; display: grid; place-items: center; box-shadow: 0 4px 12px rgba(79,70,229,.45); cursor: pointer; transition: transform .25s; z-index: 2; }
+.fab .d-svg { stroke-width: 2.5; }
+.mini { position: absolute; right: 18px; bottom: 18px; width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--p); display: grid; place-items: center; box-shadow: 0 2px 8px rgba(30,27,75,.25); opacity: 0; transition: transform .25s, opacity .25s; }
+.mini .d-svg { width: 16px; height: 16px; }
+#fb:checked ~ .fab { transform: rotate(45deg); }
+#fb:checked ~ .m1 { opacity: 1; transform: translateY(-58px); }
+#fb:checked ~ .m2 { opacity: 1; transform: translateY(-100px); }
+#fb:focus-visible ~ .fab { outline: 3px solid var(--p); outline-offset: 3px; }
+
+/* 07 페이지네이션: 라디오 버튼을 숫자 칸으로 꾸민다 */
+.pg { display: flex; gap: 4px; }
+.pg label { min-width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; border: 1px solid var(--line); background: #fff; font-weight: 700; cursor: pointer; }
+.pg label:has(input:checked) { background: var(--p); border-color: var(--p); color: #fff; }
+.pg label:has(:focus-visible) { outline: 3px solid var(--p); outline-offset: 2px; }
+.pg .d-svg { width: 16px; height: 16px; }
+
+/* 08 무한 스크롤: 똑같은 카드가 계속 올라오고, 멈출 때마다 아래에 스피너가 돈다 */
+.win { position: relative; width: 230px; height: 170px; overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.strip { padding: 8px 10px; display: grid; gap: 8px; animation: feed 4.8s ease-in-out infinite; }
+.strip div { height: 44px; border-radius: 10px; background: #e6e9f5; display: grid; align-content: center; gap: 6px; padding: 0 10px; }
+.strip div::before, .strip div::after { content: ""; height: 7px; border-radius: 9px; background: #c9cfe6; width: 70%; }
+.strip div::after { width: 40%; }
+@keyframes feed { 0%, 30% { transform: none; } 50%, 80% { transform: translateY(-104px); } 100% { transform: translateY(-208px); } }
+.win .more { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; display: grid; place-items: center; background: linear-gradient(transparent, #fff 60%); opacity: 0; animation: fetch 4.8s linear infinite; }
+.win .more i { width: 16px; height: 16px; border: 3px solid #d5daea; border-top-color: var(--p); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes fetch { 0%, 28% { opacity: 0; } 32%, 46% { opacity: 1; } 50%, 78% { opacity: 0; } 82%, 96% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 09 뒤로 가기: 새 화면이 옆에서 들어왔다가, 뒤로 가기를 누르면 같은 방향으로 되돌아간다 */
+.nav .a { position: absolute; inset: 0; }
+.nav .b { position: absolute; inset: 0; background: #fff; display: flex; flex-direction: column; box-shadow: -6px 0 14px rgba(30,27,75,.15); animation: push 4.4s ease-in-out infinite; }
+@keyframes push { 0%, 6% { transform: translateX(105%); } 22%, 62% { transform: none; } 78%, 100% { transform: translateX(105%); } }
+.nav .back { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; animation: tap 4.4s linear infinite; }
+@keyframes tap { 0%, 56% { background: transparent; transform: none; } 60% { background: var(--p-soft); transform: scale(1.2); } 66%, 100% { background: transparent; transform: none; } }
+
+/* 추가: 맨 위로 버튼 — 스크롤이 내려간 뒤에만 나타난다 */
+.totop { position: absolute; right: 10px; bottom: 10px; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; animation: topshow 4s ease-in-out infinite; }
+@keyframes topshow { 0%, 35% { opacity: 0; transform: translateY(8px); } 50%, 85% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(8px); } }
+.win .strip.sl { animation: slow 4s ease-in-out infinite; }
+@keyframes slow { 0%, 15% { transform: none; } 45%, 85% { transform: translateY(-80px); } 100% { transform: none; } }
+/* 추가: 세그먼트 컨트롤 — 한 덩어리 안에서 하얀 알약이 움직인다 */
+.seg { position: relative; display: grid; grid-template-columns: 1fr 1fr 1fr; width: 220px; padding: 3px; border-radius: 10px; background: #dfe3f0; }
+.seg label { position: relative; z-index: 1; text-align: center; padding: 6px 0; font-size: 12px; font-weight: 700; cursor: pointer; }
+.seg label:has(input:checked) { color: var(--p); }
+.seg label:has(:focus-visible) { outline: 3px solid var(--p); }
+.seg .pill { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / 3); border-radius: 8px; background: #fff; box-shadow: 0 1px 4px rgba(30,27,75,.2); transition: transform .25s ease; }
+.seg:has(#sg2:checked) .pill { transform: translateX(100%); }
+.seg:has(#sg3:checked) .pill { transform: translateX(200%); }
+.rd input { position: absolute; opacity: 0; pointer-events: none; }
+/* 추가: 더 보기 버튼 — 누를 때마다 줄이 늘어난다(체크박스로 숨은 줄 펼치기) */
+.lm { width: 220px; display: grid; gap: 8px; }
+.lm .row2 { display: none; }
+.lm:has(#lm:checked) .row2 { display: block; }
+.lm .row2 div, .lm .r1 { height: 30px; border-radius: 8px; background: #e6e9f5; }
+.lm:has(#lm:checked) .btn { display: none; }
+.lm .btn { cursor: pointer; text-align: center; padding: 8px 0; border-radius: 10px; border: 1px solid var(--line); background: #fff; font-weight: 700; color: var(--p); }
+.lm input { position: absolute; opacity: 0; }
+.lm:has(:focus-visible) .btn { outline: 3px solid var(--p); }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">이동과 아이콘</a><span class="sep">›</span>
+  <span>화면 이동</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>화면 이동 9가지</h1>
+    <p class="lead">화면 사이를 오가는 길에도 이름이 있어요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="tab-bar">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="ph">
+            <div class="hd">모아보기</div>
+            <div class="ct"><div class="d-bar dark" style="width:55%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div><div class="d-bar"></div></div>
+            <nav class="tb" aria-label="하단 탭바 예시">
+              <label><input type="radio" name="tb" checked><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9H4z"/></svg>홈</label>
+              <label><input type="radio" name="tb"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.500-4.500"/></svg>검색</label>
+              <label><input type="radio" name="tb"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.400-7-10a4 4 0 0 1 7-2.600A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg>찜</label>
+              <label><input type="radio" name="tb"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>내 정보</label>
+            </nav>
+          </div>
+          <span class="d-cap">탭을 눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">하단 탭바 <span class="en">Tab bar</span></h2>
+        <p class="desc">화면 맨 아래에 붙은 줄로, 앱의 가장 큰 구역 3~5개를 한 번에 오가게 합니다. 안드로이드에서는 <strong>내비게이션 바(Bottom navigation)</strong>라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>홈·검색·알림·내 정보처럼 자주 오가는 최상위 구역이 3~5개인 모바일 앱.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>화면 아래에 아이콘과 글자가 함께 있는 하단 탭바를 4칸으로 만들고 현재 탭을 주색으로 강조해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>6칸이 넘으면 글자가 잘려서 아이콘 맞히기 게임이 됩니다. 아이콘만 두지 말고 글자를 붙이세요. 안드로이드 기본 제스처 바나 아이폰 홈 막대와 겹치지 않게 아래 여백도 확보해야 하고, 탭을 바꿔도 각 탭의 스크롤 위치를 기억해 주는지는 개발자와 꼭 맞춰 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="top-tabs">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="ph" style="height:170px">
+            <div class="tt" role="tablist">
+              <label><input type="radio" name="tt" id="tt1" checked style="position:absolute;opacity:0">추천</label>
+              <label><input type="radio" name="tt" id="tt2" style="position:absolute;opacity:0">팔로잉</label>
+              <label><input type="radio" name="tt" id="tt3" style="position:absolute;opacity:0">인기</label>
+              <i class="ind"></i>
+            </div>
+            <div class="ct"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:75%"></div><div class="d-bar"></div></div>
+          </div>
+          <span class="d-cap">탭을 눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">상단 탭 <span class="en">Top tabs</span></h2>
+        <p class="desc">같은 화면 안에서 내용 묶음을 갈아 끼우는 윗줄입니다. 하단 탭바가 "앱의 큰 구역"이라면 상단 탭은 "한 구역 안의 보기 방식"입니다. <strong>탭 바(Tabs)</strong>, 칸이 많으면 <strong>스크롤 탭</strong>이라고 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>피드의 추천/팔로잉, 상품의 상세/후기/문의처럼 같은 대상을 나눠 보여줄 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상품 상세 상단에 상세·후기·문의 상단 탭을 만들고 선택한 탭 아래에 밑줄이 따라 움직이게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>탭 이름이 길어 줄바꿈되거나 한글 번역이 길어져 칸이 넘치는 경우가 흔합니다. 탭이 5개를 넘으면 옆으로 스크롤하되 잘린 탭이 살짝 보이게 해서 더 있음을 알려 주세요. 옆으로 쓸어 넘기는 동작을 넣을지 여부도 정해야 합니다. 지도나 가로 목록과 제스처가 부딪힙니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="drawer">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="ph">
+            <input type="checkbox" id="dr" aria-label="드로어 열기">
+            <div class="hd"><label for="dr" class="hit" aria-hidden="true"><svg class="d-svg" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></label>홈</div>
+            <div class="ct"><div class="d-bar dark" style="width:50%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div><div class="d-bar"></div></div>
+            <label for="dr" class="scrim" aria-hidden="true"></label>
+            <nav class="drawer" aria-label="드로어 예시"><span>홈</span><span>설정</span><span>보관함</span><span>도움말</span></nav>
+          </div>
+          <span class="d-cap">줄 3개를 눌러 열고, 어두운 곳을 눌러 닫아 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">드로어 <span class="en">Navigation drawer</span></h2>
+        <p class="desc">화면 옆에서 서랍처럼 밀려 나오는 메뉴 패널입니다. 평소에는 숨겨져 있어서 화면을 넓게 쓸 수 있습니다. <strong>사이드 메뉴, 슬라이드 메뉴, 오프캔버스</strong>라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>메뉴가 많은 앱, 관리자 화면처럼 이동할 곳이 6개 이상이고 자주 쓰지 않는 항목이 섞여 있을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>왼쪽 상단 버튼을 누르면 왼쪽에서 드로어가 열리고 뒤 화면은 어둡게 덮이며, 어두운 곳을 누르면 닫히게 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>숨겨 둔 메뉴는 사람들이 잘 안 누릅니다. 가장 자주 쓰는 구역은 탭바에 두고 드로어에는 덜 쓰는 것만 담으세요. 열렸을 때 키보드 포커스가 패널 안에 머물고, 닫으면 열었던 버튼으로 돌아오게 해야 합니다. 안드로이드의 뒤로 가기와 가장자리 쓸기 동작이 충돌하는 것도 자주 놓칩니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="breadcrumb">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:14px">
+          <nav class="d-box bc" aria-label="브레드크럼 예시"><a href="#breadcrumb">홈</a><i>›</i><a href="#breadcrumb">노트북</a><i>›</i><a href="#breadcrumb">13인치</a><i>›</i><b>모델 A</b></nav>
+          <span class="d-cap">지금 위치: 홈 &gt; 노트북 &gt; 13인치 &gt; 모델 A</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">브레드크럼 <span class="en">Breadcrumb</span></h2>
+        <p class="desc">"홈 &gt; 노트북 &gt; 13인치"처럼 지금 위치까지 지나온 길을 한 줄로 보여주는 것입니다. 동화 속에서 빵 부스러기를 흘려 길을 찾는 데서 나온 이름입니다. 앞 단계는 눌러서 바로 돌아갈 수 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>단계가 깊은 쇼핑몰 카테고리, 문서 사이트, 관리자 화면처럼 폴더식으로 겹겹이 들어가는 웹.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상품 상세 상단에 홈 &gt; 카테고리 &gt; 상품명 순서의 브레드크럼을 넣고 마지막 항목은 링크 없이 굵게 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모바일 폭에서는 한 줄에 안 들어가 두 줄로 터지기 일쑤입니다. 가운데를 "…"로 줄이거나 바로 위 단계 하나만 "‹ 노트북"으로 보여주세요. 상품이 여러 카테고리에 걸려 있으면 어느 길로 들어왔는지(사용자의 이동 경로)와 원래 소속 경로 중 무엇을 보여줄지도 정해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="sticky-header">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="sc" tabindex="0" aria-label="스크롤 되는 상자">
+            <div class="sticky">제목은 위에 붙어 있어요</div>
+            <div class="rows"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          </div>
+          <span class="d-cap">상자 안을 스크롤해 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">고정 헤더 <span class="en">Sticky header</span></h2>
+        <p class="desc">스크롤해도 화면 위에 달라붙어 따라오는 머리글입니다. CSS의 <strong>position: sticky</strong>가 바로 이 동작입니다. 처음부터 끝까지 고정하는 fixed 헤더와 달리, 자기 영역이 끝나면 함께 밀려납니다.</p>
+        <p class="when"><b>언제 쓰나</b>긴 목록의 날짜 구분, 표의 열 제목, 항상 필요한 검색창과 로고 줄.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>목록 위 머리글은 position: sticky로 상단에 고정하고, 스크롤하면 그림자가 생기게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>헤더가 크면 화면의 4분의 1을 영구히 가립니다. 특히 가로로 눕힌 폰이나 키보드가 올라온 화면에서 치명적이므로, 내릴 때는 숨기고 올릴 때만 보이게 하는 방식도 검토하세요. 또 sticky는 부모에 overflow가 걸려 있으면 안 붙는 경우가 많아, 개발자가 "왜 안 붙지?" 하는 단골 원인이 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="fab">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="ph">
+            <input type="checkbox" id="fb" aria-label="플로팅 버튼 펼치기">
+            <div class="hd">메모</div>
+            <div class="ct"><div class="d-bar dark" style="width:50%"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div><div class="d-bar"></div><div class="d-bar" style="width:85%"></div></div>
+            <span class="mini m1" aria-hidden="true"><svg class="d-svg" viewBox="0 0 24 24"><path d="M5 19l1-4L16 5l3 3L9 18z"/></svg></span>
+            <span class="mini m2" aria-hidden="true"><svg class="d-svg" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 15l5-4 5 4 3-2 3 2"/></svg></span>
+            <label for="fb" class="fab"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></label>
+          </div>
+          <span class="d-cap">동그란 버튼을 눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">플로팅 버튼 <span class="en">Floating action button</span></h2>
+        <p class="desc">내용 위에 떠 있는 동그란 버튼으로, 그 화면에서 가장 중요한 행동 하나를 가리킵니다. 줄여서 <strong>FAB</strong>라고 부릅니다. 눌러서 보조 버튼이 펼쳐지는 형태는 스피드 다이얼(Speed dial)이라고 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>새 글 쓰기, 새 메모, 채팅 시작처럼 "만들기"가 그 화면의 주된 행동일 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>화면 오른쪽 아래에 새 메모를 만드는 플로팅 버튼을 띄우고, 목록 마지막 줄이 가려지지 않게 아래 여백을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>한 화면에 하나만 두세요. 둘이 되는 순간 "가장 중요한 행동"이라는 의미가 사라집니다. 목록 맨 아래 항목과 삭제 버튼 같은 우측 끝 요소를 가리는 사고가 많고, 아이콘만 있으면 용도를 모르니 접근성 이름("새 메모")을 반드시 달아야 합니다. 웹 PC 화면에서는 어색해서 보통 일반 버튼이 낫습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="pagination">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:14px">
+          <div class="d-box d-col" style="width:230px">
+            <div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div>
+          </div>
+          <div class="pg rd" role="group" aria-label="페이지 번호 예시">
+            <label><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></label>
+            <label><input type="radio" name="pg" checked>1</label>
+            <label><input type="radio" name="pg">2</label>
+            <label><input type="radio" name="pg">3</label>
+            <label><input type="radio" name="pg">4</label>
+            <label><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></label>
+          </div>
+          <span class="d-cap">숫자를 눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">페이지네이션 <span class="en">Pagination</span></h2>
+        <p class="desc">긴 목록을 1, 2, 3…쪽으로 나누고 번호로 건너뛰게 하는 방식입니다. 무한 스크롤과 달리 지금 어디쯤인지 알고, 원하는 쪽으로 곧장 갈 수 있습니다. <strong>페이징</strong>이라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색 결과, 게시판, 관리자 표처럼 "다시 찾아가기"와 위치 감각이 중요한 PC 웹.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>게시판 목록 아래에 이전·다음 버튼과 페이지 번호가 있는 페이지네이션을 넣고, 현재 쪽은 주색으로 강조해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>번호 칸은 손가락으로 누르기엔 작아서 모바일에서는 48dp 정도로 키우거나 이전/다음만 남기세요. 첫 쪽에서 "이전"을 비활성화하는 것과, 쪽을 옮기면 목록 맨 위로 스크롤을 되돌리는 것을 많이 빠뜨립니다. 주소창에 쪽 번호가 남아야 뒤로 가기와 공유가 제대로 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="infinite-scroll">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="win" role="img" aria-label="내릴 때마다 새 카드가 이어 붙는 목록">
+            <div class="strip"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <div class="more"><i></i></div>
+          </div>
+          <span class="d-cap">끝에 닿으면 다음 내용을 불러옵니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">무한 스크롤 <span class="en">Infinite scroll</span></h2>
+        <p class="desc">바닥에 닿으면 다음 내용을 자동으로 이어 붙여서 끝이 없는 것처럼 보이게 하는 방식입니다. 번호를 누르는 페이지네이션과 달리 손가락만 계속 내리면 됩니다.</p>
+        <p class="when"><b>언제 쓰나</b>소셜 피드, 사진 모음, 추천 영상처럼 훑어보며 소비하고 특정 항목을 다시 찾을 일이 적은 목록.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>피드는 바닥 근처에 오면 다음 20개를 자동으로 불러오는 무한 스크롤로 만들고, 불러오는 동안 아래에 스피너를 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>맨 아래에 있는 푸터(회사 정보, 약관)에 영영 닿을 수 없는 문제가 가장 유명합니다. 또 본 곳으로 돌아가려고 상세 화면에서 뒤로 가면 맨 위로 튕겨 가는 일이 잦으니 스크롤 위치 복원은 필수입니다. 끝에 도달했을 때 "여기까지입니다" 표시와 불러오기 실패 시 다시 시도 버튼도 설계하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="back-navigation">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="ph nav">
+            <div class="a"><div class="hd">목록</div><div class="ct"><div class="d-bar dark" style="width:50%"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div></div></div>
+            <div class="b"><div class="hd"><span class="back" aria-hidden="true"><svg class="d-svg" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></span>상세</div><div class="ct"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:85%"></div><div class="d-bar"></div></div></div>
+          </div>
+          <span class="d-cap">단순화한 예시: 들어갔다가 뒤로 나옵니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">뒤로 가기 <span class="en">Back navigation</span></h2>
+        <p class="desc">직전 화면으로 돌아가는 동작입니다. 왼쪽 위 화살표 버튼, 브라우저의 뒤로 가기, 안드로이드의 시스템 뒤로 가기, 아이폰의 가장자리 쓸기가 모두 여기에 해당합니다.</p>
+        <p class="when"><b>언제 쓰나</b>목록에서 상세로 들어갔다가 나올 때처럼, 쌓인 화면을 한 장씩 되돌릴 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상세 화면 왼쪽 위에 뒤로 가기 화살표를 두고, 누르면 직전 목록과 스크롤 위치가 그대로 복원되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>뒤로 가기가 "앱 닫기"가 되거나 같은 화면을 맴돌게 하는 버그가 가장 흔합니다. 로그인이나 결제 완료 직후 화면에서 뒤로 가면 이미 끝난 단계로 돌아가는 문제도 있으니, 돌아가면 안 되는 화면은 기록에서 지워야 합니다. 웹은 SPA에서 주소 기록(history)을 개발자가 직접 챙겨야 하는 점이 가장 큰 차이입니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">화면 이동을 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="back-to-top">
+      <div class="demo">
+        <div class="win" role="img" aria-label="내려가면 맨 위로 버튼이 나타나는 목록">
+          <div class="strip sl"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          <span class="totop"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 12l6-6 6 6"/></svg></span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">맨 위로 버튼 <span class="en">Back to top</span></h2>
+        <p class="desc">많이 내려간 뒤에만 나타나서, 누르면 화면 맨 위로 되돌려 주는 작은 버튼입니다. 무한 스크롤이나 긴 문서에서 올라오는 수고를 덜어 줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>기사, 약관, 긴 후기 목록처럼 스크롤이 몇 화면 이상 길어지는 페이지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>화면을 두 번 이상 내리면 오른쪽 아래에 맨 위로 버튼이 나타나고, 누르면 부드럽게 올라가게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>플로팅 버튼과 같은 자리를 노리다 서로 겹치는 일이 잦습니다. 한쪽을 위로 올리거나, 아이폰은 상태 표시줄을 누르면 맨 위로 가는 기본 동작이 있으니 모바일 앱에서는 굳이 만들지 않아도 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="segmented-control">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:12px">
+          <div class="seg rd" role="group" aria-label="세그먼트 컨트롤 예시">
+            <i class="pill"></i>
+            <label><input type="radio" name="sg" id="sg1" checked>일간</label>
+            <label><input type="radio" name="sg" id="sg2">주간</label>
+            <label><input type="radio" name="sg" id="sg3">월간</label>
+          </div>
+          <span class="d-cap">눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">세그먼트 컨트롤 <span class="en">Segmented control</span></h2>
+        <p class="desc">한 덩어리 안에 2~4개의 보기 방식을 나란히 두고 하나만 고르게 하는 스위치입니다. 상단 탭과 비슷하게 생겼지만, 화면을 이동하는 게 아니라 같은 내용을 다른 기준으로 바꿔 보여줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>일간/주간/월간 보기, 지도/목록 전환처럼 같은 데이터의 보기 방식을 바꿀 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>통계 화면 위에 일간·주간·월간 세그먼트 컨트롤을 넣고 선택하면 아래 차트만 바뀌게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>칸이 4개를 넘거나 글자가 길면 칸 너비가 달라져 흔들립니다. 그때는 탭이나 드롭다운으로 바꾸세요. 선택 즉시 바뀌어야 하므로 "적용" 버튼을 따로 붙이면 오히려 혼란스럽습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="load-more">
+      <div class="demo">
+        <label class="lm">
+          <input type="checkbox" id="lm" aria-label="더 보기">
+          <div class="r1"></div><div class="r1"></div>
+          <div class="row2"><div></div></div>
+          <div class="row2"><div></div></div>
+          <span class="btn">더 보기</span>
+          <span class="d-cap" style="text-align:center">버튼을 눌러 보세요</span>
+        </label>
+      </div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">더 보기 버튼 <span class="en">Load more</span></h2>
+        <p class="desc">목록 끝에 버튼을 두고, 누를 때만 다음 내용을 이어 붙입니다. 자동으로 불러오는 무한 스크롤과 번호로 나누는 페이지네이션의 중간 방식입니다.</p>
+        <p class="when"><b>언제 쓰나</b>후기, 댓글, 상품 목록처럼 이어서 보되 바닥의 푸터에도 닿아야 하는 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>후기 목록은 처음 10개만 보여주고 아래 더 보기 버튼을 누르면 10개씩 이어서 불러오게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>누른 뒤 새 항목이 어디부터인지 알 수 있게 첫 새 항목으로 포커스를 옮기거나 구분해 주세요. 스크린리더 사용자는 목록이 늘어난 것을 모릅니다. 남은 개수("12개 더 보기")를 적어 주면 누를지 말지 판단하기 쉽습니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

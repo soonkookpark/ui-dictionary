@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="추가 용어 50: 2부 동작·기획·지표 — 움직이는 예시로 보는 UI 용어 사전">
+<title>추가 용어 2부: 동작·기획·지표 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+.vh { position: absolute; opacity: 0; width: 1px; height: 1px; }                 /* 보이지 않지만 키보드로 누를 수 있는 input */
+.mini { width: 290px; height: 190px; position: relative; overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.ph { width: 150px; height: 190px; position: relative; overflow: hidden; background: #fff; border: 2px solid #c9cfe6; border-radius: 16px; }
+
+/* 01 일괄 선택: 체크된 input 마다 CSS counter 를 올리고, 하단 바에 그 숫자를 찍는다 */
+.bk { counter-reset: sel; display: grid; grid-template-rows: 1fr auto; }
+.bk .rows { padding: 8px; display: grid; gap: 4px; align-content: start; }
+.bk .rows label { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: var(--stage); font-weight: 600; cursor: pointer; }
+.bk .rows label:has(:checked) { background: var(--p-soft); }
+.bk input { accent-color: var(--p); width: 16px; height: 16px; margin: 0; }
+.bk input:checked { counter-increment: sel; }
+.bk .bar { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: var(--ink); color: #fff; font-weight: 700; transform: translateY(100%); transition: transform .2s; }
+.bk:has(:checked) .bar { transform: none; }
+.bk .bar::before { content: counter(sel) "개 선택"; margin-right: auto; }
+.bk .bar span { padding: 3px 10px; border-radius: 99px; background: rgba(255,255,255,.18); font-size: 12px; }
+
+/* 02 자동 저장: 입력하면 JS 가 상태 글자를 "저장 중" → "저장됨" 으로 바꾼다 */
+.as { width: 270px; }
+.as .st { display: flex; align-items: center; gap: 6px; height: 22px; margin-top: 8px; color: var(--mute); font-weight: 600; font-size: 12px; }
+.as .st .d-svg { width: 14px; height: 14px; }
+.as .sp { width: 12px; height: 12px; border: 2px solid #d5daea; border-top-color: var(--p); border-radius: 50%; animation: spin .8s linear infinite; display: none; }
+.as[data-s="saving"] .sp { display: block; }
+.as[data-s="saving"] .ok, .as[data-s="idle"] .ok { display: none; }
+.as[data-s="saved"] .ok { color: var(--ok); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 03 드래그 핸들: radial-gradient 로 점 6개를 찍은 손잡이 (순서 바꾸기는 아래 JS) */
+.dh { width: 250px; display: grid; gap: 6px; padding: 0; margin: 0; list-style: none; }
+.dh li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: #fff; border: 1px solid var(--line); box-shadow: 0 2px 6px rgba(30,27,75,.06); font-weight: 600; }
+.dh li.drag { opacity: .4; }
+.grip { width: 12px; height: 18px; cursor: grab; background: radial-gradient(circle, #8a93b2 1.5px, transparent 2px) 0 0 / 6px 6px; flex: none; }
+
+/* 04 구분선: border 한 줄로 만든 가로선, 글자가 낀 선, 세로선 */
+.dv .hr { height: 0; border: 0; border-top: 1px solid var(--line); margin: 0; }
+.dv .lab { display: flex; align-items: center; gap: 8px; color: var(--mute); font-size: 12px; font-weight: 600; }
+.dv .lab::before, .dv .lab::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+.dv .vl { width: 0; align-self: stretch; border-left: 1px solid #b9c0dc; }
+
+/* 05 미니 플레이어: 아래에 붙은 막대 + 진행선. 체크박스로 재생/정지(animation-play-state) */
+.mp .pg { position: absolute; left: 0; right: 0; bottom: 0; height: 52px; background: var(--ink); color: #fff; display: flex; align-items: center; gap: 8px; padding: 0 8px; }
+.mp .cv { width: 34px; height: 34px; border-radius: 6px; background: linear-gradient(135deg, #f97316, #a855f7); flex: none; }
+.mp .pg b { font-size: 12px; } .mp .pg small { display: block; color: #aab; font-size: 11px; font-weight: 500; }
+.mp .pg label { margin-left: auto; width: 30px; height: 30px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+.mp .pg label .d-svg { width: 16px; height: 16px; fill: currentColor; stroke: none; }
+.mp .pause { display: none; }
+.mp input:checked ~ .pg .play { display: none; } .mp input:checked ~ .pg .pause { display: block; }
+.mp .pg::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--p); transform-origin: left; transform: scaleX(.1); animation: mpg 6s linear infinite paused; }
+.mp input:checked ~ .pg::after { animation-play-state: running; }
+@keyframes mpg { to { transform: scaleX(1); } }
+.mp .pip { position: absolute; top: 8px; right: 8px; width: 72px; height: 44px; border-radius: 8px; background: linear-gradient(135deg, #38bdf8, #4f46e5); box-shadow: 0 6px 14px rgba(30,27,75,.3); }
+.mp:has(:focus-visible) { outline: 3px solid var(--p); }
+
+/* 06 지도 핀과 클러스터: 같은 자리의 핀 여러 개를 숫자 원 하나로 묶고, 확대하면 풀어 준다 */
+.mm .map { position: absolute; inset: 0; background: linear-gradient(#e7ecf8 1px, transparent 1px) 0 0 / 28px 28px, linear-gradient(90deg, #e7ecf8 1px, transparent 1px) 0 0 / 28px 28px, #f4f7fd; }
+.mm .map::before { content: ""; position: absolute; left: -10px; right: -10px; top: 80px; height: 14px; background: #dce4f6; transform: rotate(-12deg); }
+.mm .pin { position: absolute; width: 18px; height: 18px; border-radius: 50% 50% 50% 0; background: var(--danger); transform: rotate(-45deg); border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,.25); transition: opacity .25s, transform .3s; }
+.mm .cl { position: absolute; left: 112px; top: 62px; width: 44px; height: 44px; border-radius: 50%; background: var(--p); color: #fff; display: grid; place-items: center; font-weight: 800; border: 4px solid rgba(79,70,229,.3); background-clip: padding-box; transition: opacity .25s; }
+.mm .sing { opacity: 0; transform: rotate(-45deg) scale(.3); }
+.mm input:checked ~ .sing { opacity: 1; transform: rotate(-45deg); }
+.mm input:checked ~ .cl { opacity: 0; pointer-events: none; }
+.mm label.zm { position: absolute; left: 8px; bottom: 8px; z-index: 2; cursor: pointer; }
+.mm:has(:focus-visible) { outline: 3px solid var(--p); }
+
+/* 07 고정 열: 표를 가로 스크롤하되 첫 열만 position: sticky 로 붙들어 둔다 */
+.fz { overflow: auto; }
+.fz table { border-collapse: separate; border-spacing: 0; min-width: 560px; font-size: 12px; }
+.fz th, .fz td { padding: 8px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; text-align: left; background: #fff; }
+.fz thead th { position: sticky; top: 0; background: var(--stage); z-index: 2; }
+.fz th:first-child, .fz td:first-child { position: sticky; left: 0; z-index: 1; box-shadow: 2px 0 4px rgba(30,27,75,.1); font-weight: 700; }
+.fz thead th:first-child { z-index: 3; }
+
+/* 08 가상 스크롤: 높이만 1만 줄 크기로 잡고, 실제 DOM 행은 보이는 만큼만 JS 로 만든다 */
+.vs { display: grid; gap: 6px; }
+.vs .vp { position: relative; height: 144px; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.vs .sp { position: relative; }
+.vs .vr { position: absolute; left: 0; right: 0; height: 30px; padding: 5px 12px; border-bottom: 1px solid var(--line); font-weight: 600; }
+
+/* 09 레이지 로딩: 화면에 들어온 타일만 JS(IntersectionObserver)가 "불러옴" 상태로 바꾼다 */
+.lz { display: grid; gap: 6px; }
+.lz .vp { height: 144px; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px; padding: 8px; display: grid; gap: 8px; background: #fff; }
+.lz .t { height: 70px; flex: none; border-radius: 8px; display: grid; place-items: center; background: #e6e9f5; color: var(--mute); font-weight: 600; }
+.lz .t.on { background: linear-gradient(135deg, #93c5fd, #4f46e5); color: #fff; animation: fade .4s; }
+@keyframes fade { from { opacity: 0; } }
+
+/* 10 딥링크: 단계 상자가 차례로 켜지는 step 애니메이션. 위는 돌아가는 길, 아래는 바로 가는 길 */
+.dl { width: 285px; display: grid; gap: 14px; }
+.dl .row { display: flex; align-items: center; gap: 6px; }
+.dl .row > span:first-child { width: 58px; font-size: 11px; font-weight: 700; color: var(--mute); }
+.dl .s { padding: 7px 8px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font-weight: 700; font-size: 12px; animation: lit 3s step-end infinite; }
+.dl .row.fast .s { animation-duration: 3s; }
+.dl .a { animation-delay: 0s; } .dl .b { animation-delay: 1s; } .dl .c { animation-delay: 2s; }
+.dl .fast .a { animation-name: litf1; } .dl .fast .b { animation-name: litf2; animation-delay: 0s; }
+.dl i { color: var(--mute); font-style: normal; font-size: 12px; }
+@keyframes lit { 0% { background: var(--p); color: #fff; border-color: var(--p); } 33.3%, 100% { background: #fff; color: var(--ink); border-color: var(--line); } }
+@keyframes litf1 { 0% { background: var(--p); color: #fff; } 50%, 100% { background: #fff; color: var(--ink); } }
+@keyframes litf2 { 0% { background: #fff; color: var(--ink); } 50% { background: var(--p); color: #fff; border-color: var(--p); } 100% { background: #fff; color: var(--ink); } }
+
+/* 11 푸시 vs 인앱: 왼쪽은 잠금 화면 위의 알림 카드, 오른쪽은 앱 안에서 위에서 내려오는 배너 */
+.pv { width: 120px; height: 180px; border-radius: 14px; position: relative; overflow: hidden; }
+.pv.lock { background: linear-gradient(160deg, #1e1b4b, #4338ca); color: #fff; }
+.pv.lock .t { text-align: center; margin-top: 18px; font-size: 22px; font-weight: 800; }
+.pv.lock .n { margin: 14px 8px 0; padding: 7px 8px; border-radius: 10px; background: rgba(255,255,255,.92); color: var(--ink); font-size: 11px; line-height: 1.35; }
+.pv.app { background: #fff; border: 2px solid #c9cfe6; }
+.pv.app .d-bar { margin: 10px 10px 0; }
+.pv.app .ban { position: absolute; left: 6px; right: 6px; top: 6px; padding: 7px 8px; border-radius: 8px; background: var(--ink); color: #fff; font-size: 11px; font-weight: 600; animation: drop 4s ease-in-out infinite; }
+@keyframes drop { 0%, 10% { transform: translateY(-140%); } 25%, 70% { transform: none; } 85%, 100% { transform: translateY(-140%); } }
+
+/* 12 알림 센터: 종 아이콘 + 배지, 눌러서 목록을 펼친다 */
+.nc .bell { position: absolute; right: 12px; top: 10px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--stage); cursor: pointer; }
+.nc .badge { position: absolute; right: -2px; top: -2px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 99px; background: var(--danger); color: #fff; font-size: 10px; font-weight: 800; display: grid; place-items: center; }
+.nc .panel { position: absolute; left: 10px; right: 10px; top: 54px; display: none; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 8px 20px rgba(30,27,75,.15); overflow: hidden; }
+.nc input:checked ~ .panel { display: block; }
+.nc .panel header { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid var(--line); font-weight: 800; }
+.nc .panel header button { border: 0; background: none; color: var(--p); font: 700 11px var(--font); cursor: pointer; }
+.nc .it { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-bottom: 1px solid var(--line); font-size: 12px; }
+.nc .un { width: 7px; height: 7px; border-radius: 50%; background: var(--p); flex: none; }
+.nc.read .badge, .nc.read .un { display: none; }
+.nc:has(:focus-visible) { outline: 3px solid var(--p); }
+
+/* 13 위젯: 홈 화면에 올려 두는 작은/중간 크기 정보 카드. 걸음 링은 conic-gradient */
+.wg { background: linear-gradient(160deg, #c7d2fe, #fbcfe8); padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-content: start; }
+.wg .w { border-radius: 16px; background: rgba(255,255,255,.88); padding: 8px 10px; }
+.wg .w.m { grid-column: 1 / -1; }
+.wg .rg { width: 46px; height: 46px; border-radius: 50%; background: conic-gradient(var(--ok) 0 70%, #d5daea 0); display: grid; place-items: center; margin: 2px auto 0; }
+.wg .rg::before { content: "70%"; width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 10px; font-weight: 800; }
+.wg .tmp { font-size: 22px; font-weight: 800; }
+.wg .ev { display: flex; gap: 6px; align-items: center; padding: 3px 0; font-size: 12px; font-weight: 600; }
+.wg .ev i { width: 4px; height: 14px; border-radius: 2px; background: var(--p); }
+
+/* 14 페르소나: 가상 인물의 카드. 아바타 + 목표/불만 두 칸 */
+.pe { width: 285px; display: grid; gap: 8px; }
+.pe .hd { display: flex; align-items: center; gap: 10px; }
+.pe .av { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #fdba74, #ea580c); display: grid; place-items: center; color: #fff; font-weight: 800; }
+.pe .q { padding: 6px 10px; border-radius: 10px; background: var(--p-soft); color: var(--p); font-weight: 700; }
+.pe .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pe .two div { padding: 6px 8px; border-radius: 8px; background: #fff; border: 1px solid var(--line); }
+.pe .two b { display: block; font-size: 11px; margin-bottom: 2px; }
+.pe .two .g b { color: var(--ok); } .pe .two .p b { color: var(--danger); }
+
+/* 16 유저 스토리: 세 칸 문장 + 완료 조건 체크박스 */
+.us { width: 285px; display: grid; gap: 6px; }
+.us .l { padding: 6px 10px; border-radius: 8px; background: #fff; border: 1px solid var(--line); }
+.us .l b { color: var(--p); margin-right: 4px; }
+.us .ac { display: grid; gap: 4px; padding-top: 2px; }
+.us .ac label { display: flex; align-items: center; gap: 6px; font-weight: 600; cursor: pointer; }
+.us input { accent-color: var(--ok); }
+
+/* 17 사이트맵: SVG 로 그린 계층 도식 */
+.sm text { font: 700 10px var(--font); fill: var(--ink); text-anchor: middle; }
+.sm .bx { fill: #fff; stroke: #aab2d5; stroke-width: 1.2; }
+.sm .rt { fill: var(--p); stroke: none; }
+.sm .ln { stroke: #aab2d5; stroke-width: 1.2; fill: none; }
+
+/* 18 와이어플로: 화면 3개 + 화살표. 점선이 흐르는 stroke-dashoffset 애니메이션 */
+.wf .ar { stroke: var(--p); stroke-width: 1.8; fill: none; stroke-dasharray: 4 3; animation: flow 1s linear infinite; }
+.wf .ar.bad { stroke: var(--danger); }
+.wf .sc { fill: #fff; stroke: #aab2d5; stroke-width: 1.2; }
+.wf .ba { fill: #d5daea; } .wf .bt { fill: var(--p); }
+.wf text { font: 700 8px var(--font); fill: var(--mute); text-anchor: middle; }
+@keyframes flow { to { stroke-dashoffset: -14; } }
+
+/* 19 휴리스틱 평가: 발견한 문제 + 심각도 칸 */
+.he { width: 285px; display: grid; gap: 6px; }
+.he .r { padding: 7px 10px; border-radius: 10px; background: #fff; border: 1px solid var(--line); display: grid; gap: 3px; }
+.he .r b { font-size: 11px; color: var(--p); }
+.he .sv { display: flex; align-items: center; gap: 3px; font-size: 11px; color: var(--mute); font-weight: 700; }
+.he .sv i { width: 14px; height: 6px; border-radius: 3px; background: #d5daea; }
+.he .sv i.on { background: var(--danger); } .he .sv i.mid { background: var(--warn); }
+
+/* 20 멘탈 모델: 사용자 머릿속과 실제 시스템의 어긋남 */
+.mmod { width: 285px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px; align-items: center; }
+.mmod .c { padding: 10px 8px; border-radius: 12px; text-align: center; border: 1.5px dashed #aab2d5; background: #fff; }
+.mmod .c.sys { border-style: solid; background: var(--stage); }
+.mmod .c b { display: block; font-size: 12px; margin-bottom: 4px; color: var(--p); }
+.mmod .gap { color: var(--danger); font-weight: 800; font-size: 11px; text-align: center; animation: pulse 1.8s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { transform: none; opacity: 1; } 50% { transform: scale(1.12); opacity: .6; } }
+
+/* 21 전환율: 단계마다 줄어드는 가로 막대. scaleX 로 자라난다 */
+.cvr { width: 285px; display: grid; gap: 7px; }
+.cvr .r { display: grid; grid-template-columns: 54px 1fr 40px; gap: 8px; align-items: center; font-weight: 600; }
+.cvr .bar { height: 18px; border-radius: 5px; background: var(--p); transform-origin: left; animation: grow 4s ease-out infinite; }
+.cvr .bar.b2 { background: #818cf8; animation-delay: .15s; } .cvr .bar.b3 { background: #a5b4fc; animation-delay: .3s; }
+@keyframes grow { 0% { transform: scaleX(0); } 25%, 90% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+.cvr .res { padding: 6px 10px; border-radius: 10px; background: var(--p-soft); color: var(--p); font-weight: 800; text-align: center; }
+
+/* 22 이탈률 vs 종료율: 방문 경로를 상자와 화살표로 비교 */
+.bn { display: flex; align-items: center; gap: 3px; flex-wrap: wrap; justify-content: center; }
+.bn .pg { padding: 4px 6px; border-radius: 6px; background: #fff; border: 1px solid var(--line); font-weight: 700; font-size: 11px; }
+.bn .pg.out { background: var(--danger); border-color: var(--danger); color: #fff; }
+.bn i { font-style: normal; color: var(--mute); font-size: 11px; }
+.bn .x { color: var(--danger); font-weight: 800; font-size: 11px; }
+
+/* 23 리텐션 코호트 표: 칸 배경의 진하기(color-mix)로 값을 표현하는 히트맵 */
+.coh { border-collapse: separate; border-spacing: 3px; width: 285px; text-align: center; font-weight: 700; font-size: 12px; }
+.coh th { color: var(--mute); font-size: 11px; font-weight: 700; }
+.coh td { height: 30px; border-radius: 6px; color: var(--ink); }
+.coh td:first-child { text-align: left; color: var(--mute); font-size: 11px; background: none; }
+.coh .v { background: color-mix(in srgb, var(--p) calc(var(--v) * 1%), #fff); }
+.coh .v.hi { color: #fff; }
+
+/* 24 만족도 지표: CSAT 별점 라디오 + SUS 한 문항 */
+.sat { width: 285px; display: grid; gap: 10px; }
+.sat .box { padding: 8px 10px; border-radius: 10px; background: #fff; border: 1px solid var(--line); display: grid; gap: 6px; }
+.sat .scale { display: flex; gap: 5px; }
+.sat .scale label { flex: 1; text-align: center; padding: 5px 0; border-radius: 8px; border: 1.5px solid var(--line); font-weight: 700; cursor: pointer; }
+.sat .scale label:has(:checked) { border-color: var(--p); background: var(--p-soft); color: var(--p); }
+.sat .scale label:has(:focus-visible) { outline: 3px solid var(--p); }
+.sat .cap { display: flex; justify-content: space-between; color: var(--mute); font-size: 11px; }
+
+/* 25 과업 성공률: 참가자 5명 x 과업 3개의 성공/실패 점 */
+.ts { width: 285px; display: grid; gap: 7px; }
+.ts .r { display: grid; grid-template-columns: 78px 1fr 36px; align-items: center; gap: 8px; font-weight: 600; }
+.ts .dots { display: flex; gap: 5px; }
+.ts .dots i { width: 18px; height: 18px; border-radius: 50%; background: var(--ok); }
+.ts .dots i.f { background: var(--danger); } .ts .dots i.h { background: var(--warn); }
+.ts .lg { display: flex; gap: 10px; color: var(--mute); font-size: 11px; font-weight: 600; }
+.ts .lg i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 3px; background: var(--ok); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5v14l12-7z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h3v14H7zM14 5h3v14h-3z"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+</svg>
+
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">버튼 이름과 추가 용어</a><span class="sep">›</span>
+  <span>추가 용어 2부: 동작·기획·지표</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>추가 용어 2부: 동작·기획·지표</h1>
+    <p class="lead">화면이 어떻게 동작하고, 무엇을 기획·측정하는지 25가지</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="bulk-select">
+      <div class="demo">
+        <div class="mini bk">
+          <div class="rows">
+            <label><input type="checkbox"> 영수증_3월.pdf</label>
+            <label><input type="checkbox"> 계약서_최종.pdf</label>
+            <label><input type="checkbox"> 회의록.doc</label>
+            <label><input type="checkbox"> 시안_v2.fig</label>
+            <span class="d-cap">체크해 보세요. 아래에 작업 바가 올라옵니다</span>
+          </div>
+          <div class="bar"><span>이동</span><span>삭제</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">일괄 선택 모드 <span class="en">Bulk select</span></h2>
+        <p class="desc">목록에서 <strong>여러 항목을 체크해 한꺼번에 삭제·이동 같은 작업을 하는 모드</strong>. 하나를 길게 누르거나 "선택" 버튼을 누르면 체크박스가 나타나고, 아래나 위에 "3개 선택됨" 작업 바가 뜹니다. 항목 하나를 여는 일반 보기와 다른 상태입니다.</p>
+        <p class="when"><b>언제 쓰나</b>메일 정리, 사진 여러 장 삭제, 관리자 화면의 대량 상태 변경처럼 같은 작업을 여러 번 반복해야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>목록에 일괄 선택 모드를 넣어서 체크한 개수를 하단 작업 바에 보여주고, 전체 선택과 선택 해제 버튼도 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>가장 위험한 건 "전체 선택"입니다. 화면에 보이는 20개만 고른 건지, 필터에 걸린 전체 3천 개를 고른 건지 문구로 분명히 하세요. 일괄 삭제는 바로 지우기보다 "실행 취소"를 주는 편이 안전하고, 선택 모드에서는 항목을 눌렀을 때 열리는 동작이 체크로 바뀐다는 걸 개발자와 맞춰야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="autosave-indicator">
+      <div class="demo">
+        <div class="as" id="as" data-s="idle">
+          <input class="d-input" id="asIn" type="text" value="여름 캠페인 기획서" aria-label="제목 입력">
+          <div class="st"><i class="sp"></i><span id="asT">변경 사항 없음</span><svg class="d-svg ok" viewBox="0 0 24 24"><use href="#i-check"/></svg></div>
+          <span class="d-cap">글자를 고쳐 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">자동 저장 표시 <span class="en">Autosave indicator</span></h2>
+        <p class="desc">저장 버튼 없이 <strong>입력하는 대로 저장되고 있음을 작은 글자로 알려주는 표시</strong>. "저장 중…"에서 "저장됨"으로 바뀌는 것이 기본입니다. 저장 버튼이 있는 폼과 달리 사용자가 저장을 신경 쓰지 않아도 되게 만드는 장치입니다.</p>
+        <p class="when"><b>언제 쓰나</b>문서·메모·디자인 도구처럼 오래 쓰다가 날릴까 걱정되는 편집 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>문서 편집기에 자동 저장을 넣고, 상단에 저장 중, 저장됨, 저장 실패 상태 표시를 보여주고 실패하면 다시 시도 버튼을 띄워줘</q></p>
+        <p class="senior"><b>20년차 메모</b>"저장됨"만 그리고 "저장 실패"와 "오프라인이라 대기 중"을 안 그리면, 사용자는 날아간 글을 모르고 창을 닫습니다. 실패 상태는 눈에 띄게 하고, 저장 안 된 변경이 있을 때 탭을 닫으려 하면 경고하세요. 입력할 때마다 저장 요청을 보내지 말고 멈춘 뒤 잠시 기다려 보내도록(디바운스) 개발자와 정하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="drag-handle">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <ul class="dh" id="dh">
+            <li><i class="grip" aria-hidden="true"></i>장보기</li>
+            <li><i class="grip" aria-hidden="true"></i>운동하기</li>
+            <li><i class="grip" aria-hidden="true"></i>보고서 쓰기</li>
+            <li><i class="grip" aria-hidden="true"></i>청소하기</li>
+          </ul>
+          <span class="d-cap">점 모양 손잡이를 끌어 순서를 바꿔 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">드래그 핸들 <span class="en">Drag handle · Grip</span></h2>
+        <p class="desc">항목 옆에 붙은 <strong>점 여섯 개(⋮⋮) 모양의 손잡이</strong>로, "여기를 잡고 끌면 순서가 바뀐다"는 표시입니다. 항목 전체를 끌 수 있게 하는 것과 달리, 잡는 자리를 손잡이 하나로 정해 줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>할 일 순서, 메뉴 순서, 즐겨찾기 정렬처럼 사용자가 직접 순서를 정하는 목록.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>할 일 목록 항목 왼쪽에 드래그 핸들을 두고, 핸들을 끌어 순서를 바꾸게 하고, 끄는 동안 놓을 자리를 선으로 표시해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>끌기만 되는 정렬은 키보드와 스크린리더 사용자를 완전히 막습니다. "위로 / 아래로" 버튼이나 키보드 대체 조작을 반드시 같이 주세요. 터치에서는 목록 스크롤과 끌기가 충돌하니 핸들 영역을 따로 두는 게 해법이고, 핸들 크기는 손가락 기준 44pt를 지켜야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="divider">
+      <div class="demo">
+        <div class="dv d-col" style="width:280px;gap:12px">
+          <div class="d-row" style="justify-content:space-between"><span>프로필</span><span class="d-cap">박순국</span></div>
+          <hr class="hr">
+          <div class="d-row" style="justify-content:space-between"><span>알림</span><span class="d-cap">켜짐</span></div>
+          <div class="lab">또는</div>
+          <div class="d-row" style="justify-content:center;gap:14px;height:28px"><b>로그인</b><i class="vl"></i><b>회원가입</b></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">구분선 <span class="en">Divider</span></h2>
+        <p class="desc">내용을 나누는 얇은 선. 가로선은 목록 항목 사이, 가운데 글자가 낀 선("또는")은 두 선택지 사이, 세로선은 나란한 버튼 사이에 씁니다. 여백으로도 나눌 수 있는 것을 선으로 한 번 더 강조하는 장치입니다.</p>
+        <p class="when"><b>언제 쓰나</b>설정 목록의 그룹 나누기, 로그인 화면의 "또는 소셜 로그인", 하단 버튼 줄 사이.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>설정 항목 그룹 사이에는 연한 회색 1px 구분선을 넣고, 소셜 로그인 위에는 가운데 "또는" 글자가 있는 구분선을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>선이 너무 많으면 화면이 감옥처럼 보입니다. 먼저 간격과 배경색 차이로 묶고, 그래도 구분이 안 될 때만 선을 쓰세요. 선 색은 배경과 대비가 너무 약하면 일부 화면에서 안 보이지만, 선이 의미 있는 정보를 전달하는 게 아니므로 스크린리더에서는 장식(role="presentation")으로 숨겨도 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="mini-player">
+      <div class="demo">
+        <div class="mini mp">
+          <input class="vh" type="checkbox" id="mp1" checked aria-label="재생 또는 일시정지">
+          <div style="padding:12px;display:grid;gap:7px"><div class="d-bar dark" style="width:50%"></div><div class="d-bar" style="width:70%"></div><div class="d-bar"></div><div class="d-bar" style="width:60%"></div><span class="d-cap">아래 막대가 미니 플레이어, 오른쪽 위가 PiP 창</span></div>
+          <div class="pip" aria-hidden="true"></div>
+          <div class="pg"><i class="cv"></i><div><b>봄날의 산책</b><small>플레이리스트</small></div>
+            <label for="mp1"><svg class="d-svg play" viewBox="0 0 24 24"><use href="#i-play"/></svg><svg class="d-svg pause" viewBox="0 0 24 24"><use href="#i-pause"/></svg></label></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">미니 플레이어 <span class="en">Mini player · PiP</span></h2>
+        <p class="desc">다른 화면을 보는 동안에도 <strong>재생 중인 음악·영상을 작게 줄여 붙여 두는 것</strong>. 앱 안의 하단 막대를 미니 플레이어, 다른 앱 위에까지 떠다니는 작은 영상 창을 PiP(Picture in Picture, 화면 속 화면)라고 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>음악·팟캐스트·영상 앱에서 재생을 유지한 채 다른 목록을 둘러볼 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>재생 중에 다른 화면으로 가면 하단에 미니 플레이어를 고정하고, 눌러서 전체 플레이어로 확장되게 하고 재생과 정지 버튼을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>미니 플레이어가 탭바 위에 겹쳐 쌓이는 높이를 계산하지 않으면 목록의 마지막 줄이 가려집니다. 하단 여백을 그만큼 늘리세요. 닫는 방법(옆으로 밀기, X 버튼)이 없으면 한 번 틀면 영원히 붙어 있습니다. PiP는 브라우저·기기마다 지원이 달라 웹에서는 가능한지 먼저 확인해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="map-pin-cluster">
+      <div class="demo">
+        <div class="mini mm">
+          <div class="map"></div>
+          <input class="vh" type="checkbox" id="mm1" aria-label="확대해서 핀 펼치기">
+          <i class="pin sing" style="left:96px;top:60px"></i><i class="pin sing" style="left:150px;top:52px"></i><i class="pin sing" style="left:176px;top:96px"></i><i class="pin sing" style="left:112px;top:112px"></i><i class="pin sing" style="left:140px;top:80px"></i>
+          <i class="pin" style="left:30px;top:36px"></i><i class="pin" style="left:236px;top:128px"></i>
+          <div class="cl" aria-hidden="true">12</div>
+          <label for="mm1" class="d-btn ghost zm" style="min-height:28px">확대 / 축소</label>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">지도 핀과 클러스터 <span class="en">Map pin · Cluster</span></h2>
+        <p class="desc">지도 위의 위치를 가리키는 물방울 모양이 <strong>핀(pin)</strong>이고, 가까이 모인 핀 여러 개를 숫자 원 하나로 묶은 것이 <strong>클러스터(cluster)</strong>입니다. 지도를 확대하면 숫자 원이 풀려서 개별 핀이 됩니다.</p>
+        <p class="when"><b>언제 쓰나</b>맛집·숙소·매장처럼 한 지도에 장소가 수십 개 이상 찍히는 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>지도의 매장 핀이 가까이 모이면 숫자가 적힌 클러스터로 묶고, 클러스터를 누르면 그 영역으로 확대되며 핀이 풀리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>핀을 누르면 정보 카드가 열리는데, 카드가 지도 위의 다른 핀을 덮거나 지도 조작과 충돌하는 경우가 많습니다. 선택된 핀은 색과 크기로 구분하고, 빈 지역·위치 권한 거부 상태도 그려야 합니다. 핀 색만으로 종류를 나누면 접근성이 떨어지니 아이콘 모양을 함께 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="frozen-column">
+      <div class="demo">
+        <div class="mini fz" tabindex="0" aria-label="가로로 스크롤되는 표">
+          <table>
+            <thead><tr><th>이름</th><th>부서</th><th>입사일</th><th>연락처</th><th>직책</th><th>메모</th></tr></thead>
+            <tbody>
+              <tr><td>김지우</td><td>디자인</td><td>2021-03-02</td><td>010-1234-0001</td><td>선임</td><td>디자인 시스템 담당</td></tr>
+              <tr><td>박민서</td><td>개발</td><td>2020-09-14</td><td>010-1234-0002</td><td>책임</td><td>웹 프론트엔드</td></tr>
+              <tr><td>이도현</td><td>기획</td><td>2022-01-10</td><td>010-1234-0003</td><td>사원</td><td>온보딩 개선</td></tr>
+              <tr><td>최서연</td><td>마케팅</td><td>2019-06-24</td><td>010-1234-0004</td><td>팀장</td><td>캠페인 총괄</td></tr>
+              <tr><td>정하준</td><td>개발</td><td>2023-02-06</td><td>010-1234-0005</td><td>사원</td><td>백엔드</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">고정 열 <span class="en">Frozen · Sticky column</span></h2>
+        <p class="desc">표를 옆으로 스크롤해도 <strong>첫 열(보통 이름)만 제자리에 붙어 있는 것</strong>. 스프레드시트의 "열 고정"이 같은 기능이고, 같은 방식으로 맨 윗줄(제목 줄)을 고정하는 것은 고정 행입니다. 왼쪽 표를 가로로 밀어 보세요.</p>
+        <p class="when"><b>언제 쓰나</b>열이 많아 가로 스크롤이 생기는 표에서 "이 값이 누구 것인지"를 계속 보여줘야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>열이 많은 표는 가로 스크롤하되 첫 번째 이름 열과 제목 줄은 고정 열과 고정 행으로 붙여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>고정 열의 배경이 투명하면 스크롤되는 글자가 비쳐서 글자가 겹쳐 보입니다. 반드시 불투명한 배경과 오른쪽 그림자를 주세요. 고정하는 열이 3개를 넘으면 스크롤 영역이 거의 안 남으니 최대 1~2개로 제한하고, 모바일에서는 표 대신 카드 목록으로 바꾸는 것도 고려하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="virtual-scroll">
+      <div class="demo">
+        <div class="vs" style="width:270px">
+          <div class="vp" id="vsVp" tabindex="0" aria-label="1만 줄 목록"><div class="sp" id="vsSp"></div></div>
+          <div class="d-row" style="justify-content:space-between"><span class="d-cap">지금 실제 DOM 행: <b id="vsN">0</b>개</span><span class="d-cap">전체 10,000줄</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">가상 스크롤 <span class="en">Virtual scroll · Windowing</span></h2>
+        <p class="desc">수천~수만 줄 목록에서 <strong>화면에 보이는 몇 줄만 실제로 그리고 스크롤에 맞춰 내용을 바꿔 끼우는 기법</strong>. 사용자에게는 긴 목록이 다 있는 것처럼 보이지만 브라우저는 몇 줄만 다룹니다. 아래쪽에서 데이터를 조금씩 더 불러오는 무한 스크롤과는 다른 이야기입니다.</p>
+        <p class="when"><b>언제 쓰나</b>채팅 기록, 로그, 대용량 표처럼 목록이 수천 줄을 넘어 화면이 버벅거릴 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>1만 줄짜리 로그 목록이 느리니까 가상 스크롤로 바꿔서 보이는 줄만 렌더링하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>가상 스크롤을 쓰면 브라우저의 "페이지 내 검색"(Ctrl+F)이 화면 밖 줄을 못 찾고, 줄 높이가 제각각이면 스크롤바가 튑니다. 디자인에서는 줄 높이를 가능한 한 고정하세요. 성능 문제가 실제로 없는 200줄 목록에는 쓰지 마세요. 복잡도만 늘어납니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="lazy-loading">
+      <div class="demo">
+        <div class="lz" style="width:270px">
+          <div class="vp" id="lzVp" tabindex="0" aria-label="스크롤하면 이미지가 불러와지는 목록">
+            <div class="t">이미지 1</div><div class="t">이미지 2</div><div class="t">이미지 3</div><div class="t">이미지 4</div><div class="t">이미지 5</div><div class="t">이미지 6</div>
+          </div>
+          <span class="d-cap">불러온 이미지 <b id="lzN">0</b> / 6 · 아래로 스크롤해 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">레이지 로딩 <span class="en">Lazy loading</span></h2>
+        <p class="desc">이미지나 화면 조각을 <strong>처음부터 다 받지 않고, 스크롤해서 화면에 가까워질 때 받아오는 방식</strong>. 첫 화면이 빨리 뜹니다. 회색 자리표시자를 먼저 보여주는 것은 스켈레톤이고, 가상 스크롤은 이미 받은 데이터를 적게 그리는 방식이라 서로 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>사진이 많은 피드, 긴 상품 목록, 페이지 아래쪽의 무거운 영역.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>스크롤 아래쪽의 이미지는 레이지 로딩으로 화면에 들어오기 직전에 불러오고, 이미지 자리의 가로세로 비율은 미리 잡아줘</q></p>
+        <p class="senior"><b>20년차 메모</b>이미지 자리 크기를 안 잡아 두면 로딩될 때마다 글이 아래로 밀립니다. 그리고 첫 화면에 보이는 대표 이미지에 레이지 로딩을 걸면 오히려 가장 중요한 사진이 늦게 뜹니다. 첫 화면 위쪽은 즉시 로딩, 아래쪽만 지연 로딩이 원칙입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="deep-link">
+      <div class="demo">
+        <div class="dl" role="img" aria-label="일반 링크는 홈과 목록을 거쳐 상품에 가고, 딥링크는 링크에서 바로 상품으로 가는 비교 도식">
+          <div class="row"><span>일반 진입</span><span class="s a">홈</span><i>›</i><span class="s b">목록</span><i>›</i><span class="s c">상품</span></div>
+          <div class="row fast"><span>딥링크</span><span class="s a">링크</span><i>›</i><span class="s b">상품</span></div>
+          <span class="d-cap">단순화한 예시: 중간 화면을 건너뜁니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">딥링크 <span class="en">Deep link</span></h2>
+        <p class="desc">앱이나 사이트의 <strong>첫 화면이 아니라 특정 화면(예: 이 상품의 상세)으로 곧장 연결되는 링크</strong>. 앱에서는 myapp://product/123처럼 앱 전용 주소를 쓰기도 합니다. 홈 화면만 열어 주는 일반 링크와 구분됩니다.</p>
+        <p class="when"><b>언제 쓰나</b>푸시 알림, 문자·카카오톡 공유, 광고, QR코드에서 사용자를 원하는 화면으로 바로 보낼 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>공유한 상품 링크를 누르면 앱이 설치돼 있을 때 상품 상세 화면으로 딥링크로 바로 열리고, 설치 전이면 스토어로 보내줘</q></p>
+        <p class="senior"><b>20년차 메모</b>딥링크 설계는 "그 링크를 눌렀는데 로그인이 필요하거나 앱이 없으면 어디로 가나"가 전부입니다. 로그인 후 원래 가려던 화면으로 돌아오는 흐름과, 삭제된 상품 링크의 빈 화면을 반드시 그리세요. 개발에서는 iOS 유니버설 링크, 안드로이드 앱 링크 설정이 따로라 일정이 걸린다는 점도 알아 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="push-vs-in-app">
+      <div class="demo">
+        <div class="d-pair" style="width:290px">
+          <div class="side"><div class="pv lock"><div class="t">9:41</div><div class="n"><b>쿠폰 도착</b><br>오늘까지 20% 할인</div></div><span class="d-cap">푸시 알림</span></div>
+          <span class="mid">vs</span>
+          <div class="side"><div class="pv app"><div class="d-bar dark" style="width:55%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div><div class="d-bar"></div><div class="ban">쿠폰이 도착했어요</div></div><span class="d-cap">인앱 메시지</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">푸시 알림 <span class="vs">vs</span> 인앱 메시지 <span class="en">Push notification vs In-app message</span></h2>
+        <p class="desc">앱이 꺼져 있어도 폰 잠금 화면과 알림창에 뜨면 푸시 알림, 사용자가 앱을 쓰고 있을 때 앱 화면 안에 뜨면 인앱 메시지입니다. 푸시는 사용자의 허락(권한)이 있어야 보낼 수 있고, 인앱은 앱을 연 사람에게만 보입니다.</p>
+        <p class="when"><b>이렇게 구분</b>앱을 안 쓰는 사람을 다시 불러야 하면 푸시, 지금 쓰는 사람에게 안내하거나 유도하면 인앱 메시지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>쿠폰 발급은 푸시 알림으로 보내고, 앱을 열었을 때 아직 안 쓴 쿠폰이 있으면 상단 인앱 메시지로 한 번 더 알려줘</q></p>
+        <p class="senior"><b>20년차 메모</b>푸시 권한 요청을 앱을 처음 열자마자 띄우면 거절당하고, iOS에서는 한 번 거절하면 시스템 설정에서만 다시 켤 수 있습니다. 가치를 보여준 뒤 묻고, 거절한 사람에게는 인앱 메시지로 대신 알리는 경로를 설계하세요. 푸시 문구는 잠금 화면에서 잘리므로 앞 30자 안에 핵심을 넣어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="notification-center">
+      <div class="demo">
+        <div class="mini nc" id="nc">
+          <input class="vh" type="checkbox" id="nc1" checked aria-label="알림 센터 열기">
+          <div style="padding:14px;display:grid;gap:7px;width:70%"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div></div>
+          <label for="nc1" class="bell"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-bell"/></svg><span class="badge">3</span></label>
+          <div class="panel">
+            <header>알림<button type="button" onclick="document.getElementById('nc').classList.add('read')">모두 읽음</button></header>
+            <div class="it"><i class="un"></i>김지우님이 댓글을 남겼습니다</div>
+            <div class="it"><i class="un"></i>주문하신 상품이 출발했어요</div>
+            <div class="it"><i class="un"></i>새 쿠폰이 도착했습니다</div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">알림 센터 <span class="en">Notification center</span></h2>
+        <p class="desc">그동안 받은 알림을 <strong>한곳에 모아 다시 볼 수 있게 한 목록</strong>. 종 아이콘 위의 숫자 배지로 안 읽은 개수를 알리고, 누르면 목록이 열립니다. 토스트처럼 잠깐 떴다 사라지는 알림과 달리 기록이 남습니다.</p>
+        <p class="when"><b>언제 쓰나</b>댓글·좋아요·주문 상태 등 사용자가 놓친 알림을 나중에 확인해야 하는 서비스.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상단 종 아이콘에 안 읽은 알림 개수 배지를 달고, 누르면 알림 센터가 열려 읽지 않은 항목은 점으로 표시하고 모두 읽음 버튼을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>배지 숫자가 영원히 안 줄어드는 서비스가 많은데, 읽음 처리 기준(열람? 클릭? 센터를 열기만 해도?)을 안 정했기 때문입니다. 알림이 없을 때의 빈 상태, 오래된 알림의 자동 삭제 기간, 알림을 눌렀을 때 해당 화면으로 가는 딥링크가 한 세트입니다. 배지 99+ 같은 최대 표시 자릿수도 정해 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="widget">
+      <div class="demo">
+        <div class="mini wg" role="img" aria-label="날씨, 걸음 수, 일정 위젯이 놓인 홈 화면">
+          <div class="w"><span class="d-cap">서울</span><div class="tmp">18°</div><span class="d-cap">맑음</span></div>
+          <div class="w"><span class="d-cap">걸음 수</span><div class="rg"></div></div>
+          <div class="w m"><span class="d-cap">오늘 일정</span><div class="ev"><i></i>10:00 디자인 리뷰</div><div class="ev"><i style="background:var(--accent)"></i>15:30 고객 미팅</div></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">13</p>
+        <h2 class="term-name">위젯 <span class="en">Widget</span></h2>
+        <p class="desc">앱을 열지 않고 <strong>폰 홈 화면이나 잠금 화면에서 바로 정보를 보여주는 작은 조각</strong>. 날씨, 일정, 걸음 수처럼 한눈에 읽는 정보에 알맞고, 크기는 작게·중간·크게로 정해져 있습니다. 앱 안의 대시보드 카드를 가리켜 "위젯"이라고 부르기도 하니 어느 쪽인지 확인하세요.</p>
+        <p class="when"><b>언제 쓰나</b>사용자가 하루에 여러 번 확인하는 값(일정, 배송, 주가)을 앱 실행 없이 보여주고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>홈 화면 위젯을 작게와 중간 두 크기로 만들어 오늘 일정 두 개를 보여주고, 누르면 해당 일정 상세로 열리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>위젯은 앱처럼 자유롭게 움직이지 못합니다. 스크롤도 입력도 없고, 갱신 주기를 운영체제가 정하므로 "실시간"이라는 기획은 거의 성립하지 않습니다. 정보를 한 가지로 줄이고, 데이터를 못 불러왔을 때와 로그아웃 상태의 화면까지 그려야 합니다. 다크 모드와 크기별 시안도 따로 필요합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="persona">
+      <div class="demo">
+        <div class="pe">
+          <div class="hd"><div class="av">민</div><div><b>김민지, 34세</b><br><span class="d-cap">초등학생 둘을 키우는 직장인</span></div></div>
+          <div class="q">"퇴근하고 장 볼 시간이 없어요"</div>
+          <div class="two"><div class="g"><b>목표</b>저녁 재료를 한 번에 주문</div><div class="p"><b>불만</b>같은 상품을 매번 다시 검색</div></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">14</p>
+        <h2 class="term-name">페르소나 <span class="en">Persona</span></h2>
+        <p class="desc">우리 서비스를 쓸 <strong>대표 사용자 한 명을 이름·나이·상황·목표·불만이 있는 가상 인물로 그려 놓은 것</strong>. 실제 인터뷰와 데이터를 바탕으로 만들며, 팀이 "누구를 위해 만드는가"를 같은 얼굴로 떠올리게 합니다. 사용자 집단 전체를 묶은 통계와는 다릅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>기획 초기에 기능 우선순위를 정하거나, 팀 안에서 "사용자는 이럴 거야"라는 각자의 상상이 어긋날 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>인터뷰 메모를 바탕으로 이름, 나이, 직업, 상황, 목표, 불만, 대표 한마디가 들어간 페르소나 카드 두 장을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>인터뷰나 데이터 없이 상상으로 만든 페르소나는 "내가 쓰고 싶은 사람"을 그린 자화상입니다. 근거 자료를 카드 뒤에 붙여 두세요. 나이·직업 같은 인구 통계보다 상황과 동기가 설계에 훨씬 쓸모 있고, 10개씩 만들면 아무도 기억하지 못하니 주 페르소나 1~2명으로 좁혀야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="journey-map">
+      <div class="demo">
+        <svg viewBox="0 0 290 190" width="290" height="190" role="img" aria-label="인지, 탐색, 결제, 사용 단계별 감정 곡선">
+          <rect x="0" y="0" width="290" height="190" rx="12" fill="#fff" stroke="#d9def0"/>
+          <g font-size="10" font-weight="700" fill="#55607a" text-anchor="middle" font-family="Pretendard, sans-serif">
+            <text x="40" y="20">인지</text><text x="112" y="20">탐색</text><text x="184" y="20">결제</text><text x="256" y="20">사용</text>
+          </g>
+          <g stroke="#e3e7f5"><line x1="76" y1="28" x2="76" y2="150"/><line x1="148" y1="28" x2="148" y2="150"/><line x1="220" y1="28" x2="220" y2="150"/></g>
+          <line x1="8" y1="90" x2="282" y2="90" stroke="#c9cfe6" stroke-dasharray="3 3"/>
+          <path id="jc" d="M40 62 C76 62 80 80 112 84 S150 138 184 132 S224 56 256 54" fill="none" stroke="#4f46e5" stroke-width="3" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"><animate attributeName="stroke-dashoffset" values="1;0;0;1" keyTimes="0;.6;.9;1" dur="5s" repeatCount="indefinite"/></path>
+          <circle cx="40" cy="62" r="5" fill="#16a34a"/><circle cx="112" cy="84" r="5" fill="#d97706"/><circle cx="184" cy="132" r="5" fill="#dc2626"/><circle cx="256" cy="54" r="5" fill="#16a34a"/>
+          <circle r="6" fill="#4f46e5" stroke="#fff" stroke-width="2"><animateMotion dur="5s" repeatCount="indefinite" keyPoints="0;1;1;0" keyTimes="0;.6;.9;1" calcMode="linear"><mpath href="#jc"/></animateMotion></circle>
+          <g font-size="9" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif"><text x="184" y="152" fill="#dc2626">결제 오류로 불안</text><text x="256" y="72" fill="#16a34a">만족</text><text x="40" y="52" fill="#16a34a">기대</text></g>
+          <g font-size="9" fill="#55607a" font-family="Pretendard, sans-serif"><text x="8" y="172">행동: 광고 보기 - 비교 - 카드 입력 - 첫 사용</text></g>
+        </svg>
+      </div>
+      <div class="body">
+        <p class="num">15</p>
+        <h2 class="term-name">사용자 여정 지도 <span class="en">Journey map</span></h2>
+        <p class="desc">사용자가 서비스를 알게 되고 쓰고 끝내는 <strong>전체 과정을 단계별로 늘어놓고 그때의 행동·생각·감정(감정 곡선)을 함께 그린 표</strong>. 곡선이 푹 꺼진 곳이 개선할 지점입니다. 화면의 이동 경로만 그리는 와이어플로와 달리 사용자의 감정까지 담습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>어디서 사용자가 불편해하는지 팀 전체가 한눈에 보고, 가장 아픈 구간부터 고칠 순서를 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>인지, 탐색, 결제, 사용 네 단계로 사용자 여정 지도를 표로 만들고, 단계마다 행동, 생각, 감정 점수와 개선 기회를 적어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>감정 곡선을 책상에서 상상으로 그리면 전부 평탄하거나 예쁜 곡선이 나옵니다. 반드시 인터뷰나 실제 관찰에서 얻은 순간만 점으로 찍으세요. 또 화면 안의 경험만 그리면 반쪽입니다. 배송, 고객센터 전화, 환불처럼 앱 밖의 접점이 가장 깊게 꺼지는 경우가 많습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="user-story">
+      <div class="demo">
+        <div class="us">
+          <div class="l"><b>~로서</b>쇼핑몰 구매자</div>
+          <div class="l"><b>~하고 싶다</b>저장한 주소를 다시 쓰고 싶다</div>
+          <div class="l"><b>왜냐하면</b>매번 주소를 입력하기 번거롭다</div>
+          <div class="ac"><span class="d-cap">완료 조건</span>
+            <label><input type="checkbox" checked> 저장된 주소가 목록으로 보인다</label>
+            <label><input type="checkbox"> 주소를 눌러 바로 선택한다</label>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">16</p>
+        <h2 class="term-name">유저 스토리 <span class="en">User story</span></h2>
+        <p class="desc">기능을 <strong>"~로서, ~하고 싶다, 왜냐하면 ~이기 때문이다"</strong> 한 문장으로 쓴 요구사항. 기능 이름이 아니라 누가 왜 필요한지를 적는 것이 핵심이고, 아래에 "이렇게 되면 끝"이라는 완료 조건(acceptance criteria)을 붙입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>기능 목록을 정하고 개발 팀에 일을 넘길 때. 지라 같은 작업 관리 도구의 카드 한 장이 보통 이 형식입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>배송지 저장 기능을 유저 스토리 형식으로 쓰고, 완료 조건 3개와 예외 상황 2개를 같이 적어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>"사용자로서 편하게 쓰고 싶다"처럼 누구인지와 이유가 뭉개진 스토리는 의미가 없습니다. 페르소나 이름이나 구체적 역할을 쓰세요. 그리고 "왜냐하면"이 비면 기능을 만들 이유도 비어 있다는 신호입니다. 완료 조건에 빈 값·오류·권한 없음 같은 예외가 빠지면 개발 중에 질문이 쏟아집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="sitemap">
+      <div class="demo">
+        <svg class="sm" viewBox="0 0 290 190" width="290" height="190" role="img" aria-label="홈 아래에 소개, 상품, 고객센터, 로그인이 있고 상품과 고객센터 아래에 하위 페이지가 있는 사이트맵">
+          <path class="ln" d="M145 28V44M40 44H250M40 44V58M110 44V58M180 44V58M250 44V58"/>
+          <path class="ln" d="M86 80V138M86 108H96M86 138H96M160 80V138M160 108H170M160 138H170"/>
+          <rect class="rt" x="105" y="6" width="80" height="22" rx="6"/><text x="145" y="21" style="fill:#fff">홈</text>
+          <rect class="bx" x="9" y="58" width="62" height="22" rx="6"/><text x="40" y="73">소개</text>
+          <rect class="bx" x="79" y="58" width="62" height="22" rx="6"/><text x="110" y="73">상품</text>
+          <rect class="bx" x="149" y="58" width="62" height="22" rx="6"/><text x="180" y="73">고객센터</text>
+          <rect class="bx" x="219" y="58" width="62" height="22" rx="6"/><text x="250" y="73">로그인</text>
+          <rect class="bx" x="96" y="97" width="54" height="22" rx="6"/><text x="123" y="112">목록</text>
+          <rect class="bx" x="96" y="127" width="54" height="22" rx="6"/><text x="123" y="142">상세</text>
+          <rect class="bx" x="170" y="97" width="54" height="22" rx="6"/><text x="197" y="112">공지</text>
+          <rect class="bx" x="170" y="127" width="54" height="22" rx="6"/><text x="197" y="142">문의</text>
+        </svg>
+      </div>
+      <div class="body">
+        <p class="num">17</p>
+        <h2 class="term-name">사이트맵 <span class="en">Sitemap</span></h2>
+        <p class="desc">서비스에 <strong>어떤 페이지가 있고 어떤 계층으로 묶이는지를 나무 모양으로 그린 지도</strong>. 화면을 그리기 전에 "무엇이 어디에 있나"를 정하는 도면입니다. 검색엔진에 알려주는 sitemap.xml 파일도 같은 이름이지만 그쪽은 기계용 목록입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>새로 만들거나 개편할 때 메뉴 구조를 정하고, 팀·고객과 "페이지가 몇 개나 되나"를 합의할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>쇼핑몰의 사이트맵을 3단계 깊이의 계층 목록으로 정리하고, 로그인해야 접근할 수 있는 페이지는 따로 표시해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>사이트맵은 우리 조직도를 그대로 옮기기 쉽습니다. 사용자가 찾는 말(예: "환불")이 아니라 부서 이름("고객지원팀")으로 메뉴를 짓는 함정입니다. 깊이는 3단계를 넘기지 않는 것이 좋고, 같은 페이지로 가는 길이 여러 개일 때 어느 쪽이 정식 위치인지 정해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="wireflow">
+      <div class="demo">
+        <svg class="wf" viewBox="0 0 290 190" width="290" height="190" role="img" aria-label="로그인 화면에서 성공하면 홈, 실패하면 오류 화면으로 가는 와이어플로">
+          <defs>
+            <marker id="mk1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4 0 8z" fill="#4f46e5"/></marker>
+            <marker id="mk2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4 0 8z" fill="#dc2626"/></marker>
+          </defs>
+          <rect class="sc" x="6" y="12" width="68" height="108" rx="8"/><rect class="ba" x="16" y="28" width="48" height="6" rx="3"/><rect class="ba" x="16" y="42" width="48" height="12" rx="3"/><rect class="ba" x="16" y="60" width="48" height="12" rx="3"/><rect class="bt" x="16" y="84" width="48" height="14" rx="4"/><text x="40" y="142">로그인</text>
+          <rect class="sc" x="112" y="12" width="68" height="108" rx="8"/><rect class="ba" x="122" y="28" width="30" height="6" rx="3"/><rect class="ba" x="122" y="44" width="48" height="26" rx="4"/><rect class="ba" x="122" y="78" width="48" height="26" rx="4"/><text x="146" y="142">홈</text>
+          <rect class="sc" x="216" y="12" width="68" height="108" rx="8"/><rect class="ba" x="226" y="30" width="48" height="6" rx="3" style="fill:#fecaca"/><rect class="ba" x="226" y="44" width="36" height="6" rx="3"/><rect class="bt" x="226" y="84" width="48" height="14" rx="4"/><text x="250" y="142">오류 안내</text>
+          <path class="ar" d="M76 66H108" marker-end="url(#mk1)"/><text x="92" y="58">성공</text>
+          <path class="ar bad" d="M40 122V158H250V124" marker-end="url(#mk2)" style="stroke-linejoin:round"/><text x="145" y="174">실패 (3회 틀림)</text>
+        </svg>
+      </div>
+      <div class="body">
+        <p class="num">18</p>
+        <h2 class="term-name">와이어플로 <span class="en">Wireflow</span></h2>
+        <p class="desc">단순한 화면 뼈대(와이어프레임)를 <strong>화살표로 이어 "이걸 누르면 어디로 가는지"를 보여주는 도면</strong>. 와이어프레임(화면 하나)과 플로차트(순서도)를 합친 것입니다. 사이트맵이 "무엇이 있나"라면 와이어플로는 "어떤 순서로 오가나"를 그립니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>가입·결제처럼 여러 화면에 걸친 흐름을 개발자와 맞추거나, 성공 경로와 실패 경로를 한 장에서 점검할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>로그인부터 홈까지의 와이어플로를 그리고, 비밀번호 오류와 계정 잠김 같은 실패 경로도 화살표로 표시해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>성공 경로만 그린 와이어플로는 거의 쓸모가 없습니다. 화면이 터지는 곳은 실패, 취소, 뒤로 가기, 빈 값입니다. 화살표마다 "무엇을 눌렀을 때"를 글로 적어 두고, 로그인 전후처럼 상태가 달라지는 지점은 색으로 구분하세요. 화면이 20개를 넘으면 한 장에 몰지 말고 하위 흐름으로 쪼개세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="heuristic-evaluation">
+      <div class="demo">
+        <div class="he">
+          <div class="r"><b>시스템 상태의 가시성</b>업로드 중 진행 표시가 없다<div class="sv">심각도 <i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+          <div class="r"><b>사용자 통제와 자유</b>실수로 지운 글을 되돌릴 수 없다<div class="sv">심각도 <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+          <div class="r"><b>오류 예방</b>날짜를 직접 입력해야 한다<div class="sv">심각도 <i class="mid"></i><i class="mid"></i><i></i><i></i></div></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">19</p>
+        <h2 class="term-name">휴리스틱 평가 <span class="en">Heuristic evaluation</span></h2>
+        <p class="desc">사용자 없이 <strong>전문가가 "좋은 UI의 원칙 목록"에 비춰 화면의 문제를 찾아내는 검사</strong>. 가장 널리 쓰이는 목록은 제이콥 닐슨의 10가지 사용성 원칙입니다. 사용자를 직접 지켜보는 사용성 테스트와 달리 빠르고 싸지만 전문가의 눈에 의존합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>사용자 테스트를 하기 전에 뻔한 문제를 먼저 걸러내고 싶거나, 시간·예산 때문에 테스트를 못 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이 결제 화면을 닐슨의 10가지 휴리스틱에 따라 평가하고, 발견한 문제마다 어긴 원칙과 심각도(0~4)와 개선안을 표로 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>평가자 한 명이 찾는 문제는 전체의 일부일 뿐입니다. 서로 다른 사람 3~5명이 각자 따로 평가한 뒤 합치세요. 원칙 이름을 붙이는 데서 끝내지 말고 심각도(자주 겪나, 막히나, 못 넘어가나)로 우선순위를 줘야 개발 팀이 고칩니다. 그리고 "문제 없음"으로 나온 화면이 사용자에게도 쉽다는 보장은 아닙니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="mental-model">
+      <div class="demo">
+        <div class="mmod">
+          <div class="c"><b>사용자 머릿속</b>휴지통에 넣으면<br>바로 지워진다</div>
+          <div class="gap">어긋남</div>
+          <div class="c sys"><b>실제 시스템</b>30일 보관 후<br>자동 삭제</div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">20</p>
+        <h2 class="term-name">멘탈 모델 <span class="en">Mental model</span></h2>
+        <p class="desc">사용자가 <strong>"이건 이렇게 돌아가겠지" 하고 머릿속에 갖고 있는 작동 방식에 대한 그림</strong>. 실제 시스템 구조와 다를 수 있고, 둘이 어긋날 때 "왜 이렇게 되지?"라는 혼란과 사고가 생깁니다. 디자이너가 만든 개념 모델과도 구분됩니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>사용자가 자꾸 같은 곳에서 실수할 때, 새 용어·구조를 만들 때, 인터뷰에서 "어떻게 동작한다고 생각하세요?"를 물어볼 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>사용자가 휴지통을 완전 삭제로 오해하는 멘탈 모델 차이를 줄이도록, 삭제 시 안내 문구와 복구 화면을 제안해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>멘탈 모델은 "교육"으로 바꾸기 어렵습니다. 사용자의 그림에 시스템을 맞추는 쪽이 싸게 먹힙니다. 개발 용어(동기화, 캐시, 아카이브)를 그대로 화면에 올리면 사용자의 그림과 가장 크게 어긋납니다. 어긋남은 인터뷰에서 "그다음엔 어떻게 될 것 같으세요?"라고 물을 때 가장 잘 드러납니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="conversion-rate">
+      <div class="demo">
+        <div class="cvr">
+          <span class="d-cap">예시 숫자 (가상)</span>
+          <div class="r"><span>방문</span><div class="bar" style="width:100%"></div><span>1,000</span></div>
+          <div class="r"><span>장바구니</span><div class="bar b2" style="width:30%"></div><span>300</span></div>
+          <div class="r"><span>결제</span><div class="bar b3" style="width:9%"></div><span>90</span></div>
+          <div class="res">전환율 = 90 ÷ 1,000 = 9%</div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">21</p>
+        <h2 class="term-name">전환율 <span class="en">Conversion rate</span></h2>
+        <p class="desc">방문한 사람 중 <strong>우리가 바라는 행동(구매, 가입, 신청)을 실제로 한 사람의 비율</strong>. "전환수 ÷ 전체 방문자 수"로 계산합니다. 단계별로 나눠 보면 사람들이 어느 단계에서 빠지는지 보이고, 이를 깔때기 모양이라 하여 퍼널(funnel)이라 부릅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>화면 개선이 실제로 효과가 있었는지 전후를 비교하거나, 퍼널에서 가장 크게 새는 단계를 찾을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>방문, 장바구니, 결제 단계별 전환율을 퍼널 차트로 보여주고 가장 많이 이탈하는 단계를 표시해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>분모를 무엇으로 잡느냐가 전부입니다. 전체 방문자인지, 상품을 본 사람인지, 신규 방문자만인지 합의하지 않으면 팀마다 다른 숫자를 말합니다. 전환율이 올라도 매출이 안 오르는 경우(가격 인하, 저품질 가입)가 있으니 "무엇을 전환으로 칠 것인가"를 하나 정하고 보조 지표와 함께 보세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="bounce-vs-exit">
+      <div class="demo">
+        <div class="d-pair" style="width:290px">
+          <div class="side"><div class="bn"><span class="pg out">메인</span><span class="x">나감</span></div><span class="d-cap">한 페이지만 보고 떠남</span></div>
+          <span class="mid">vs</span>
+          <div class="side"><div class="bn"><span class="pg">메인</span><i>›</i><span class="pg">상품</span><i>›</i><span class="pg out">결제</span></div><span class="d-cap">여러 페이지를 보다 마지막에 떠남</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">22</p>
+        <h2 class="term-name">이탈률 <span class="vs">vs</span> 종료율 <span class="en">Bounce rate vs Exit rate</span></h2>
+        <p class="desc">방문의 첫 페이지에서 다른 행동 없이 곧바로 떠난 비율이 이탈률(Bounce rate), 방문 중 어느 페이지든 마지막으로 보고 떠난 비율이 종료율(Exit rate)입니다. 이탈률은 "처음 만난 페이지의 실망", 종료율은 "그 페이지가 끝점이 된 비율"입니다. 분석 도구마다 이탈의 정의가 조금씩 다릅니다.</p>
+        <p class="when"><b>이렇게 구분</b>첫 페이지에서 한 번도 안 넘어가고 나가면 이탈, 여러 페이지를 본 뒤 그 페이지에서 끝나면 종료. 결제 완료 페이지의 높은 종료율은 정상입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>랜딩 페이지별 이탈률과 결제 단계 페이지별 종료율을 따로 계산하는 분석 쿼리를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>이탈률이 높다고 무조건 나쁜 페이지가 아닙니다. 전화번호 하나 찾아서 떠나는 안내 페이지는 목적을 달성한 이탈입니다. 반대로 결제 단계 중간의 종료율은 위험 신호입니다. 지표를 그대로 보지 말고 "이 페이지는 사용자가 거기서 끝내도 되는 페이지인가"를 먼저 물으세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="retention">
+      <div class="demo">
+        <table class="coh" aria-label="가입 월별 재방문율 코호트 표 (가상 값)">
+          <thead><tr><th></th><th>가입일</th><th>1일 후</th><th>7일 후</th><th>30일 후</th></tr></thead>
+          <tbody>
+            <tr><td>3월 가입</td><td class="v hi" style="--v:100">100%</td><td class="v hi" style="--v:60">40%</td><td class="v" style="--v:30">22%</td><td class="v" style="--v:18">14%</td></tr>
+            <tr><td>4월 가입</td><td class="v hi" style="--v:100">100%</td><td class="v hi" style="--v:70">46%</td><td class="v" style="--v:36">27%</td><td class="v" style="--v:22">17%</td></tr>
+            <tr><td>5월 가입</td><td class="v hi" style="--v:100">100%</td><td class="v hi" style="--v:80">52%</td><td class="v" style="--v:44">31%</td><td>-</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="body">
+        <p class="num">23</p>
+        <h2 class="term-name">리텐션 <span class="en">Retention</span></h2>
+        <p class="desc">처음 쓴 사람이 <strong>며칠·몇 주 뒤에도 다시 돌아오는 비율</strong>. 같은 시기에 가입한 사람끼리 묶은 집단을 코호트(cohort)라 하고, 가입 월별로 재방문율을 늘어놓은 위 표를 코호트 표라 부릅니다. 진할수록 많이 남은 칸입니다(숫자는 가상).</p>
+        <p class="when"><b>이럴 때 쓴다</b>"가입자는 늘었는데 쓰는 사람이 안 늘어난다"는 의심이 들 때, 온보딩이나 기능을 바꾼 뒤 효과를 코호트별로 비교할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>가입 월별 코호트로 1일, 7일, 30일 리텐션을 계산해 색이 진할수록 높은 히트맵 표로 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>"다시 방문"의 기준을 정하지 않으면 숫자가 무의미합니다. 앱을 열기만 해도 되는지, 핵심 행동을 해야 하는지 정하세요. 가장 최근 코호트는 아직 시간이 안 지나 칸이 비어 있는데, 그걸 0으로 보고 개선이 실패했다고 판단하는 실수가 흔합니다. 전체 평균 하나로 보면 좋은 코호트와 나쁜 코호트가 섞여 안 보입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="csat-sus">
+      <div class="demo">
+        <div class="sat">
+          <div class="box"><b>CSAT: 방금 상담은 만족스러우셨나요?</b>
+            <div class="scale"><label><input class="vh" type="radio" name="cs" value="1">1</label><label><input class="vh" type="radio" name="cs" value="2">2</label><label><input class="vh" type="radio" name="cs" value="3">3</label><label><input class="vh" type="radio" name="cs" value="4" checked>4</label><label><input class="vh" type="radio" name="cs" value="5">5</label></div>
+            <div class="cap"><span>매우 불만족</span><span>매우 만족</span></div></div>
+          <div class="box"><b>SUS: 이 시스템을 자주 쓰고 싶다</b>
+            <div class="scale"><label><input class="vh" type="radio" name="su" value="1">1</label><label><input class="vh" type="radio" name="su" value="2">2</label><label><input class="vh" type="radio" name="su" value="3" checked>3</label><label><input class="vh" type="radio" name="su" value="4">4</label><label><input class="vh" type="radio" name="su" value="5">5</label></div>
+            <div class="cap"><span>전혀 아니다</span><span>매우 그렇다</span></div></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">24</p>
+        <h2 class="term-name">만족도 지표 <span class="en">CSAT · SUS</span></h2>
+        <p class="desc">사용자의 만족을 숫자로 재는 설문 방식. CSAT(고객 만족도)는 "방금 경험이 만족스러웠나요?"를 1~5점으로 한 번 묻는 것이고, SUS(시스템 사용성 척도)는 10개 문항을 1~5점으로 답하게 해 사용성을 0~100점으로 환산하는 표준 설문입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>상담 종료나 구매 직후처럼 특정 순간의 만족을 가볍게 모을 때는 CSAT, 서비스 전체의 사용성을 개선 전후로 비교할 때는 SUS.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상담이 끝나면 1~5점 CSAT 설문을 한 문항 띄우고, 낮은 점수를 준 사람에게만 이유를 묻는 주관식 칸을 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>CSAT는 묻는 시점과 문구에 따라 숫자가 크게 흔들리니, 기간을 넘나드는 비교는 문구를 고정한 상태에서만 하세요. SUS 점수 하나로 "좋다/나쁘다"를 말하기보다 개선 전후나 경쟁 서비스와의 상대 비교에 쓰는 게 안전합니다. 설문 창이 작업을 가로막으면 점수가 아니라 짜증만 얻습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="task-success-rate">
+      <div class="demo">
+        <div class="ts">
+          <span class="d-cap">참가자 5명 (가상)</span>
+          <div class="r"><span>회원가입</span><div class="dots"><i></i><i></i><i></i><i></i><i></i></div><b>5/5</b></div>
+          <div class="r"><span>결제하기</span><div class="dots"><i></i><i></i><i></i><i class="h"></i><i class="f"></i></div><b>3/5</b></div>
+          <div class="r"><span>환불 신청</span><div class="dots"><i></i><i class="f"></i><i class="f"></i><i></i><i class="f"></i></div><b>2/5</b></div>
+          <div class="lg"><span><i></i>성공</span><span><i style="background:var(--warn)"></i>도움받아 성공</span><span><i style="background:var(--danger)"></i>실패</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">25</p>
+        <h2 class="term-name">과업 성공률 <span class="en">Task success rate</span></h2>
+        <p class="desc">사용성 테스트에서 <strong>"이 일을 해 보세요"라고 시킨 과업을 성공적으로 끝낸 참가자의 비율</strong>. "성공 인원 ÷ 전체 참가자"로 계산하며, 도움을 받아 겨우 끝낸 경우를 성공으로 칠지 미리 정합니다. 만족도처럼 마음이 아니라 실제 행동의 결과를 잽니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>가입·결제·환불처럼 핵심 과업을 사용자가 정말 끝낼 수 있는지 확인하고, 개선 전후를 비교할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>사용성 테스트 결과표에서 과업별 성공, 도움받아 성공, 실패 인원을 세어 과업 성공률과 실패 원인 요약을 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>참가자 5명의 "80%"는 통계가 아니라 "4명이 됐고 1명이 막혔다"는 관찰입니다. 퍼센트보다 막힌 사람이 어디서 왜 멈췄는지를 기록하세요. 성공의 정의(정해진 시간 안에? 도움 없이?)를 테스트 전에 적어 두지 않으면 보고서마다 숫자가 달라지고, 쉬운 과업만 골라 성공률을 높이는 실수도 흔합니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script>
+/* 02 자동 저장: 입력이 멈추고 0.6초 뒤 "저장됨"으로 */
+(function () {
+  var box = document.getElementById('as'), t = document.getElementById('asT'), tm;
+  document.getElementById('asIn').addEventListener('input', function () {
+    box.dataset.s = 'saving'; t.textContent = '저장 중...'; clearTimeout(tm);
+    tm = setTimeout(function () { box.dataset.s = 'saved'; t.textContent = '저장됨'; }, 900);
+  });
+})();
+
+/* 03 드래그 핸들: 손잡이를 잡았을 때만 draggable, 지나가는 줄의 위/아래 절반에 따라 끼워 넣는다 */
+(function () {
+  var ul = document.getElementById('dh'), cur = null;
+  ul.addEventListener('mousedown', function (e) { var li = e.target.closest('li'); if (li) li.draggable = !!e.target.closest('.grip'); });
+  ul.addEventListener('dragstart', function (e) { cur = e.target.closest('li'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', ''); setTimeout(function () { cur.classList.add('drag'); }, 0); });
+  ul.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    var li = e.target.closest('li'); if (!li || li === cur) return;
+    var r = li.getBoundingClientRect();
+    ul.insertBefore(cur, e.clientY < r.top + r.height / 2 ? li : li.nextSibling);
+  });
+  ul.addEventListener('dragend', function () { cur.classList.remove('drag'); cur.draggable = false; });
+})();
+
+/* 08 가상 스크롤: 높이는 1만 줄, 실제 행은 보이는 줄 + 여유 2줄만 만든다 */
+(function () {
+  var vp = document.getElementById('vsVp'), sp = document.getElementById('vsSp'), n = document.getElementById('vsN'), H = 30, TOTAL = 10000;
+  sp.style.height = H * TOTAL + 'px';
+  function render() {
+    var s = Math.max(0, Math.floor(vp.scrollTop / H) - 1), e = Math.min(TOTAL, s + Math.ceil(vp.clientHeight / H) + 3);
+    sp.innerHTML = '';
+    for (var i = s; i < e; i++) {
+      var d = document.createElement('div'); d.className = 'vr'; d.style.top = i * H + 'px';
+      d.textContent = (i + 1).toLocaleString('ko-KR') + '번째 줄'; sp.appendChild(d);
+    }
+    n.textContent = e - s;
+  }
+  vp.addEventListener('scroll', render); render();
+})();
+
+/* 09 레이지 로딩: 화면 안으로 들어온 타일만 "불러옴" */
+(function () {
+  var vp = document.getElementById('lzVp'), n = document.getElementById('lzN'), c = 0;
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (x) {
+      if (x.isIntersecting && !x.target.classList.contains('on')) { x.target.classList.add('on'); x.target.textContent = x.target.textContent.replace('이미지', '불러옴'); c++; n.textContent = c; io.unobserve(x.target); }
+    });
+  }, { root: vp });
+  vp.querySelectorAll('.t').forEach(function (t) { io.observe(t); });
+})();
+/*JS-MORE*/
+</script>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

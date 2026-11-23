@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="탭 바 전환 모션 6가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>탭바 모션 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 4칸 탭 바. 8초 동안 탭이 2초씩 차례로 선택된다(음수 지연으로 칸마다 순서를 엇갈리게 함) */
+.tb { position: relative; display: grid; grid-template-columns: repeat(4, 65px); width: 260px; height: 56px; background: #fff; border-radius: 18px; box-shadow: 0 2px 10px rgba(30,27,75,.12); }
+.t { position: relative; z-index: 1; display: grid; place-items: center; color: var(--mute); animation: act 8s infinite; animation-delay: calc(var(--i) * 2s - 8s); }
+.t .d-svg { width: 24px; height: 24px; }
+@keyframes act { 0%, 24.9% { color: var(--p); } 25%, 100% { color: var(--mute); } }
+/* 선택 표시가 한 칸(65px)씩 옮겨 다니는 틀. 이동은 각 2초의 마지막 0.4초에 일어난다 */
+.hop { position: absolute; left: 0; top: 0; width: 65px; height: 100%; display: grid; place-items: center; animation: hop 8s ease-in-out infinite; }
+@keyframes hop { 0%, 20% { transform: none; } 25%, 45% { transform: translateX(65px); } 50%, 70% { transform: translateX(130px); } 75%, 95% { transform: translateX(195px); } 100% { transform: none; } }
+
+/* 01 3D 플립: perspective + rotateY 360도로 선택된 아이콘만 뒤집는다 */
+.flip .t { animation-name: flip; }
+@keyframes flip { 0% { transform: perspective(160px) rotateY(0); color: var(--p); } 10% { transform: perspective(160px) rotateY(360deg); } 24.9% { transform: none; color: var(--p); } 25%, 100% { transform: none; color: var(--mute); } }
+
+/* 02 글로우 트레일: 빛나는 점이 옮겨 갈 때만 가로로 길게 늘어나(scaleX) 꼬리처럼 보인다 */
+.gt .hop { align-items: end; padding-bottom: 6px; }
+.gt .comet { width: 12px; height: 6px; border-radius: 99px; background: var(--p); box-shadow: 0 0 10px 3px rgba(79,70,229,.55); animation: comet 2s ease-in infinite; }
+@keyframes comet { 0%, 78% { transform: scaleX(1); } 90% { transform: scaleX(7); } 100% { transform: scaleX(1); } }
+
+/* 03 파티클 개더: 입자들이 흩어졌다가 새 탭 위치에서 다시 모인다 (단순화한 예시) */
+.pg .hop i { position: absolute; left: calc(50% - 2px); top: calc(50% - 2px); width: 5px; height: 5px; border-radius: 50%; background: var(--p); opacity: 0; animation: pg 2s ease-in-out infinite; }
+@keyframes pg { 0%, 70% { transform: none; opacity: 0; } 74% { transform: none; opacity: 1; } 84%, 94% { transform: translate(var(--dx), var(--dy)); opacity: 1; } 99% { transform: none; opacity: 1; } 100% { transform: none; opacity: 0; } }
+
+/* 04 일래스틱 스트링: SVG path 의 d 값을 바꿔 줄이 출렁이고, 구슬은 옮겨 갈 때 위로 뛴다 */
+.es { margin-top: 18px; }
+.es .str { position: absolute; left: 0; top: -9px; width: 260px; height: 18px; overflow: visible; fill: none; stroke: var(--p); stroke-width: 3; stroke-linecap: round; z-index: 2; }
+.es .str path { animation: str 2s ease-out infinite; }
+.es .hop { align-items: start; z-index: 3; }
+.es .bead { margin-top: -6px; width: 12px; height: 12px; border-radius: 50%; background: var(--p); box-shadow: 0 2px 6px rgba(79,70,229,.5); animation: bead 2s ease-in infinite; }
+@keyframes str { 0% { d: path("M0 9 Q130 30 260 9"); } 12% { d: path("M0 9 Q130 -10 260 9"); } 26% { d: path("M0 9 Q130 18 260 9"); } 40% { d: path("M0 9 Q130 4 260 9"); } 55%, 100% { d: path("M0 9 Q130 9 260 9"); } }
+@keyframes bead { 0%, 78% { transform: none; } 90% { transform: translateY(-14px); } 100% { transform: none; } }
+
+/* 05 시소 틸트: 바 전체를 누른 쪽으로 rotate 했다가 흔들리며 돌아온다 */
+.ss .tb { animation: tilt 8s ease-out infinite; transform-origin: 50% 100%; }
+.fulcrum { width: 22px; height: 14px; background: #c9cfe6; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+@keyframes tilt { 0% { transform: rotate(-7deg); } 10% { transform: rotate(1deg); } 16%, 24.9% { transform: none; } 25% { transform: rotate(-2.5deg); } 35% { transform: rotate(.5deg); } 41%, 49.9% { transform: none; } 50% { transform: rotate(2.5deg); } 60% { transform: rotate(-.5deg); } 66%, 74.9% { transform: none; } 75% { transform: rotate(7deg); } 85% { transform: rotate(-1deg); } 91%, 100% { transform: none; } }
+
+/* 06 슬롯 릴: 아이콘 줄을 세로로 빠르게 돌리다(translateY) 선택된 칸에서 멈춘다 */
+.sl .win { width: 44px; height: 44px; overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 0 0 2px var(--p), 0 4px 10px rgba(79,70,229,.25); color: var(--p); }
+.sl .reel { display: grid; animation: reel 8s ease-in-out infinite; }
+.sl .reel span { height: 44px; display: grid; place-items: center; }
+@keyframes reel { 0%, 20% { transform: none; } 25% { transform: translateY(-220px); } 25.01%, 45% { transform: translateY(-44px); } 50% { transform: translateY(-264px); } 50.01%, 70% { transform: translateY(-88px); } 75% { transform: translateY(-308px); } 75.01%, 95% { transform: translateY(-132px); } 100% { transform: translateY(-352px); } }
+
+/* 07 슬라이딩 인디케이터: 막대 하나가 탭 위를 미끄러져 다닌다 */
+.sd .hop::before { content: ""; position: absolute; left: 14px; right: 14px; top: 0; height: 4px; border-radius: 0 0 4px 4px; background: var(--p); }
+
+/* 08 필 인디케이터: 알약 모양 배경이 선택된 탭 뒤로 옮겨 다닌다 */
+.pl .hop::before { content: ""; width: 52px; height: 36px; border-radius: 99px; background: var(--p-soft); }
+
+/* 09 라벨 확장: 선택된 탭만 폭이 늘어나 이름이 함께 보인다 */
+.lx { display: flex; gap: 4px; align-items: center; justify-content: center; width: 260px; height: 56px; background: #fff; border-radius: 18px; box-shadow: 0 2px 10px rgba(30,27,75,.12); }
+.lx .t { display: flex; align-items: center; gap: 14px; height: 40px; padding: 0 9px; width: 40px; border-radius: 20px; overflow: hidden; font-size: 12px; font-weight: 700; white-space: nowrap; animation-name: lx; justify-content: flex-start; }
+.lx .t .d-svg { flex: none; width: 22px; height: 22px; }
+@keyframes lx { 0% { width: 40px; color: var(--mute); background: transparent; } 3%, 22% { width: 100px; color: var(--p); background: var(--p-soft); } 25%, 100% { width: 40px; color: var(--mute); background: transparent; } }
+
+/* 10 햅틱 피드백: 진동은 눈에 안 보이므로 아이콘이 파르르 떨리고 파문이 퍼지는 것으로 표현한다 (단순화한 예시) */
+.hp .t { animation-name: hap; }
+.hp .t::after { content: ""; position: absolute; width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--p); opacity: 0; animation: ring 8s infinite; animation-delay: calc(var(--i) * 2s - 8s); }
+@keyframes hap { 0% { transform: translateX(-3px); color: var(--p); } 2% { transform: translateX(3px); } 4% { transform: translateX(-3px); } 6% { transform: translateX(2px); } 8% { transform: translateX(-1px); } 10%, 24.9% { transform: none; color: var(--p); } 25%, 100% { transform: none; color: var(--mute); } }
+@keyframes ring { 0% { transform: scale(.4); opacity: .8; } 9%, 100% { transform: scale(1.4); opacity: 0; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></symbol>
+</defs></svg>
+
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">모션과 제스처</a><span class="sep">›</span>
+  <span>탭바 모션</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>탭 바 전환 모션 6가지</h1>
+    <p class="lead">탭을 누르는 순간의 작은 움직임에도 이름이 있어요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="3d-flip">
+      <div class="demo"><div class="tb flip" role="img" aria-label="선택된 아이콘이 3D로 뒤집히는 탭 바">
+        <span class="t" style="--i:0"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span class="t" style="--i:1"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span class="t" style="--i:2"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span class="t" style="--i:3"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+      </div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">3D 플립 <span class="en">3D Flip</span></h2>
+        <p class="desc">누른 아이콘이 동전처럼 세로축을 따라 입체로 뒤집히며 선택됩니다. 평면 아이콘에 깊이감을 주는 가장 단순한 전환입니다.</p>
+        <p class="when"><b>언제 쓰나</b>탭 수가 적고 놀이 요소가 있는 앱, 한 번 눌러 보고 싶은 아이콘 중심의 바.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>하단 탭 바에서 탭을 누르면 해당 아이콘이 rotateY 360도로 3D 플립 되며 활성 색으로 바뀌게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>매일 수십 번 누르는 탭 바에서 매번 0.5초씩 회전하면 사흘만 지나도 답답합니다. 회전 시간을 0.3초 안으로 줄이고, 연타해도 화면 전환이 모션을 기다리지 않게 하세요. 뒤집히는 동안 아이콘의 뒷면이 보이면 안 되므로 좌우 대칭이 아닌 아이콘(글자가 든 아이콘 등)은 특히 조심합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="glow-trail">
+      <div class="demo"><div class="tb gt" role="img" aria-label="빛나는 혜성이 새 탭으로 날아가며 꼬리를 남기는 탭 바">
+        <span class="t" style="--i:0"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span class="t" style="--i:1"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span class="t" style="--i:2"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span class="t" style="--i:3"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+        <div class="hop"><i class="comet"></i></div>
+      </div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">글로우 트레일 <span class="en">Glow Trail</span></h2>
+        <p class="desc">빛나는 점이 새 탭으로 혜성처럼 날아가며 뒤에 빛의 꼬리를 남깁니다. 움직이는 길이 보이기 때문에 선택이 어디서 어디로 옮겨졌는지 눈으로 따라갈 수 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>어두운 배경의 게임·음악·미디어 앱, 탭이 멀리 떨어져 있어 이동 경로를 보여주고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>탭을 누르면 탭 바 아래의 빛나는 점이 새 탭으로 날아가며 길게 늘어나는 글로우 트레일 효과를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>빛 번짐은 흰 배경에서는 거의 안 보이고 지저분한 얼룩처럼 보입니다. 어두운 바에서만 쓰세요. 한 칸 옆으로 옮길 때도 꼬리가 길면 과해 보이니 이동 거리에 비례해 꼬리 길이를 줄이도록 개발자에게 요청하세요. 또 빛만으로 선택을 알리면 색을 구분하기 어려운 사용자가 놓치므로 아이콘의 색이나 모양도 같이 바꿔야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="particle-gather">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="tb pg" role="img" aria-label="입자가 흩어졌다 새 아이콘으로 모이는 탭 바">
+        <span class="t" style="--i:0"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span class="t" style="--i:1"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span class="t" style="--i:2"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span class="t" style="--i:3"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+        <div class="hop"><i style="--dx:-14px;--dy:-14px"></i><i style="--dx:14px;--dy:-12px"></i><i style="--dx:-16px;--dy:6px"></i><i style="--dx:16px;--dy:10px"></i><i style="--dx:0;--dy:-18px"></i><i style="--dx:0;--dy:16px"></i><i style="--dx:-8px;--dy:14px"></i><i style="--dx:9px;--dy:-16px"></i></div>
+      </div><span class="d-cap" style="margin-top:12px">단순화한 예시: 입자가 흩어졌다 다음 탭에 모입니다</span></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">파티클 개더 <span class="en">Particle Gather</span></h2>
+        <p class="desc">이전 아이콘이 작은 입자로 흩어지고, 그 입자들이 새 탭에 모여 새 아이콘이 됩니다. 아이콘이 사라지고 다시 만들어지는 과정을 보여주는 전환입니다.</p>
+        <p class="when"><b>언제 쓰나</b>탭을 바꿀 때마다 화면이 완전히 달라지는 앱의 강한 인상을 남기고 싶을 때, 캠페인용 한정 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>탭을 바꾸면 이전 아이콘이 입자로 흩어지고 새 탭에서 입자들이 모여 아이콘이 되는 파티클 개더 모션을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>입자가 모이는 동안 새 아이콘이 완성되지 않아 사용자가 "눌렸나?" 하고 한 번 더 누르기 쉽습니다. 화면 전환은 모션과 상관없이 즉시 시작해야 합니다. 입자 수가 많으면 저사양 안드로이드에서 프레임이 떨어지니 20~30개 이하로 제한하고, 평소에는 쓰지 말고 이벤트성으로만 두는 편이 낫습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="elastic-string">
+      <div class="demo"><div class="tb es" role="img" aria-label="줄이 튕겨지고 구슬이 타고 넘어가는 탭 바">
+        <svg class="str" viewBox="0 0 260 18" aria-hidden="true"><path d="M0 9 Q130 9 260 9"/></svg>
+        <span class="t" style="--i:0"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span class="t" style="--i:1"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span class="t" style="--i:2"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span class="t" style="--i:3"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+        <div class="hop"><i class="bead"></i></div>
+      </div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">일래스틱 스트링 <span class="en">Elastic String</span></h2>
+        <p class="desc">탭 바 위에 팽팽한 줄이 있고, 새 탭에 구슬이 내려앉을 때마다 줄이 튕겨 출렁입니다. 늘어났다 돌아오는 탄성(elastic)이 이름의 뜻입니다.</p>
+        <p class="when"><b>언제 쓰나</b>장난스럽고 탄력 있는 브랜드의 앱, 탭 이동 자체를 작은 놀이처럼 느끼게 하고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>탭 바 위의 줄이 탭을 누를 때 튕기고 구슬이 새 탭으로 넘어가 앉는 일래스틱 스트링 모션을 SVG로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>줄이 출렁이는 1초 가까이 계속 눈이 그쪽으로 끌려서 정작 화면 내용을 읽는 시간을 뺏습니다. 출렁임은 0.5초 안에 잦아들게 하세요. 줄이 곡선 경로 데이터로 움직이는 방식이라 웹과 앱에서 각각 다시 만들어야 해서 개발 비용이 의외로 큽니다. 일회성 이벤트가 아니라면 비용 대비 효과를 먼저 따져 보세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="seesaw-tilt">
+      <div class="demo"><div class="d-col ss" style="align-items:center;gap:0"><div class="tb" role="img" aria-label="누른 쪽으로 바 전체가 기울었다 돌아오는 탭 바">
+        <span class="t" style="--i:0"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span class="t" style="--i:1"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span class="t" style="--i:2"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span class="t" style="--i:3"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+      </div><div class="fulcrum"></div></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">시소 틸트 <span class="en">Seesaw Tilt</span></h2>
+        <p class="desc">누른 쪽 끝이 눌린 것처럼 탭 바 전체가 기울었다가 출렁이며 제자리로 돌아옵니다. 개별 아이콘이 아니라 바 전체를 하나의 물체로 다루는 점이 특징입니다.</p>
+        <p class="when"><b>언제 쓰나</b>버튼이 눌리는 물리적 감각을 살리고 싶은 앱, 탭이 눌렸다는 확신을 시각으로도 주고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>탭을 누르면 탭 바가 누른 쪽으로 7도 기울었다가 0.4초 안에 돌아오는 시소 틸트 모션을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>바가 기울어 있는 동안 아이콘과 글자가 같이 기울어서 눌러야 할 영역이 움직이는 과녁이 됩니다. 연타하면 터치가 빗나가니 기울기는 3~5도 이내로 작게 잡으세요. 하단 홈 인디케이터가 있는 iOS에서는 바가 화면 아래 가장자리에 붙어 있어 기울면 가장자리가 비어 보이는 문제도 점검해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="slot-reel">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="tb sl" role="img" aria-label="아이콘이 슬롯머신처럼 돌다 멈추는 탭 바">
+        <span class="t" style="--i:0"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span class="t" style="--i:1"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span class="t" style="--i:2"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span class="t" style="--i:3"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+        <div class="hop"><div class="win"><div class="reel">
+          <span><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+          <span><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+          <span><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span>
+        </div></div></div>
+      </div><span class="d-cap" style="margin-top:12px">단순화한 예시: 선택 칸의 릴이 돌다 멈춥니다</span></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">슬롯 릴 <span class="en">Slot Reel</span></h2>
+        <p class="desc">아이콘이 슬롯머신의 릴처럼 세로로 빠르게 돌다가 선택된 아이콘에서 멈춥니다. 아이콘이 바뀐다는 사실을 가장 시끄럽게 알리는 전환입니다.</p>
+        <p class="when"><b>언제 쓰나</b>게임·이벤트 앱, 선택이 결과처럼 느껴지는 서비스, 한시적인 캠페인 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>탭을 누르면 선택된 칸의 아이콘이 슬롯 릴처럼 위아래로 돌다가 해당 아이콘에서 멈추는 모션을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>정보를 찾아가는 탭 바에서 도박 같은 연출은 아이콘이 도는 동안 무슨 탭인지 읽을 수 없게 만들어 오히려 방해가 됩니다. 업무·금융·건강 서비스에는 쓰지 마세요. 도는 시간이 0.6초를 넘으면 "고장났나?" 싶어지고, 움직임이 불편한 사용자를 위해 시스템의 동작 줄이기 설정에서는 모션을 꺼야 합니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">탭 바 전환을 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="sliding-indicator">
+      <div class="demo"><div class="tb sd" role="img" aria-label="막대가 탭 위를 미끄러지는 슬라이딩 인디케이터">
+        <span class="t" style="--i:0"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span class="t" style="--i:1"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span class="t" style="--i:2"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span class="t" style="--i:3"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+        <div class="hop"></div>
+      </div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">슬라이딩 인디케이터 <span class="en">Sliding Indicator</span></h2>
+        <p class="desc">선택된 탭을 알리는 막대나 점이 탭 사이를 미끄러지듯 이동하는 방식. 선택 표시가 사라졌다 나타나는 것이 아니라 하나가 계속 이어져 움직이는 점이 핵심입니다.</p>
+        <p class="when"><b>언제 쓰나</b>탭 바와 화면 위쪽의 탭 목록 모두, 가장 무난하고 안전한 선택 표시가 필요할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>선택된 탭 위에 있는 막대가 탭을 바꿀 때 0.25초 동안 미끄러지듯 따라 움직이는 슬라이딩 인디케이터를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>탭이 화면을 좌우로 쓸어 넘기는 방식과 함께 쓰면 인디케이터가 스와이프 진행률에 맞춰 같이 움직여야 자연스럽습니다. 이 연동을 빠뜨리면 손가락은 반쯤 넘겼는데 막대는 아직 제자리라 어긋나 보입니다. 모션이 가장 조용해서 매일 쓰는 탭 바의 기본값으로 가장 오래 버팁니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="pill-indicator">
+      <div class="demo"><div class="tb pl" role="img" aria-label="알약 모양 배경이 선택된 탭으로 옮겨 가는 탭 바">
+        <div class="hop"></div>
+        <span class="t" style="--i:0"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span class="t" style="--i:1"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span class="t" style="--i:2"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span class="t" style="--i:3"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+      </div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">필 인디케이터 <span class="en">Pill Indicator</span></h2>
+        <p class="desc">선택된 아이콘 뒤에 알약(pill) 모양의 배경이 깔리며 이동하는 표시. 구글 머티리얼 3의 하단 내비게이션이 이 방식이어서 안드로이드에서 흔히 보입니다.</p>
+        <p class="when"><b>언제 쓰나</b>안드로이드 스타일의 앱, 아이콘만으로는 선택이 약하게 느껴져 면으로 확실히 표시하고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>하단 탭 바에서 선택된 아이콘 뒤에 연한 색 알약 모양 필 인디케이터가 깔리고 탭을 바꾸면 따라 이동하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>알약 색과 아이콘 색의 명도 대비가 3:1 아래로 내려가면 선택 여부가 흐릿해집니다. 연한 배경에 연한 아이콘이 되지 않도록 아이콘을 짙게 바꾸세요. 알약이 눌리는 영역처럼 보이지만 실제 터치 영역은 그보다 넓어야 하므로 배경 크기와 터치 영역을 따로 생각해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="label-expansion">
+      <div class="demo"><div class="lx" role="img" aria-label="선택된 탭만 이름이 펼쳐지는 탭 바">
+        <span class="t" style="--i:0"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg>홈</span><span class="t" style="--i:1"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg>검색</span><span class="t" style="--i:2"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg>찜</span><span class="t" style="--i:3"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg>내 정보</span>
+      </div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">라벨 확장 <span class="en">Label expansion</span></h2>
+        <p class="desc">평소에는 아이콘만 보이다가 선택된 탭만 폭이 넓어져 이름(라벨)이 함께 나타납니다. 모든 탭에 글자를 다는 것보다 공간을 아낄 수 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>탭이 4~5개이고 화면 폭이 좁아 모든 이름을 늘어놓기 어려울 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>선택된 탭만 아이콘 옆에 이름이 나타나도록 폭이 부드럽게 늘어나는 라벨 확장 탭 바를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>선택되지 않은 탭에 이름이 없으면 처음 쓰는 사람은 아이콘 뜻을 몰라 눌러 봐야 합니다. 아이콘만으로 뜻이 분명한 서비스(홈, 검색 정도)가 아니라면 이 방식은 위험합니다. 폭이 변하면 옆 탭의 터치 위치도 같이 움직이므로 연타 시 다른 탭이 눌리는 사고를 직접 눌러 보며 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="haptic-feedback">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="tb hp" role="img" aria-label="아이콘이 떨리며 파문이 퍼지는 탭 바">
+        <span class="t" style="--i:0"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span class="t" style="--i:1"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-search"/></svg></span><span class="t" style="--i:2"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-heart"/></svg></span><span class="t" style="--i:3"><svg class="d-svg" viewBox="0 0 24 24"><use href="#i-user"/></svg></span>
+      </div><span class="d-cap" style="margin-top:12px">단순화한 예시: 진동 대신 떨림과 파문으로 표현</span></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">햅틱 피드백 <span class="en">Haptic feedback</span></h2>
+        <p class="desc">화면의 움직임과 함께 폰이 짧게 진동해 "눌렸다"는 느낌을 손끝으로 전달하는 것. 눈이 아니라 촉각으로 주는 반응이라 CSS 모션이 아니라 기기 기능으로 구현합니다.</p>
+        <p class="when"><b>언제 쓰나</b>탭 전환, 스위치 켜고 끄기, 새로고침 완료처럼 작지만 분명한 확인이 필요한 순간.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>탭을 누르면 아이콘 모션과 함께 가벼운 햅틱 피드백이 한 번 울리게 해줘. 진동 끔 설정이면 울리지 않게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>탭 바처럼 자주 누르는 곳에서 진동까지 매번 울리면 불쾌해지기 쉽습니다. 진동은 중요한 확정 동작에만 아껴 쓰세요. iOS는 진동 종류가 세분화되어 있지만 안드로이드는 기기마다 세기가 달라 같은 코드가 다르게 느껴집니다. 웹에서는 대부분 지원하지 않으니 시안에 적을 때 플랫폼을 명시해야 합니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

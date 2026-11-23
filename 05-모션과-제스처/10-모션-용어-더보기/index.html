@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="모션 용어 28가지 더 — 움직이는 예시로 보는 UI 용어 사전">
+<title>모션 용어 더보기 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통 부품: 달리는 길(lane)과 공(ball). 공은 translateX 로만 움직인다 */
+.lane { position: relative; width: 230px; height: 36px; }
+.lane::before { content: ""; position: absolute; left: 6px; right: 6px; top: 16px; height: 4px; border-radius: 4px; background: #c9cfe6; }
+.lane.s { width: 120px; }
+.ball { position: absolute; left: 0; top: 4px; width: 28px; height: 28px; border-radius: 50%; background: var(--p); box-shadow: 0 2px 6px rgba(79,70,229,.45); }
+.lane .k { position: absolute; top: 15px; width: 6px; height: 6px; border-radius: 50%; background: #7d86b3; }
+.lane .end { position: absolute; top: 6px; width: 24px; height: 24px; border-radius: 6px; border: 2px dashed var(--p); }
+@keyframes go { 0%, 12% { transform: translateX(0); } 88%, 100% { transform: translateX(202px); } }
+@keyframes gos2 { 0%, 12% { transform: translateX(0); } 88%, 100% { transform: translateX(72px); } }
+@keyframes gos { 0%, 12% { transform: translateX(0); } 88%, 100% { transform: translateX(92px); } }
+
+/* 01 트윈: 처음과 끝 모양만 정하면 사이는 자동으로 채운다. 핵심: linear 로 같은 간격의 중간 점(회색)을 지난다 */
+.b-tween { animation: go 3.2s linear infinite alternate; }
+
+/* 02 큐빅 베지어: 곡선 모양이 곧 속도. 핵심: animation-timing-function: cubic-bezier(.7, 0, .3, 1) */
+.b-cb { animation: go 3.2s cubic-bezier(.7,0,.3,1) infinite alternate; }
+.cbg { width: 96px; height: 96px; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+
+/* 03 이즈 인 아웃: 천천히 출발 - 빠르게 - 천천히 멈춤. 핵심: ease-in-out, 점이 양끝에서 촘촘 */
+.b-eio { animation: go 3.2s ease-in-out infinite alternate; }
+
+/* 04 스텝: 부드럽게 가지 않고 칸 단위로 뚝뚝. 핵심: animation-timing-function: steps(6) */
+.b-steps { animation: go 3.2s steps(6) infinite alternate; }
+
+/* 05 지연: 막대가 차는 동안 기다렸다가 출발. 핵심: animation-delay 와 같은 효과를 keyframes 앞쪽 35% 정지로 표현 */
+.b-delay { animation: gd 3.6s ease-in-out infinite; }
+@keyframes gd { 0%, 35% { transform: translateX(0); opacity: 1; } 75%, 92% { transform: translateX(202px); opacity: 1; } 97% { transform: translateX(202px); opacity: 0; } 98% { transform: translateX(0); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+.dbar { width: 230px; height: 6px; border-radius: 6px; background: #d5daea; overflow: hidden; }
+.dbar i { display: block; height: 100%; background: var(--warn); transform-origin: left; animation: dbar 3.6s linear infinite; }
+@keyframes dbar { 0% { transform: scaleX(0); } 35%, 100% { transform: scaleX(1); } }
+
+/* 06 반복 횟수: 정해진 횟수만 돌고 멈춘다. 핵심: animation-iteration-count: 3 (여기서는 rotate 1080deg = 3바퀴) */
+.rot { width: 54px; height: 54px; border-radius: 12px; background: var(--p); animation: r3 3.6s linear infinite; }
+@keyframes r3 { 0% { transform: rotate(0); } 75%, 100% { transform: rotate(1080deg); } }
+.cnt { display: flex; gap: 6px; }
+.cnt i { width: 12px; height: 12px; border-radius: 50%; background: #c9cfe6; }
+.cnt i:nth-child(1) { animation: c1 3.6s step-end infinite; }
+.cnt i:nth-child(2) { animation: c2 3.6s step-end infinite; }
+.cnt i:nth-child(3) { animation: c3 3.6s step-end infinite; }
+@keyframes c1 { 0% { background: #c9cfe6; } 1%, 100% { background: var(--p); } }
+@keyframes c2 { 0%, 25% { background: #c9cfe6; } 26%, 100% { background: var(--p); } }
+@keyframes c3 { 0%, 50% { background: #c9cfe6; } 51%, 100% { background: var(--p); } }
+
+/* 07 왕복: 끝에 닿으면 거꾸로 되돌아온다. 핵심: animation-direction: alternate (아래 줄은 normal 이라 순간이동) */
+.b-alt { animation: go 2.4s ease-in-out infinite alternate; }
+.b-norm { animation: go 2.4s ease-in-out infinite; background: #8b93bd; box-shadow: none; }
+
+/* 08 채움 모드: 끝난 뒤 처음으로 돌아가나(none) 끝 모양을 유지하나(forwards). 핵심: animation-fill-mode */
+.fm { width: 34px; height: 34px; border-radius: 9px; background: var(--p); }
+.fm.n { animation: fmn 3.2s infinite; background: #8b93bd; }
+.fm.f { animation: fmf 3.2s infinite; }
+.fmw { height: 96px; }
+@keyframes fmn { 0%, 10% { transform: none; } 40% { transform: translateY(56px); } 40.1%, 100% { transform: none; } }
+@keyframes fmf { 0%, 10% { transform: none; } 40%, 90% { transform: translateY(56px); } 93%, 100% { transform: none; } }
+
+/* 09 진입·퇴장: 들어올 땐 ease-out(빠르게 도착), 나갈 땐 ease-in(점점 빨라져 퇴장). 핵심: keyframe 마다 다른 timing */
+.ee { width: 170px; padding: 14px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 6px 18px rgba(30,27,75,.12); animation: ee 3.4s infinite; }
+@keyframes ee { 0% { transform: translateX(90px); opacity: 0; animation-timing-function: ease-out; } 20%, 65% { transform: none; opacity: 1; animation-timing-function: ease-in; } 88%, 100% { transform: translateX(-90px); opacity: 0; } }
+
+/* 10 크로스페이드: 한 장은 사라지고 다른 한 장은 동시에 나타난다. 핵심: 겹쳐 두고 opacity 1→0 / 0→1 */
+.xf { position: relative; width: 150px; height: 96px; }
+.xf i { position: absolute; inset: 0; border-radius: 12px; display: grid; place-items: center; font-style: normal; font-weight: 800; color: #fff; }
+.xf .a { background: linear-gradient(135deg, #f59e0b, #ea580c); animation: xa 3.4s ease-in-out infinite; }
+.xf .b { background: linear-gradient(135deg, #4f46e5, #1e1b4b); animation: xb 3.4s ease-in-out infinite; }
+@keyframes xa { 0%, 20% { opacity: 1; } 45%, 70% { opacity: 0; } 95%, 100% { opacity: 1; } }
+@keyframes xb { 0%, 20% { opacity: 0; } 45%, 70% { opacity: 1; } 95%, 100% { opacity: 0; } }
+
+/* 11 스케일·회전·기울임: transform 하나로 크기·돌림·기울임을 한다. 핵심: scale(), rotate(), skewX() */
+.tf { width: 48px; height: 48px; border-radius: 10px; background: var(--p); }
+.tf.s { animation: tfs 2.4s ease-in-out infinite alternate; }
+.tf.r { animation: tfr 2.4s ease-in-out infinite alternate; background: var(--ok); }
+.tf.k { animation: tfk 2.4s ease-in-out infinite alternate; background: var(--accent); }
+@keyframes tfs { to { transform: scale(1.4); } }
+@keyframes tfr { to { transform: rotate(90deg); } }
+@keyframes tfk { to { transform: skewX(-25deg); } }
+
+/* 12 변형 기준점: 같은 회전도 어디를 축으로 삼느냐로 달라진다. 핵심: transform-origin: center vs 0 0 */
+.og { position: relative; width: 70px; height: 70px; }
+.og i { position: absolute; inset: 0; border-radius: 6px; background: var(--p-soft); border: 2px solid var(--p); animation: og 2.4s ease-in-out infinite alternate; }
+.og.c i { transform-origin: 50% 50%; }
+.og.t i { transform-origin: 0 0; }
+.og b { position: absolute; width: 10px; height: 10px; margin: -5px; border-radius: 50%; background: var(--danger); z-index: 1; }
+.og.c b { left: 50%; top: 50%; }
+.og.t b { left: 0; top: 0; }
+@keyframes og { to { transform: rotate(60deg); } }
+
+/* 13 원근: perspective 가 있어야 회전한 면이 사다리꼴로 깊이감이 생긴다. 핵심: perspective: 260px 의 유무 */
+.pv { width: 100px; height: 90px; display: grid; place-items: center; }
+.pv.on { perspective: 260px; }
+.pv i { width: 70px; height: 70px; border-radius: 8px; background: linear-gradient(135deg, var(--p), #8b5cf6); animation: pv 3s ease-in-out infinite alternate; }
+@keyframes pv { from { transform: rotateY(-5deg); } to { transform: rotateY(65deg); } }
+
+/* 14 오버슈트: 목표선을 살짝 지나쳤다가 돌아와 자리 잡는다. 핵심: cubic-bezier(.3, 1.7, .5, 1) (1 보다 큰 값) */
+.os-t { position: absolute; left: 174px; top: 0; bottom: 0; border-left: 2px dashed var(--danger); }
+.b-os { animation: os 3.4s infinite; }
+@keyframes os { 0%, 10% { transform: translateX(0); opacity: 1; animation-timing-function: cubic-bezier(.3,1.7,.5,1); } 50%, 88% { transform: translateX(160px); opacity: 1; } 94% { transform: translateX(160px); opacity: 0; } 95% { transform: translateX(0); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+
+/* 15 앤티시페이션: 갈 방향과 반대로 살짝 물러났다가 튀어 나간다. 핵심: 첫 keyframe 에서 translateX(-16px) */
+.b-ant { margin-left: 18px; animation: ant 3.4s infinite; }
+@keyframes ant { 0%, 10% { transform: translateX(0); opacity: 1; animation-timing-function: ease-out; } 22% { transform: translateX(-16px); animation-timing-function: cubic-bezier(.5,0,.9,.5); } 45%, 86% { transform: translateX(170px); opacity: 1; } 92% { transform: translateX(170px); opacity: 0; } 93% { transform: translateX(0); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+
+/* 16 팔로 스루: 몸이 멈춘 뒤에도 안테나가 흔들리다 가라앉는다. 핵심: 부모는 정지, 자식 rotate 가 +18 → -8 → 3 → 0 으로 감쇠 */
+.ft { position: absolute; left: 0; top: 0; width: 56px; height: 30px; margin-top: 44px; border-radius: 10px; background: var(--p); animation: ftb 3.6s ease-in-out infinite; }
+.ft i { position: absolute; left: 26px; bottom: 26px; width: 4px; height: 40px; border-radius: 3px; background: var(--ink); transform-origin: bottom center; animation: fta 3.6s infinite; }
+.ft i::after { content: ""; position: absolute; left: -4px; top: -6px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+.ftw { position: relative; width: 230px; height: 100px; }
+@keyframes ftb { 0%, 8% { transform: translateX(0); opacity: 1; } 30%, 86% { transform: translateX(160px); opacity: 1; } 92% { transform: translateX(160px); opacity: 0; } 93% { transform: translateX(0); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes fta { 0%, 8% { transform: rotate(0); } 28% { transform: rotate(-24deg); } 38% { transform: rotate(18deg); } 46% { transform: rotate(-8deg); } 53% { transform: rotate(3deg); } 60%, 100% { transform: rotate(0); } }
+
+/* 17 모션 패스: 곡선 경로를 따라 이동. 핵심: offset-path: path(...) + offset-distance 0% → 100% + offset-rotate: auto */
+.mpw { position: relative; width: 240px; height: 110px; }
+.mpw svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mp { position: absolute; left: 0; top: 0; width: 26px; height: 20px; background: var(--accent); clip-path: polygon(0 0, 100% 50%, 0 100%); offset-path: path("M10 100 C70 -10 170 -10 230 100"); offset-rotate: auto; animation: mpm 3.2s ease-in-out infinite alternate; }
+@keyframes mpm { 0%, 10% { offset-distance: 0%; } 90%, 100% { offset-distance: 100%; } }
+
+/* 18 클립 패스 애니메이션: 보이는 영역(구멍)만 커진다. 핵심: clip-path: circle(0%) → circle(75%) */
+.cpw { width: 200px; height: 120px; position: relative; border-radius: 14px; background: #dfe3f0; overflow: hidden; }
+.cpw i { position: absolute; inset: 0; background: radial-gradient(circle at 72% 30%, #fde68a 0 12%, transparent 13%), linear-gradient(180deg, #7c9cff 0 55%, transparent 55%), linear-gradient(160deg, #34d399, #0f766e 85%); clip-path: circle(0% at 50% 50%); animation: cp 3.6s ease-in-out infinite; }
+@keyframes cp { 0%, 12% { clip-path: circle(0% at 50% 50%); } 55%, 80% { clip-path: circle(75% at 50% 50%); } 100% { clip-path: circle(0% at 50% 50%); } }
+
+/* 19 스크롤 트리거: 스크롤이 시작선을 넘는 순간 한 번 재생된다. 핵심: 선을 지날 때 opacity/translateY 시작(여기서는 같은 시간축으로 흉내) */
+.stp { width: 150px; height: 170px; position: relative; }
+.stp .strip { display: grid; gap: 10px; padding: 10px; animation: ss 5s linear infinite alternate; }
+.stp .strip i { display: block; height: 14px; border-radius: 99px; background: #d5daea; }
+.stp .strip .card { height: 60px; border-radius: 10px; background: var(--p); animation: sc 5s linear infinite alternate; }
+.stp .line { position: absolute; left: 0; right: 0; top: 100px; border-top: 2px dashed var(--danger); }
+.stp .line b { position: absolute; right: 6px; top: -18px; font-size: 10px; color: var(--danger); }
+@keyframes ss { 0%, 10% { transform: none; } 90%, 100% { transform: translateY(-150px); } }
+@keyframes sc { 0%, 46% { opacity: 0; transform: translateX(-24px); } 56%, 100% { opacity: 1; transform: none; } }
+
+/* 20 핀 고정: 스크롤하는 동안 카드는 제자리에 붙어 있고 안의 내용만 단계별로 바뀐다. 핵심: 고정 카드 + 뒤 목록 translateY + 글자 opacity 교대 */
+.pnw { position: relative; width: 190px; height: 170px; overflow: hidden; border-radius: 14px; background: #fff; border: 1px solid var(--line); }
+.pnw .strip { display: grid; gap: 14px; padding: 12px; animation: pns 5s linear infinite alternate; }
+.pnw .strip i { display: block; height: 16px; border-radius: 99px; background: #e4e8f5; }
+.pnw .pin { position: absolute; left: 20px; right: 20px; top: 56px; padding: 14px 10px; border-radius: 12px; background: var(--ink); color: #fff; text-align: center; font-weight: 800; box-shadow: 0 8px 18px rgba(30,27,75,.3); }
+.pnw .pin span { position: absolute; left: 0; right: 0; top: 50%; margin-top: -9px; opacity: 0; }
+.pnw .pin .p1 { animation: pa 5s linear infinite alternate; }
+.pnw .pin .p2 { animation: pb 5s linear infinite alternate; }
+.pnw .pin .p3 { animation: pc 5s linear infinite alternate; }
+.pnw .pin b { visibility: hidden; font-weight: 800; }
+.pnw .tag { position: absolute; right: 6px; top: 6px; z-index: 2; padding: 1px 8px; border-radius: 99px; background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; }
+@keyframes pns { 0%, 8% { transform: none; } 92%, 100% { transform: translateY(-190px); } }
+@keyframes pa { 0%, 30% { opacity: 1; } 36%, 100% { opacity: 0; } }
+@keyframes pb { 0%, 32% { opacity: 0; } 38%, 62% { opacity: 1; } 68%, 100% { opacity: 0; } }
+@keyframes pc { 0%, 64% { opacity: 0; } 70%, 100% { opacity: 1; } }
+
+/* 21 스크럽: 타임라인의 재생 헤드를 끄는 만큼 움직임이 앞뒤로 간다. 핵심: 두 애니메이션이 같은 시간·같은 진행률을 공유 */
+.head { position: absolute; left: 0; top: 2px; width: 14px; height: 32px; margin-left: -1px; animation: go 4s ease-in-out infinite alternate; }
+.head::before { content: ""; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: var(--danger); }
+.head::after { content: ""; position: absolute; left: 1px; top: 0; width: 12px; height: 10px; border-radius: 3px; background: var(--danger); }
+.b-scrub { animation: go 4s ease-in-out infinite alternate; background: var(--ok); }
+
+/* 22 로티: 설명 파일(JSON)을 읽어 그 자리에서 그려 재생한다(개념만). 핵심: 코드 상자 → 화살표 → 움직이는 SVG */
+.code { width: 118px; padding: 10px; border-radius: 10px; background: var(--ink); color: #c7d2fe; font: 11px/1.5 Consolas, monospace; }
+.code b { color: #fde68a; font-weight: 400; }
+.lt { width: 70px; height: 70px; fill: var(--danger); animation: lt 1.4s ease-in-out infinite; }
+@keyframes lt { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } 60% { transform: scale(1); } }
+
+/* 23 프레임 레이트: 초당 그림 수. 많으면 부드럽고 적으면 끊긴다. 핵심: 같은 이동을 linear vs steps(8) */
+.b-smooth { animation: gos 2.8s linear infinite alternate; }
+.b-chop { animation: gos 2.8s steps(8) infinite alternate; background: #8b93bd; box-shadow: none; }
+
+/* 24 모션 토큰: 속도에 이름을 붙여 규칙으로 쓴다. 핵심: --dur-fast 150ms / --dur-base 300ms / --dur-slow 600ms */
+.tkr { display: grid; grid-template-columns: 78px 1fr; align-items: center; gap: 8px; }
+.tkr code { font: 700 11px Consolas, monospace; color: var(--p); }
+.tkr .lane { width: 150px; height: 24px; }
+.tkr .lane::before { top: 10px; }
+.tkr .ball { top: 0; width: 24px; height: 24px; }
+.tkr .f { animation: tkf 2.4s ease-out infinite; }
+.tkr .n { animation: tkn 2.4s ease-out infinite; }
+.tkr .sl { animation: tks 2.4s ease-out infinite; }
+@keyframes tkf { 0% { transform: translateX(0); opacity: 1; } 6.25%, 88% { transform: translateX(120px); opacity: 1; } 94% { transform: translateX(120px); opacity: 0; } 95% { transform: translateX(0); opacity: 0; } 100% { opacity: 1; } }
+@keyframes tkn { 0% { transform: translateX(0); opacity: 1; } 12.5%, 88% { transform: translateX(120px); opacity: 1; } 94% { transform: translateX(120px); opacity: 0; } 95% { transform: translateX(0); opacity: 0; } 100% { opacity: 1; } }
+@keyframes tks { 0% { transform: translateX(0); opacity: 1; } 25%, 88% { transform: translateX(120px); opacity: 1; } 94% { transform: translateX(120px); opacity: 0; } 95% { transform: translateX(0); opacity: 0; } 100% { opacity: 1; } }
+
+/* 25 연출: 여러 요소가 정해진 순서로 이어 등장한다. 핵심: 같은 시간축에서 요소마다 시작 시점을 다르게 (1 이미지 → 2 제목 → 3 버튼) */
+.ch { width: 200px; display: grid; gap: 10px; }
+.ch .im { height: 70px; border-radius: 12px; background: linear-gradient(135deg, #7c9cff, var(--p)); animation: ch1 4s infinite; }
+.ch .ti { height: 12px; width: 70%; border-radius: 99px; background: var(--ink); animation: ch2 4s infinite; }
+.ch .d-btn { justify-self: start; animation: ch3 4s infinite; }
+@keyframes ch1 { 0%, 3% { opacity: 0; transform: translateX(-30px); } 15%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; } }
+@keyframes ch2 { 0%, 15% { opacity: 0; transform: translateY(10px); } 28%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; } }
+@keyframes ch3 { 0%, 30% { opacity: 0; transform: scale(.7); } 45%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; } }
+
+/* 26 저크(끊김): 한 프레임씩 건너뛰어 움직임이 덜컥거린다. 핵심: 시간 간격이 들쭉날쭉한 keyframes(1% 짜리 점프) */
+.b-jank { animation: jk 3s infinite alternate; background: #8b93bd; box-shadow: none; }
+@keyframes jk { 0%, 10% { transform: translateX(0); } 11%, 24% { transform: translateX(14px); } 25%, 28% { transform: translateX(40px); } 29%, 52% { transform: translateX(46px); } 53%, 58% { transform: translateX(78px); } 59%, 100% { transform: translateX(92px); } }
+
+/* 27 모션 블러: 빠를 때만 잔상처럼 번지고 늘어난다. 핵심: 속도가 최대인 구간에 filter: blur(5px) + scaleX(1.5) */
+.b-mb { width: 44px; height: 28px; border-radius: 10px; animation: mb 2.6s ease-in-out infinite alternate; }
+@keyframes mb { 0%, 12% { transform: translateX(0); filter: blur(0); } 50% { transform: translateX(94px) scale(1.5, .9); filter: blur(5px); } 88%, 100% { transform: translateX(186px); filter: blur(0); } }
+
+/* 28 중단 가능한 애니메이션: 도중에 취소하면 지금 위치에서 바로 되돌아간다. 핵심: 끝까지 기다리지 않고 현재 값에서 반대로 */
+.b-il1 { animation: il1 4s infinite; background: #8b93bd; box-shadow: none; }
+.b-il2 { animation: il2 4s infinite; }
+@keyframes il1 { 0%, 5% { transform: translateX(0); } 55%, 70% { transform: translateX(92px); } 95%, 100% { transform: translateX(0); } }
+@keyframes il2 { 0%, 5% { transform: translateX(0); } 25% { transform: translateX(44px); animation-timing-function: ease-out; } 50%, 100% { transform: translateX(0); } }
+.flag { position: absolute; left: 50%; top: -14px; padding: 0 8px; border-radius: 99px; background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; animation: flg 4s infinite; }
+@keyframes flg { 0%, 24% { opacity: 0; } 26%, 40% { opacity: 1; } 45%, 100% { opacity: 0; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">모션과 제스처</a><span class="sep">›</span>
+  <span>모션 용어 더보기</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>모션 용어 28가지 더</h1>
+    <p class="lead">움직임을 지시할 때 쓰는 말</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term added" id="tween">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="lane"><span class="end" style="left:2px"></span><span class="end" style="left:204px"></span><i class="k" style="left:25px"></i><i class="k" style="left:45px"></i><i class="k" style="left:65px"></i><i class="k" style="left:85px"></i><i class="k" style="left:105px"></i><i class="k" style="left:125px"></i><i class="k" style="left:145px"></i><i class="k" style="left:165px"></i><i class="k" style="left:185px"></i><div class="ball b-tween"></div></div><span class="d-cap">점선 칸 두 곳만 정하면 사이는 자동입니다</span></div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">트윈 <span class="en">Tween (in-betweening)</span></h2>
+        <p class="desc">시작 모양과 끝 모양만 정하면 그 사이 장면을 컴퓨터가 알아서 채워 주는 방식. 만화영화에서 중간 그림을 그리는 "사이 그림(in-between)"에서 온 말이라 <strong>인비트위닝</strong>이라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>버튼이 커졌다 돌아오기, 카드가 옆으로 밀려오기처럼 시작과 끝이 분명한 대부분의 UI 움직임.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드가 아래에서 20px 올라오며 나타나도록 시작과 끝 상태만 정해서 트윈으로 처리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>트윈은 두 점 사이를 이어 줄 뿐이라 중간에 모양이 전혀 다르면 이상하게 섞입니다(예: 정사각형에서 별로). 중간 모양을 직접 지정해야 하면 키프레임이 필요합니다. 시작과 끝의 단위가 달라(px과 %) 계산이 안 되는 경우도 흔한 함정입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="cubic-bezier">
+      <div class="demo"><div class="d-row" style="gap:16px"><div class="d-col" style="align-items:center;gap:4px"><svg class="cbg" viewBox="-6 -6 112 112" aria-label="cubic-bezier(.7, 0, .3, 1) 곡선 그래프"><path d="M0 100V0M0 100H100" stroke="#c9cfe6" fill="none"/><path d="M0 100L70 100M100 0L30 0" stroke="#aab2d3" stroke-dasharray="3 3" fill="none"/><path d="M0 100C70 100 30 0 100 0" stroke="#4f46e5" stroke-width="3" fill="none"/><circle cx="70" cy="100" r="4" fill="#ea580c"/><circle cx="30" cy="0" r="4" fill="#ea580c"/></svg><span class="d-cap">가로 시간 / 세로 진행</span></div><div class="d-col" style="gap:8px"><div class="lane s" style="width:100px"><div class="ball b-cb" style="animation-name:gos2"></div></div><span class="d-cap">(.7, 0, .3, 1)</span></div></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">큐빅 베지어 <span class="en">cubic-bezier</span></h2>
+        <p class="desc">속도의 변화를 숫자 네 개(곡선의 조절점 둘)로 정하는 방법. 가로를 시간, 세로를 진행 정도로 본 그래프에서 곡선이 가파른 곳이 빠른 구간입니다. 이징의 기본값들(ease 등)은 모두 이 곡선의 이름입니다.</p>
+        <p class="when"><b>언제 쓰나</b>기본 이징으로는 맛이 안 날 때, 디자인 도구에서 뽑은 곡선을 코드에 그대로 옮길 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>모달이 열릴 때 transition-timing-function을 cubic-bezier(0.2, 0, 0, 1)로, 0.3초로 설정해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>세로 값이 1을 넘거나 0 아래로 내려가면 목표를 지나치는 오버슈트가 생기는데, 위치가 아닌 투명도에 쓰면 오히려 깜빡이는 버그가 됩니다. 곡선 숫자를 말로 전달하기 어려우니 디자이너는 개발자에게 숫자를 직접 줘야 합니다. 프로토타입 도구와 코드의 곡선 이름이 같아도 값이 다를 수 있습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="ease-in-out">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="lane"><i class="k" style="left:11px"></i><i class="k" style="left:17px"></i><i class="k" style="left:32px"></i><i class="k" style="left:54px"></i><i class="k" style="left:81px"></i><i class="k" style="left:111px"></i><i class="k" style="left:141px"></i><i class="k" style="left:168px"></i><i class="k" style="left:190px"></i><i class="k" style="left:205px"></i><i class="k" style="left:211px"></i><div class="ball b-eio"></div></div><span class="d-cap">같은 시간 간격의 점: 양 끝은 촘촘, 가운데는 듬성</span></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">이즈 인 아웃 <span class="en">Ease-in-out</span></h2>
+        <p class="desc">천천히 출발해서 가운데에서 빠르고 마지막에 다시 천천히 멈추는 곡선. 한 화면 안에서 위치가 바뀌는 이동에 가장 자연스럽습니다. 들어오는 것은 이즈 아웃, 나가는 것은 이즈 인이라는 방향이 있는 것과 달리 둘을 합친 것입니다.</p>
+        <p class="when"><b>언제 쓰나</b>탭 밑줄이 옆 탭으로 이동, 카드 위치 재배열, 화면 안에서 요소가 자리를 옮길 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>선택 표시가 다른 탭으로 옮겨갈 때 ease-in-out으로 0.25초 동안 움직이게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>화면 밖에서 들어오거나 밖으로 나가는 요소에 쓰면 출발이 굼떠 보여 반응이 느리다고 느껴집니다. 그런 경우는 들어올 땐 이즈 아웃, 나갈 땐 이즈 인으로 나누세요. 지속 시간이 0.4초를 넘으면 느린 시작 구간이 답답함으로 바뀝니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="steps">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="lane"><i class="k" style="left:11px"></i><i class="k" style="left:45px"></i><i class="k" style="left:78px"></i><i class="k" style="left:112px"></i><i class="k" style="left:146px"></i><i class="k" style="left:179px"></i><i class="k" style="left:213px"></i><div class="ball b-steps"></div></div><span class="d-cap">6칸을 뚝뚝 끊어서 이동</span></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">스텝 <span class="en">Steps</span></h2>
+        <p class="desc">부드럽게 이어 가지 않고 정해진 칸 수만큼 뚝뚝 끊어 움직이는 타이밍. CSS의 <strong>steps(6)</strong>처럼 쓰며, 시계 초침이나 스프라이트(그림 이어 붙인 판)를 넘기는 데 씁니다.</p>
+        <p class="when"><b>언제 쓰나</b>타자기 효과, 그림 여러 장을 넘겨 만드는 프레임 애니메이션, 시계 초침.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>글자가 타자 치듯 나오도록 width 애니메이션에 steps(17) 타이밍을 적용해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>타자기 효과는 칸 수를 글자 수와 정확히 맞춰야 하는데, 글이 바뀌면 개발자가 매번 손으로 고쳐야 합니다. 한글은 글자 폭이 달라 칸이 어긋나기 쉽습니다. 끊기는 것이 의도가 아니라면 steps는 쓰지 마세요. 사용자는 끊김을 버벅임으로 받아들입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="delay">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="dbar"><i></i></div><div class="lane"><div class="ball b-delay"></div></div><span class="d-cap">노란 막대가 찰 때까지 기다린 뒤 출발</span></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">지연 <span class="en">Delay</span></h2>
+        <p class="desc">명령을 받고도 바로 시작하지 않고 정해진 시간만 기다렸다가 움직이는 것. CSS의 <strong>animation-delay</strong>입니다. 움직이는 시간(지속 시간)과 별개로 시작 전 대기 시간입니다.</p>
+        <p class="when"><b>언제 쓰나</b>앞의 요소가 끝난 뒤 이어서 시작할 때, 마우스가 스치기만 한 것에는 반응하지 않도록 툴팁을 잠깐 늦출 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>안내 말풍선이 마우스를 올리고 0.5초 지연된 뒤에 나타나도록 animation-delay를 줘</q></p>
+        <p class="senior"><b>20년차 메모</b>사용자가 누른 직후의 반응에는 지연을 넣지 마세요. 0.1초만 늦어도 먹통처럼 느껴집니다. 지연은 장식이나 연출에만 쓰고, 지연 때문에 첫 화면이 비어 보이는 시간이 길어지지 않는지 확인하세요. 지연 중에 요소가 이미 보이는지 숨어 있는지(fill-mode)도 정해야 깜빡임이 없습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="iteration-count">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:14px"><div class="rot"></div><div class="cnt"><i></i><i></i><i></i></div><span class="d-cap">3번 돌고 멈춥니다</span></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">반복 횟수 <span class="en">Iteration count</span></h2>
+        <p class="desc">같은 움직임을 몇 번 되풀이할지 정하는 값. 1번, 3번, 또는 <strong>infinite(끝없이)</strong>로 정하는 CSS의 animation-iteration-count입니다.</p>
+        <p class="when"><b>언제 쓰나</b>알림 벨을 3번만 흔들기, 버튼 눌림 안내를 2번만 깜빡이기, 로딩 스피너처럼 끝없이 돌리기.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>벨 아이콘이 3번만 흔들리고 멈추도록 animation-iteration-count를 3으로 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>안내성 움직임을 infinite로 두면 사용자가 글을 읽는 내내 시선을 빼앗깁니다. 눈길을 끄는 용도는 서너 번이면 충분합니다. 반복마다 쉬는 구간을 두지 않으면 계속 떠는 것처럼 보이고, 스피너는 끝없이 도는 것이 맞지만 오래 돌 때는 안내 문구를 함께 바꿔 주세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="alternate">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:10px"><div class="lane"><div class="ball b-alt"></div></div><div class="lane"><div class="ball b-norm"></div></div><span class="d-cap">위: 왕복(alternate) / 아래: 처음으로 순간이동</span></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">왕복 <span class="en">Alternate</span></h2>
+        <p class="desc">반복할 때 한 번은 앞으로, 다음 번은 거꾸로 재생해서 끝에서 튀지 않고 자연스럽게 되돌아오는 방식. <strong>animation-direction: alternate</strong>이며, 기본값(normal)은 끝에 닿으면 처음으로 순간이동합니다.</p>
+        <p class="when"><b>언제 쓰나</b>숨쉬는 듯한 커졌다 작아지기, 좌우로 오가는 배경, 위아래로 둥실 떠 있는 요소.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>둥실거리는 효과가 끊기지 않도록 animation-direction을 alternate로 무한 반복해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>왕복에서는 갈 때의 이징이 올 때 거꾸로 적용되니, 이즈 아웃으로 만든 것이 돌아올 땐 이즈 인이 됩니다. 의도와 다르면 곡선을 대칭으로 쓰세요. 한 번 갔다 오는 시간이 지속 시간의 두 배라는 점도 일정을 짤 때 자주 놓칩니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="fill-mode">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="fmw"><div class="fm n"></div></div><span class="d-cap">none: 끝나면 원위치</span></div><span class="mid">vs</span><div class="side"><div class="fmw"><div class="fm f"></div></div><span class="d-cap">forwards: 끝 모양 유지</span></div></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">채움 모드 <span class="en">Fill-mode</span></h2>
+        <p class="desc">애니메이션이 끝난 뒤(그리고 시작하기 전) 요소가 어떤 모양으로 있을지 정하는 규칙. <strong>forwards</strong>는 끝 모양을 유지하고, <strong>backwards</strong>는 지연 중에도 첫 모양을 미리 적용하며, 기본값 none은 원래대로 돌아갑니다.</p>
+        <p class="when"><b>언제 쓰나</b>한 번 나타난 요소가 끝에서 사라지지 않게 할 때(forwards), 지연이 있는 등장 모션의 시작 전 깜빡임을 막을 때(backwards).</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>등장 애니메이션이 끝난 뒤에도 요소가 그대로 보이도록 animation-fill-mode를 forwards로 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>가장 흔한 버그는 지연을 준 요소가 기다리는 동안 이미 완성된 모습으로 보였다가 갑자기 사라진 뒤 움직이는 현상입니다. 이럴 땐 both를 쓰세요. forwards를 쓰면 끝난 값이 계속 덮어쓰기 때문에 이후 다른 스타일(호버 등)이 안 먹는 경우도 있습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="enter-exit">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:10px"><div class="ee"><b>저장되었습니다</b><div class="d-bar" style="margin-top:8px;width:70%"></div></div><span class="d-cap">들어올 땐 빠르게 도착, 나갈 땐 점점 빠르게 퇴장</span></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">진입과 퇴장 <span class="en">Enter · Exit</span></h2>
+        <p class="desc">요소가 화면에 나타나는 움직임(진입)과 사라지는 움직임(퇴장)을 따로 설계하는 관점. 보통 진입은 이즈 아웃으로 빠르게 도착하고, 퇴장은 이즈 인으로 더 짧게 끝냅니다.</p>
+        <p class="when"><b>언제 쓰나</b>토스트, 모달, 드롭다운, 알림 배너처럼 나타났다가 사라지는 모든 것.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>토스트의 진입은 0.3초 ease-out으로 아래에서 올라오게 하고 퇴장은 0.2초 ease-in으로 페이드되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>퇴장 모션이 진입과 같은 길이면 사라지는 것을 기다리는 느낌이 납니다. 퇴장을 진입의 60~70% 길이로 줄이세요. 개발에서는 요소를 화면에서 지우는 순간 퇴장 모션이 사라지기 쉬워서, 퇴장이 끝난 뒤에 지우도록 따로 처리해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="crossfade">
+      <div class="demo"><div class="xf"><i class="a">A</i><i class="b">B</i></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">크로스페이드 <span class="en">Crossfade</span></h2>
+        <p class="desc">한 장은 옅어지고 다른 한 장은 동시에 짙어지며 서로 겹쳐 바뀌는 전환. 하나가 완전히 사라진 뒤 다음이 나타나는 페이드 스루와 달리 중간에 빈 화면이 없습니다.</p>
+        <p class="when"><b>언제 쓰나</b>갤러리 사진 교체, 탭 내용 교체, 아이콘이 다른 아이콘으로 바뀔 때, 배경 이미지 슬라이드.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>탭을 바꿀 때 이전 내용과 새 내용이 0.2초 동안 겹쳐서 크로스페이드되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>두 장을 같은 자리에 겹쳐야 하므로 크기가 다르면 한쪽이 삐져나옵니다. 중간에 둘 다 반투명이라 뒤가 비쳐 보이는 순간(합이 1이 안 되는 구간)이 있어, 글자가 있는 화면에서는 지저분해 보일 수 있습니다. 그럴 땐 위에 올라오는 쪽만 불투명하게 하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="transform">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:12px"><div class="d-row" style="gap:34px;height:76px;align-items:center"><div class="tf s"></div><div class="tf r"></div><div class="tf k"></div></div><div class="d-row" style="gap:20px"><span class="d-cap">scale 크기</span><span class="d-cap">rotate 회전</span><span class="d-cap">skew 기울임</span></div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">스케일·회전·기울임 <span class="en">Transform: scale · rotate · skew</span></h2>
+        <p class="desc">요소를 눌러 찌그러뜨리거나 늘리는 세 가지 기본 변형. 크기를 바꾸는 <strong>scale</strong>, 돌리는 <strong>rotate</strong>, 평행사변형으로 눕히는 <strong>skew</strong>, 위치를 옮기는 translate를 합쳐 transform이라고 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>호버 때 살짝 커지기, 화살표 뒤집기, 리본 라벨, 거의 모든 움직임의 재료.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>버튼에 호버하면 transform: scale(1.05)로 5% 커지게 하고 눌렀을 땐 scale(0.97)로 줄여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>transform과 opacity는 화면 배치를 다시 계산하지 않아 가장 가볍습니다. 크기를 width와 height로 애니메이션하는 것은 끊김의 원흉입니다. scale은 안의 글자와 테두리 두께까지 같이 커져 흐려 보일 수 있고, 여러 변형을 쓸 땐 적는 순서에 따라 결과가 달라집니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="transform-origin">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="og c"><i></i><b></b></div><span class="d-cap">가운데를 축으로</span></div><span class="mid">vs</span><div class="side"><div class="og t"><i></i><b></b></div><span class="d-cap">모서리를 축으로</span></div></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">변형 기준점 <span class="en">Transform origin</span></h2>
+        <p class="desc">회전하거나 커질 때 어느 점을 축으로 삼을지 정하는 값(CSS transform-origin). 기본은 가운데이며, 빨간 점이 축입니다. 같은 회전이라도 축에 따라 완전히 다른 움직임이 됩니다.</p>
+        <p class="when"><b>언제 쓰나</b>문처럼 왼쪽 경첩으로 열리기, 팝오버가 누른 버튼 쪽에서 자라나기, 시계 바늘, 접히는 카드.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>메뉴가 열릴 때 버튼 위치를 기준점(transform-origin)으로 삼아 왼쪽 위에서 커지며 나타나게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>팝오버가 항상 가운데에서 커지면 어디서 나왔는지 알 수 없어 어색합니다. 눌린 요소 쪽을 기준점으로 잡으세요. 기준점을 중간에 바꾸면 요소가 순간 튀므로 애니메이션 중에는 고정해야 하고, 개발자는 기본값이 가운데라는 걸 잊고 옆으로 삐져나가는 회전을 만들기도 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="perspective">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="pv"><i></i></div><span class="d-cap">원근 없음</span></div><span class="mid">vs</span><div class="side"><div class="pv on"><i></i></div><span class="d-cap">원근 260px</span></div></div></div>
+      <div class="body">
+        <p class="num">13</p>
+        <h2 class="term-name">원근 <span class="en">Perspective</span></h2>
+        <p class="desc">3D로 돌릴 때 가까운 쪽은 크게, 먼 쪽은 작게 보이게 하는 깊이감 설정(CSS perspective). 값이 작을수록 눈이 가까이 있는 것처럼 왜곡이 심합니다. 원근이 없으면 회전이 그냥 납작해질 뿐입니다.</p>
+        <p class="when"><b>언제 쓰나</b>카드 뒤집기, 틸트 카드, 책장 넘기기, 3D 회전 메뉴.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드 뒤집기에 부모 요소에 perspective: 800px를 주어 입체감이 나게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>perspective는 돌아가는 요소가 아니라 그 부모에 줘야 한다는 점을 개발자도 자주 틀립니다. 값이 200px 아래면 왜곡이 과해 글자가 읽히지 않고, 800~1200px가 무난합니다. 3D 변형은 글자가 흐리게 렌더링될 수 있어 중요한 텍스트가 있는 면에는 조심해서 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="overshoot">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="lane" style="width:230px"><i class="os-t"></i><div class="ball b-os"></div></div><span class="d-cap">빨간 점선(목표)을 살짝 넘었다가 돌아옵니다</span></div></div>
+      <div class="body">
+        <p class="num">14</p>
+        <h2 class="term-name">오버슈트 <span class="en">Overshoot</span></h2>
+        <p class="desc">목표 위치를 살짝 지나쳤다가 돌아와 자리 잡는 움직임. 용수철이나 고무공 같은 탄력을 줍니다. 한 번 튀고 끝나는 점이 계속 튀는 바운스와 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>팝업이 커지며 뜰 때, 좋아요 아이콘, 바텀시트가 위로 올라올 때처럼 가볍고 생기 있는 느낌이 필요한 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>팝업이 나타날 때 cubic-bezier(0.34, 1.56, 0.64, 1)로 살짝 오버슈트하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>금융·의료·관리자 화면에 쓰면 가벼워 보여 신뢰를 깎습니다. 지나치는 양은 목표 거리의 5~10%면 충분합니다. 화면 가장자리에 붙어 있는 요소가 오버슈트하면 잠깐 화면 밖으로 삐져나가 잘려 보이니 가장자리 근처에서는 피하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="anticipation">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="lane" style="width:230px"><div class="ball b-ant"></div></div><span class="d-cap">갈 방향의 반대로 먼저 물러납니다</span></div></div>
+      <div class="body">
+        <p class="num">15</p>
+        <h2 class="term-name">앤티시페이션 <span class="en">Anticipation</span></h2>
+        <p class="desc">큰 동작 직전에 반대 방향으로 작게 움찔하는 준비 동작. 점프하려고 무릎을 굽히는 것과 같습니다. 디즈니 애니메이션 12원칙 중 하나이며 <strong>예비 동작</strong>이라고 옮기기도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>카드가 튀어 나가기 전, 삭제 직전 살짝 오므라들기, 로켓 같은 힘 있는 효과.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드가 오른쪽으로 날아가기 직전에 왼쪽으로 12px 앤티시페이션 동작을 0.15초 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>자주 쓰는 버튼 반응에 넣으면 응답이 한 박자 늦게 느껴집니다. 준비 동작은 전체 길이의 20% 이내로 짧게 하세요. 실제 동작이 일어나는 시점은 준비 동작이 끝난 뒤가 아니라 눌린 직후여야 하며, 한 번에 쓰는 곳은 연출이 중요한 소수의 장면으로 제한하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="follow-through">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:6px"><div class="ftw"><div class="ft"><i></i></div></div><span class="d-cap">몸이 멈춘 뒤에도 안테나는 잠시 흔들립니다</span></div></div>
+      <div class="body">
+        <p class="num">16</p>
+        <h2 class="term-name">팔로 스루 <span class="en">Follow through</span></h2>
+        <p class="desc">주된 동작이 멈춘 뒤에도 달린 부분이 관성으로 조금 더 움직이다 가라앉는 것. 멈춘 자동차 안에서 몸이 앞으로 쏠리는 느낌입니다. 한 요소 전체가 목표를 지나치는 오버슈트와 달리 일부가 늦게 따라옵니다.</p>
+        <p class="when"><b>언제 쓰나</b>마스코트 캐릭터, 리본·꼬리가 달린 장식, 카드가 멈춘 뒤 그림자나 배지가 한 박자 늦게 자리 잡을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드가 멈춘 뒤에도 위의 리본이 0.4초 동안 좌우로 흔들리다 가라앉는 팔로 스루를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>업무용 UI에서는 쓸 일이 거의 없습니다. 쓴다면 마스코트나 온보딩처럼 감정이 필요한 곳에만 하세요. 흔들림은 점점 작아지며(감쇠) 끝나야 자연스럽고, 같은 크기로 흔들리면 고장 난 것처럼 보입니다. 부모와 자식을 따로 애니메이션해야 해서 구현 비용이 높습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="motion-path">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:6px"><div class="mpw"><svg viewBox="0 0 240 110" aria-hidden="true"><path d="M10 100C70 -10 170 -10 230 100" fill="none" stroke="#aab2d3" stroke-width="2" stroke-dasharray="4 5"/></svg><div class="mp"></div></div><span class="d-cap">곡선을 따라 가며 방향도 함께 돕니다</span></div></div>
+      <div class="body">
+        <p class="num">17</p>
+        <h2 class="term-name">모션 패스 <span class="en">Motion path</span></h2>
+        <p class="desc">요소가 직선이 아니라 그려 둔 곡선 경로를 따라 이동하는 것. CSS의 <strong>offset-path</strong>로 경로를 주고 offset-distance로 어디까지 갔는지 정합니다. 이동하는 방향으로 몸을 돌리는 옵션(offset-rotate)도 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>장바구니로 날아가는 상품, 지도 위의 이동 경로, 비행기·로켓 같은 아이콘 연출.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>종이비행기 아이콘이 곡선 경로를 따라 이동하도록 offset-path와 모션 패스를 써줘</q></p>
+        <p class="senior"><b>20년차 메모</b>경로 좌표는 화면 크기가 바뀌어도 그대로라서, 반응형에서는 경로가 어긋납니다. 크기가 다른 화면에서는 경로를 다시 계산하거나 SVG 안에서 한꺼번에 키우세요. 아주 오래된 브라우저는 지원하지 않으므로 지원 범위를 개발자와 먼저 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="clip-path-reveal">
+      <div class="demo"><div class="cpw"><i></i></div></div>
+      <div class="body">
+        <p class="num">18</p>
+        <h2 class="term-name">클립 패스 애니메이션 <span class="en">Clip-path animation</span></h2>
+        <p class="desc">요소를 원·사각형·다각형 모양의 구멍으로 오려 보이게 하고, 그 구멍의 크기나 모양을 움직이는 기법(CSS clip-path). 요소 자체는 그대로이고 보이는 영역만 달라집니다.</p>
+        <p class="when"><b>언제 쓰나</b>누른 곳에서 화면이 동그랗게 퍼지며 바뀌는 테마 전환, 사진이 열리듯 등장, 위에서 아래로 닦아 내듯 나타나는 글자.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>사진이 가운데에서 원형으로 퍼지며 나타나도록 clip-path를 circle(0%)에서 circle(75%)로 애니메이션해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>오려 낸 부분은 눈에만 안 보일 뿐 클릭은 계속 받습니다. 화면에 안 보이는데 눌리는 영역이 생기니 pointer-events도 같이 관리하세요. 구멍의 점 개수가 시작과 끝에서 다르면 보간이 안 되어 움직이지 않습니다. 큰 요소에서는 성능이 급격히 나빠질 수 있습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="scroll-trigger">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="d-phone stp"><div class="strip"><i></i><i style="width:80%"></i><i></i><i style="width:60%"></i><i></i><i style="width:75%"></i><i></i><div class="card"></div></div><div class="line"><b>시작선</b></div></div><span class="d-cap">단순화한 예시: 시작선을 넘으면 카드가 등장</span></div></div>
+      <div class="body">
+        <p class="num">19</p>
+        <h2 class="term-name">스크롤 트리거 <span class="en">Scroll trigger</span></h2>
+        <p class="desc">스크롤하다 요소가 화면의 정해진 위치를 지나는 순간 움직임을 한 번 재생하는 방식. 스크롤 양을 따라 계속 움직이는 스크롤 연동 애니메이션과 달리, 신호로만 쓰고 재생은 자기 시간으로 흘러갑니다.</p>
+        <p class="when"><b>언제 쓰나</b>랜딩 페이지의 섹션이 올라오며 나타나기, 숫자가 보일 때 세어 올라가기, 헤더가 줄어드는 순간.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>섹션이 화면 아래에서 80% 높이에 닿으면 한 번만 아래에서 올라오며 나타나도록 스크롤 트리거를 걸어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>스크롤을 다시 올릴 때 매번 재생되면 정신없으니 한 번만 재생할지 정하세요. 화면이 짧은 기기에서는 시작선에 닿지 못해 영원히 안 나타나는 요소가 생깁니다. 인쇄나 검색 엔진 미리보기에서도 내용이 보이도록 기본 상태는 보이게 두는 것이 안전합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="pin">
+      <div class="demo"><div class="pnw"><span class="tag">고정</span><div class="strip"><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i><i></i><i style="width:80%"></i><i></i><i style="width:60%"></i><i></i><i style="width:75%"></i><i></i><i></i><i style="width:50%"></i></div><div class="pin"><b>1단계</b><span class="p1">1단계 · 기획</span><span class="p2">2단계 · 디자인</span><span class="p3">3단계 · 개발</span></div></div></div>
+      <div class="body">
+        <p class="num">20</p>
+        <h2 class="term-name">핀 고정 <span class="en">Pin</span></h2>
+        <p class="desc">스크롤이 일정 구간을 지나는 동안 한 요소를 제자리에 붙여 두고, 그 위에서 다른 변화를 보여 주는 연출. <strong>핀(pin)</strong>은 GSAP ScrollTrigger 같은 도구에서 쓰는 이름이고, 단순히 머리글을 붙여 두는 스티키와 달리 스크롤 구간 전체를 무대로 씁니다.</p>
+        <p class="when"><b>언제 쓰나</b>제품 소개 페이지에서 화면 한가운데 그림을 고정하고 글만 넘어가기, 단계별 설명, 가로로 넘어가는 갤러리.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>제품 이미지를 스크롤 3화면 길이 동안 핀 고정하고 글이 바뀔 때마다 이미지 상태를 바꿔줘</q></p>
+        <p class="senior"><b>20년차 메모</b>고정 구간이 길면 사용자는 스크롤이 먹통이 됐다고 느낍니다. 3~4화면을 넘기지 마세요. 모바일 브라우저의 주소창이 접히고 펴지는 높이 변화 때문에 고정이 덜컥거리는 일이 많습니다. 키보드로 스크롤하는 사용자도 끝까지 갈 수 있게 해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="scrub">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="lane"><div class="head"></div></div><div class="lane"><div class="ball b-scrub"></div></div><span class="d-cap">단순화한 예시: 위 헤드가 가는 만큼 아래 공이 따라갑니다</span></div></div>
+      <div class="body">
+        <p class="num">21</p>
+        <h2 class="term-name">스크럽 <span class="en">Scrub</span></h2>
+        <p class="desc">스크롤이나 드래그하는 양에 애니메이션의 진행 정도를 직접 묶는 것. 영상의 타임라인을 손으로 앞뒤로 끄는 것과 같아서, 내리면 앞으로 가고 올리면 거꾸로 갑니다. 시간으로 재생되는 트리거와 달리 손이 곧 시계입니다.</p>
+        <p class="when"><b>언제 쓰나</b>스크롤에 따라 제품이 회전하거나 선이 그려지는 소개 페이지, 영상 편집 도구의 재생 헤드 조작.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>스크롤하는 만큼 그림이 그려지고 올리면 되감기도록 스크럽을 적용해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>손의 움직임을 그대로 따르면 거칠게 보이니 약간의 부드러움(0.3~1초 따라붙는 스무딩)을 주는 경우가 많습니다. 그러나 너무 늦으면 손과 화면이 따로 놀아 멀미가 납니다. 스크롤이 멈추면 화면도 멈춰야 하고, 스크롤 속도가 사람마다 달라 연출 시간을 정확히 맞출 수 없다는 점을 기획자와 합의해 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="lottie">
+      <div class="demo"><div class="d-row" style="gap:12px"><div class="code">{<br>&nbsp;<b>"fr"</b>: 60,<br>&nbsp;<b>"layers"</b>: [ … ]<br>}</div><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:22px;height:22px"><path d="M4 12h14M13 6l6 6-6 6"/></svg><svg class="lt" viewBox="0 0 24 24" role="img" aria-label="뛰는 하트"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></svg></div></div>
+      <div class="body">
+        <p class="num">22</p>
+        <h2 class="term-name">로티 <span class="en">Lottie</span></h2>
+        <p class="desc">디자이너가 만든 애니메이션을 작은 JSON 파일로 저장해, 앱과 웹에서 그 자리에서 그려 재생하는 형식(에어비앤비가 만든 Lottie). 영상(mp4)이나 GIF와 달리 화면을 키워도 선명합니다.</p>
+        <p class="when"><b>언제 쓰나</b>온보딩 일러스트, 빈 상태 그림, 성공 체크, 로딩 애니메이션처럼 디자이너가 애프터 이펙트로 만든 정교한 움직임.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>성공 화면에 디자이너가 준 success.json을 로티로 한 번만 재생해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>복잡하게 만들수록 파일이 커지고 구형 기기에서 느립니다. 레이어 수와 효과를 줄이는 것까지 디자이너의 일입니다. 애프터 이펙트의 효과 중에는 로티가 지원하지 않는 것이 있어 내보내 보면 다르게 나오기도 하니, 만들기 전에 개발자와 먼저 테스트하세요. 모션 줄이기 설정에서는 정지 그림으로 대체해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="frame-rate">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="lane s"><div class="ball b-smooth"></div></div><span class="d-cap">60fps 부드러움</span></div><span class="mid">vs</span><div class="side"><div class="lane s"><div class="ball b-chop"></div></div><span class="d-cap">낮은 fps 끊김</span></div></div></div>
+      <div class="body">
+        <p class="num">23</p>
+        <h2 class="term-name">프레임 레이트 <span class="en">Frame rate (fps)</span></h2>
+        <p class="desc">1초에 몇 장의 그림을 보여 주는지를 나타내는 수. 단위는 fps이며, 화면은 보통 60fps(1초에 60장)로 그려져 부드럽게 보입니다. 장수가 줄면 움직임이 뚝뚝 끊깁니다.</p>
+        <p class="when"><b>언제 쓰나</b>"애니메이션이 버벅인다"는 문제를 말할 때, 영상·로티 소스를 내보낼 때(30 또는 60fps) 기준을 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>스크롤 애니메이션이 60fps를 유지하도록 transform과 opacity만 쓰도록 고쳐줘</q></p>
+        <p class="senior"><b>20년차 메모</b>한 프레임에 쓸 수 있는 시간은 약 16ms뿐이고, 화면 배치를 다시 계산하는 속성(width, top 등)을 애니메이션하면 쉽게 넘깁니다. 고급 사양 노트북에서만 확인하지 말고 낮은 사양 폰에서 꼭 보세요. 120Hz 화면은 같은 코드도 더 부드럽게 보이는데, 그것을 기준으로 속도를 잡으면 다른 기기에서 달라집니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="motion-tokens">
+      <div class="demo"><div class="d-col" style="gap:10px"><div class="tkr"><code>--dur-fast<br>150ms</code><div class="lane"><div class="ball f"></div></div></div><div class="tkr"><code>--dur-base<br>300ms</code><div class="lane"><div class="ball n"></div></div></div><div class="tkr"><code>--dur-slow<br>600ms</code><div class="lane"><div class="ball sl"></div></div></div></div></div>
+      <div class="body">
+        <p class="num">24</p>
+        <h2 class="term-name">모션 토큰 <span class="en">Motion tokens</span></h2>
+        <p class="desc">움직임의 속도와 곡선에 이름을 붙여 규칙으로 정해 둔 것. "fast는 150ms, 들어올 땐 emphasized 곡선"처럼 정해 두면 누가 만들어도 같은 느낌이 납니다. 색과 간격에 이름을 붙이는 디자인 토큰의 움직임판입니다.</p>
+        <p class="when"><b>언제 쓰나</b>팀이나 디자인 시스템에서 화면마다 제각각인 시간·곡선을 통일할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>애니메이션 시간과 곡선을 CSS 변수 모션 토큰(fast 150ms, base 300ms, slow 600ms)으로 만들어 전체에 적용해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>토큰이 너무 많으면 아무도 안 씁니다. 시간 3~4개, 곡선 3개 정도면 대부분 해결됩니다. 이동 거리가 길수록 시간도 길어야 해서 크기별 토큰이 따로 필요한 경우가 있습니다. 토큰만 정하고 쓰는 곳(진입, 퇴장, 호버)에 대한 규칙이 없으면 결국 제각각입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="choreography">
+      <div class="demo"><div class="ch"><div class="im"></div><div class="ti"></div><button class="d-btn" type="button">시작하기</button></div></div>
+      <div class="body">
+        <p class="num">25</p>
+        <h2 class="term-name">연출 <span class="en">Choreography</span></h2>
+        <p class="desc">한 화면의 여러 요소가 어떤 순서와 간격으로 움직일지 짜는 것. 요소마다 같은 효과를 시간차로 반복하는 스태거와 달리, 이미지 → 제목 → 버튼처럼 서로 다른 역할의 움직임을 이야기처럼 이어 줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>첫 화면 진입, 온보딩 장면, 결제 완료 화면, 화면 전환에서 앞 화면과 뒤 화면이 만나는 순간.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>완료 화면에서 이미지가 먼저 들어오고 0.1초 뒤 제목, 0.2초 뒤 버튼 순서로 등장하도록 모션을 연출해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>전체 연출이 1초를 넘으면 사용자는 버튼을 누르려고 기다립니다. 가장 중요한 요소(주 버튼)를 가장 늦게 놓지 마세요. 순서는 눈이 읽는 순서(위에서 아래, 큰 것에서 작은 것)를 따르고, 같은 시점에 둘 이상이 크게 움직이면 시선이 갈라집니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="jank">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="lane s"><div class="ball b-smooth"></div></div><span class="d-cap">매끄러움</span></div><span class="mid">vs</span><div class="side"><div class="lane s"><div class="ball b-jank"></div></div><span class="d-cap">저크 덜컥거림</span></div></div></div>
+      <div class="body">
+        <p class="num">26</p>
+        <h2 class="term-name">저크 <span class="en">Jank</span></h2>
+        <p class="desc">움직이던 화면이 덜컥하고 걸리는 현상. 프레임 레이트가 낮은 것과 달리 속도가 일정치 않게 건너뛰는 느낌이라 더 거슬립니다. 현업에서는 "버벅인다", "프레임이 떨어진다"고 말합니다.</p>
+        <p class="when"><b>언제 쓰나</b>스크롤, 화면 전환, 모달 등장 중에 끊김이 있을 때 원인을 찾으라고 지시하는 상황.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>모달이 열릴 때 끊기는 저크 현상이 있어서 width 애니메이션을 transform으로 바꾸고 원인을 찾아줘</q></p>
+        <p class="senior"><b>20년차 메모</b>가장 흔한 원인은 애니메이션 중에 이미지가 불러와지거나, 긴 자바스크립트가 같은 시간에 도는 것입니다. 화면 배치를 바꾸는 속성을 애니메이션하는 것도 흔한 원인입니다. 개발자 컴퓨터에서는 부드러워도 실제 폰에서 끊기니, 디자인 검수는 가장 오래된 기기로 하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="motion-blur">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="lane" style="width:230px"><div class="ball b-mb"></div></div><span class="d-cap">가장 빠른 구간에서만 번집니다</span></div></div>
+      <div class="body">
+        <p class="num">27</p>
+        <h2 class="term-name">모션 블러 <span class="en">Motion blur</span></h2>
+        <p class="desc">빠르게 움직이는 물체가 한쪽으로 번져 보이는 잔상 표현. 사진의 흔들림처럼, 움직임에 속도감과 현실감을 더합니다. UI에서는 흐림(blur)과 늘어남(scale)을 흉내 내어 만듭니다.</p>
+        <p class="when"><b>언제 쓰나</b>빠른 화면 전환, 슬롯 머신 같은 돌아가는 숫자, 속도감 있는 광고·게임 연출.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>숫자가 빠르게 지나갈 때 세로로 살짝 번지는 모션 블러를 넣고 멈추면 또렷하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>흐림 효과(filter: blur)는 계산이 무거워 모바일에서 끊기기 쉬우니 작은 요소에 짧게만 쓰세요. 글자에 쓰면 읽을 수 없는 순간이 생기므로 읽어야 하는 내용에는 쓰지 않는 게 좋습니다. 화면이 멈추는 순간에는 꼭 완전히 또렷해져야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="interruptible">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="lane s"><div class="ball b-il1"></div></div><span class="d-cap">끝까지 간 뒤 되돌아감</span></div><span class="mid">vs</span><div class="side"><div class="lane s" style="margin-top:14px"><span class="flag">취소</span><div class="ball b-il2"></div></div><span class="d-cap">중간에서 바로 되돌아감</span></div></div></div>
+      <div class="body">
+        <p class="num">28</p>
+        <h2 class="term-name">중단 가능한 애니메이션 <span class="en">Interruptible animation</span></h2>
+        <p class="desc">움직이는 도중에 사용자가 다른 동작을 해도 끝까지 기다리지 않고, 지금 위치에서 곧바로 방향을 바꾸는 움직임. 정해진 시간 동안 끝까지 재생되는 키프레임 방식과 달리, 현재 값에서 출발하는 트랜지션이나 스프링이 이 특성에 가깝습니다.</p>
+        <p class="when"><b>언제 쓰나</b>메뉴 열다 바로 닫기, 바텀시트를 반쯤 끌다 놓기, 호버를 빠르게 들락날락하는 상황.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>메뉴가 열리는 중에 닫기를 눌러도 튀지 않고 현재 위치에서 바로 닫히도록 중단 가능한 트랜지션으로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>끝까지 재생된 뒤에야 반응하는 UI는 빠르게 누르는 사용자에게 먹통처럼 보입니다. 처음 위치로 순간이동했다 다시 움직이는 버그도 이 원칙을 놓칠 때 생깁니다. 그래서 반복해서 눌릴 수 있는 곳에는 CSS 키프레임보다 트랜지션이나 스프링을 권합니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

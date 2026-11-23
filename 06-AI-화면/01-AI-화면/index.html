@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AI 화면 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>AI 화면 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 대화 말풍선(내 말은 주색·오른쪽, AI 말은 흰색·왼쪽)과 숨은 입력 */
+.chat { width: 270px; display: grid; gap: 8px; }
+.u, .a { max-width: 88%; padding: 8px 12px; border-radius: 14px; line-height: 1.5; }
+.u { justify-self: end; background: var(--p); color: #fff; border-bottom-right-radius: 4px; }
+.a { justify-self: start; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.chat input[type=radio], .chat input[type=checkbox] { position: absolute; opacity: 0; pointer-events: none; }
+.ibtn { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; color: var(--mute); cursor: pointer; }
+.ibtn:hover { background: var(--p-soft); color: var(--p); }
+.ibtn .d-svg { width: 16px; height: 16px; }
+
+/* 01 생각 중 표시: 점 3개가 차례로 위아래로 튄다(animation-delay 로 시차) */
+.dots { display: inline-flex; gap: 5px; padding: 4px 2px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: #9aa3c4; animation: hop 1.2s ease-in-out infinite; }
+.dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes hop { 0%, 60%, 100% { transform: none; opacity: .5; } 30% { transform: translateY(-6px); opacity: 1; } }
+
+/* 02 스트리밍 답변: 줄을 clip-path 로 왼쪽부터 드러낸다(steps 로 글자 단위처럼) */
+.rv { display: block; width: fit-content; clip-path: inset(0 100% 0 0); }
+.r1 { animation: rv1 6s steps(12) infinite; }
+.r2 { animation: rv2 6s steps(14) infinite; }
+@keyframes rv1 { 0% { clip-path: inset(0 100% 0 0); } 35%, 100% { clip-path: inset(0 0 0 0); } }
+@keyframes rv2 { 0%, 35% { clip-path: inset(0 100% 0 0); } 75%, 100% { clip-path: inset(0 0 0 0); } }
+.blink { display: inline-block; width: 7px; height: 14px; margin-left: 2px; vertical-align: -2px; background: var(--p); animation: caret .8s step-end infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+
+/* 03 추천 질문 칩: 라디오를 칩 모양으로 꾸미고, 고른 칩 내용이 내 말풍선으로 나온다 */
+.sp { width: 270px; display: grid; gap: 8px; }
+.sp .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.sp .chips label { padding: 6px 12px; border-radius: 99px; background: #fff; border: 1px solid var(--p); color: var(--p); font-weight: 700; cursor: pointer; }
+.sp .chips label:hover { background: var(--p-soft); }
+.sp .chips label:has(:focus-visible) { outline: 3px solid var(--p); outline-offset: 2px; }
+.sp input { position: absolute; opacity: 0; }
+.sp .ub { display: none; }
+.sp:has(#c1:checked) .b1, .sp:has(#c2:checked) .b2, .sp:has(#c3:checked) .b3 { display: block; }
+.sp:has(input:checked) .chips { display: none; }
+
+/* 04 다시 생성: 1/2 · 2/2 로 두 버전을 넘겨 본다 */
+.rg .v { display: none; }
+.rg:has(#g1:checked) .v1, .rg:has(#g2:checked) .v2 { display: block; }
+.rg .pg { display: inline-flex; align-items: center; gap: 2px; margin-top: 6px; color: var(--mute); font-weight: 700; }
+.rg .cnt { min-width: 30px; text-align: center; }
+.rg .c1, .rg .c2 { display: none; }
+.rg:has(#g1:checked) .c1, .rg:has(#g2:checked) .c2 { display: inline; }
+.rg .ibtn .d-svg { width: 14px; height: 14px; }
+.rg label:has(+ :focus-visible) { outline: 3px solid var(--p); }
+
+/* 05 출처 표시: 번호 칩에 마우스를 올리거나 포커스하면 출처 카드가 뜬다 */
+.cite { position: relative; display: inline-block; margin: 0 1px; }
+.cite b { display: inline-grid; place-items: center; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 99px; background: var(--p-soft); color: var(--p); font-size: 10px; cursor: pointer; vertical-align: 1px; }
+.cite .card { position: absolute; left: 0; bottom: 24px; width: 150px; padding: 8px 10px; border-radius: 10px; background: var(--ink); color: #fff; font-size: 11px; opacity: 0; pointer-events: none; transform: translateY(4px); transition: opacity .15s, transform .15s; z-index: 3; }
+.cite:hover .card, .cite:focus-within .card { opacity: 1; transform: none; }
+.cite .card i { display: block; margin-top: 2px; font-style: normal; color: #b6bde6; }
+.srcs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.srcs span { padding: 2px 8px; border-radius: 99px; background: #eef0f8; font-size: 11px; font-weight: 600; color: var(--mute); }
+
+/* 06 답변 피드백: 엄지를 고르면 감사 문구가 나온다 */
+.fb { display: flex; align-items: center; gap: 4px; margin-top: 6px; }
+.fb label { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; color: var(--mute); cursor: pointer; }
+.fb label:hover { background: var(--p-soft); }
+.fb label:has(input:checked) { background: var(--p-soft); color: var(--p); }
+.fb label:has(:focus-visible) { outline: 3px solid var(--p); }
+.fb .d-svg { width: 16px; height: 16px; }
+.fb .down svg { transform: rotate(180deg); }
+.fb .ty { display: none; font-size: 11px; color: var(--ok); font-weight: 700; margin-left: 4px; }
+.chat:has(.fb input:checked) .ty { display: inline; }
+
+/* 07 고쳐 묻기: 연필을 누르면 내 말풍선이 입력칸으로 바뀐다 */
+.ed .edit { display: none; justify-self: end; width: 88%; padding: 8px; border-radius: 12px; background: #fff; border: 2px solid var(--p); }
+.ed .edit .t { padding: 2px 4px 8px; }
+.ed .edit .row { display: flex; justify-content: flex-end; gap: 6px; }
+.ed:has(#e1:checked) .view { display: none; }
+.ed:has(#e1:checked) .edit { display: block; }
+.ed .view { justify-self: end; display: flex; align-items: center; gap: 4px; max-width: 100%; }
+.ed .view .u { max-width: 200px; }
+.ed label:has(+ :focus-visible) { outline: 3px solid var(--p); }
+
+/* 08 파일 첨부: 입력창 위에 파일 칩이 붙고, X 로 뗄 수 있다 */
+.fa { width: 270px; padding: 8px; display: grid; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 14px; }
+.fa .file { display: inline-flex; align-items: center; gap: 8px; width: fit-content; padding: 6px 8px 6px 10px; border-radius: 10px; background: #eef0f8; font-weight: 600; }
+.fa .file small { color: var(--mute); font-weight: 500; }
+.fa .file .d-svg { width: 18px; height: 18px; color: var(--p); }
+.fa input { position: absolute; opacity: 0; }
+.fa:has(#f1:checked) .file { display: none; }
+.fa .inp { display: flex; align-items: center; gap: 8px; color: var(--mute); }
+.fa .inp .send { margin-left: auto; width: 30px; height: 30px; border-radius: 50%; background: var(--p); color: #fff; display: grid; place-items: center; }
+.fa .inp .send .d-svg { width: 16px; height: 16px; }
+.fa:has(#f1:checked) .attach { color: var(--p); font-weight: 700; }
+.fa label:has(+ :focus-visible) { outline: 3px solid var(--p); }
+
+/* 09 에이전트 단계: 단계마다 대기 → 도는 중 → 체크 순으로 바뀐다. 한 주기(9초)에 세 단계가 차례로 */
+.ag { width: 250px; padding: 12px 14px; display: grid; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: 14px; }
+.ag li { list-style: none; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.ag ul { margin: 0; padding: 0; display: grid; gap: 10px; }
+.ag .ic { position: relative; width: 20px; height: 20px; flex: none; border-radius: 50%; border: 2px solid #c9cfe6; }
+.ag .ic i { position: absolute; inset: -2px; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--p); opacity: 0; animation: rot .8s linear infinite; }
+.ag .ic svg { position: absolute; inset: -2px; width: 20px; height: 20px; padding: 3px; border-radius: 50%; background: var(--ok); stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+@keyframes rot { to { transform: rotate(360deg); } }
+.ag li:nth-child(1) { animation: t1 9s infinite; } .ag li:nth-child(2) { animation: t2 9s infinite; } .ag li:nth-child(3) { animation: t3 9s infinite; }
+.ag li:nth-child(1) .ic { animation: w1 9s infinite; } .ag li:nth-child(2) .ic { animation: w2 9s infinite; } .ag li:nth-child(3) .ic { animation: w3 9s infinite; }
+.ag li:nth-child(1) svg { animation: k1 9s infinite; } .ag li:nth-child(2) svg { animation: k2 9s infinite; } .ag li:nth-child(3) svg { animation: k3 9s infinite; }
+.ag li:nth-child(1) i { animation: rot .8s linear infinite, s1 9s infinite; } .ag li:nth-child(2) i { animation: rot .8s linear infinite, s2 9s infinite; } .ag li:nth-child(3) i { animation: rot .8s linear infinite, s3 9s infinite; }
+@keyframes t1 { 0% { opacity: .4; } 4%, 92% { opacity: 1; } 100% { opacity: .4; } }
+@keyframes t2 { 0%, 30% { opacity: .4; } 34%, 92% { opacity: 1; } 100% { opacity: .4; } }
+@keyframes t3 { 0%, 58% { opacity: .4; } 62%, 92% { opacity: 1; } 100% { opacity: .4; } }
+@keyframes w1 { 0%, 4% { border-color: #c9cfe6; } 5%, 30% { border-color: #e6e9f5; } 31%, 92% { border-color: var(--ok); } 100% { border-color: #c9cfe6; } }
+@keyframes w2 { 0%, 33% { border-color: #c9cfe6; } 34%, 58% { border-color: #e6e9f5; } 59%, 92% { border-color: var(--ok); } 100% { border-color: #c9cfe6; } }
+@keyframes w3 { 0%, 61% { border-color: #c9cfe6; } 62%, 86% { border-color: #e6e9f5; } 87%, 92% { border-color: var(--ok); } 100% { border-color: #c9cfe6; } }
+@keyframes s1 { 0%, 4% { opacity: 0; } 5%, 29% { opacity: 1; } 31%, 100% { opacity: 0; } }
+@keyframes s2 { 0%, 33% { opacity: 0; } 34%, 57% { opacity: 1; } 59%, 100% { opacity: 0; } }
+@keyframes s3 { 0%, 61% { opacity: 0; } 62%, 85% { opacity: 1; } 87%, 100% { opacity: 0; } }
+@keyframes k1 { 0%, 30% { opacity: 0; transform: scale(.5); } 34%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes k2 { 0%, 58% { opacity: 0; transform: scale(.5); } 62%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes k3 { 0%, 86% { opacity: 0; transform: scale(.5); } 88%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+
+/* 추가: 면책 문구 — 입력창 바로 아래 아주 작은 글씨 */
+.dc { width: 270px; display: grid; gap: 6px; }
+.dc .box { padding: 10px 12px; background: #fff; border: 1px solid var(--line); border-radius: 14px; color: var(--mute); }
+.dc small { text-align: center; color: var(--mute); font-size: 11px; }
+/* 추가: 대화 기록 — 왼쪽 목록, 현재 대화는 칠해 둔다 */
+.hs { width: 220px; padding: 8px; background: #fff; border: 1px solid var(--line); border-radius: 14px; display: grid; gap: 2px; }
+.hs .g { padding: 6px 8px 2px; color: var(--mute); font-size: 11px; font-weight: 700; }
+.hs .i { padding: 7px 10px; border-radius: 8px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hs .i:hover { background: #eef0f8; }
+.hs .i.on { background: var(--p-soft); color: var(--p); }
+/* 추가: 빈 대화 화면 — 인사와 시작용 칩 */
+.es { width: 260px; display: grid; justify-items: center; gap: 10px; text-align: center; }
+.es .logo { width: 36px; height: 36px; border-radius: 12px; background: var(--p-soft); color: var(--p); display: grid; place-items: center; }
+.es .logo .d-svg { width: 20px; height: 20px; }
+.es .row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">AI 화면</a><span class="sep">›</span>
+  <span>AI 화면</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>AI 화면 9가지</h1>
+    <p class="lead">AI 채팅 화면에 보이는 것들의 이름</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="thinking-indicator">
+      <div class="demo">
+        <div class="chat"><div class="u">여행 일정 짜줘</div><div class="a" role="status" aria-label="답변을 준비하는 중"><span class="dots"><i></i><i></i><i></i></span></div></div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">생각 중 표시 <span class="en">Thinking indicator</span></h2>
+        <p class="desc">질문을 보내고 첫 글자가 나오기 전까지 보여주는 점 3개입니다. "받았고 처리 중"이라는 신호로, 채팅 앱의 "입력 중…" 표시와 비슷합니다. <strong>타이핑 인디케이터</strong>라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>질문을 보낸 직후 답변의 첫 글자가 나오기까지의 짧은 대기.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>질문을 보내면 AI 말풍선 자리에 점 3개 생각 중 표시를 보여주고, 첫 글자가 오면 사라지게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>점이 10초 넘게 돌기만 하면 사용자는 멈춘 줄 압니다. 오래 걸리는 작업은 "자료를 찾는 중"처럼 지금 하는 일을 글로 알려 주세요. 움직임을 줄이는 설정을 켠 사용자를 위해 애니메이션 대신 고정된 "…"를 보여줄 대비책도 둬야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="streaming-response">
+      <div class="demo">
+        <div class="chat"><div class="u">첫 문장 써줘</div><div class="a"><span class="rv r1">답변이 먼저 만들어진 만큼</span><span class="rv r2">바로 화면에 이어집니다<i class="blink"></i></span></div></div>
+      </div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">스트리밍 답변 <span class="en">Streaming response</span></h2>
+        <p class="desc">답이 전부 만들어지기를 기다리지 않고, 만들어진 만큼 글자를 화면에 흘려보내는 방식입니다. 끝에서 깜빡이는 막대는 <strong>커서(caret)</strong>로, 아직 쓰는 중이라는 표시입니다.</p>
+        <p class="when"><b>언제 쓰나</b>답변이 길어서 완성까지 몇 초에서 수십 초가 걸리는 AI 채팅.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>AI 답변을 스트리밍으로 한 토막씩 출력하고, 쓰는 동안 끝에 깜빡이는 커서를 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>글이 늘어나는 동안 줄바꿈이 계속 바뀌어 읽는 중에 화면이 흔들립니다. 마크다운이 완성되기 전(별표 두 개가 짝 없이 보이는 상태)의 깨진 모양도 미리 점검하세요. 사용자가 위로 스크롤해 읽는 중이면 자동으로 끌어내리지 말아야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="suggested-prompts">
+      <div class="demo">
+        <div class="sp">
+          <div class="a">무엇을 도와드릴까요?</div>
+          <div class="chips" role="radiogroup" aria-label="추천 질문">
+            <label><input type="radio" name="c" id="c1">요약해줘</label>
+            <label><input type="radio" name="c" id="c2">쉽게 설명해줘</label>
+            <label><input type="radio" name="c" id="c3">예시 들어줘</label>
+          </div>
+          <div class="u ub b1">요약해줘</div><div class="u ub b2">쉽게 설명해줘</div><div class="u ub b3">예시 들어줘</div>
+          <span class="d-cap">칩을 눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">추천 질문 칩 <span class="en">Suggested prompts</span></h2>
+        <p class="desc">입력창 위나 빈 화면에 놓인 "이렇게 물어보세요" 알약들입니다. 누르면 그 문장이 그대로 질문으로 들어갑니다. 무엇을 물어야 할지 막막한 첫 순간을 덜어 줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>대화를 시작하기 전의 빈 화면, 또는 한 번 답한 뒤 이어 물을 만한 질문을 제안할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>빈 화면에 추천 질문 칩 3개를 보여주고, 누르면 그 문장이 바로 질문으로 전송되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>칩이 실제로 잘 답해 주는 질문이어야 합니다. 눌렀는데 어색한 답이 나오면 신뢰를 한 번에 잃습니다. 3~4개로 줄이고 첫 질문 후에는 사라지게 하세요. 칩 문장이 길면 두 줄로 터지니 한 줄 안에 들어오게 다듬어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="regenerate">
+      <div class="demo">
+        <div class="chat rg">
+          <input type="radio" name="g" id="g1" checked aria-label="1번째 답변"><input type="radio" name="g" id="g2" aria-label="2번째 답변">
+          <div class="u">제목 추천해줘</div>
+          <div class="a"><span class="v v1">첫 번째 답: 차분한 제목</span><span class="v v2">두 번째 답: 호기심 끄는 제목</span>
+            <div class="pg"><label for="g1" class="ibtn" aria-label="이전 답변"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></label><span class="cnt"><span class="c1">1/2</span><span class="c2">2/2</span></span><label for="g2" class="ibtn" aria-label="다음 답변"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></label></div>
+          </div>
+          <span class="d-cap">화살표로 버전을 넘겨 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">다시 생성 <span class="en">Regenerate</span></h2>
+        <p class="desc">같은 질문으로 답을 한 번 더 만들어 달라는 기능입니다. 새 답이 나오면 이전 답을 지우지 않고 <strong>1/2, 2/2처럼 버전으로 쌓아</strong> 넘겨 볼 수 있게 하는 화면이 많습니다.</p>
+        <p class="when"><b>언제 쓰나</b>답이 마음에 안 들거나 다른 표현이 필요할 때. 문구 추천처럼 정답이 하나가 아닌 질문.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>다시 생성을 누르면 새 답을 만들고 이전 답은 1/2 2/2 버전으로 남겨서 화살표로 넘겨 볼 수 있게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>다시 생성하면 앞서 마음에 든 부분까지 사라질까 불안해합니다. 이전 버전이 남는다는 사실이 화면에서 드러나야 안심하고 누릅니다. 버전이 쌓이면 어느 것이 대화의 이후 맥락으로 이어지는지 헷갈리는데, 지금 보이는 버전이 이어진다는 걸 분명히 하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="citations">
+      <div class="demo">
+        <div class="chat" style="margin-top:34px">
+          <div class="a">이 지역의 평균 기온은 15도 안팎입니다<span class="cite" tabindex="0"><b>1</b><span class="card">기상 자료 요약<i>weather.example</i></span></span>, 겨울에는 더 내려갑니다<span class="cite" tabindex="0"><b>2</b><span class="card">여행 안내 페이지<i>travel.example</i></span></span>.
+            <div class="srcs"><span>1 weather.example</span><span>2 travel.example</span></div>
+          </div>
+          <span class="d-cap">번호에 마우스를 올려 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">출처 표시 <span class="en">Citations</span></h2>
+        <p class="desc">답변의 어느 문장이 어디서 왔는지 번호 칩과 링크로 알려 줍니다. AI 답이 그럴듯하게 틀릴 수 있어서, 사용자가 직접 확인할 길을 열어 두는 장치입니다. 각주(footnote)와 같은 발상입니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색해서 답하는 AI, 사실 확인이 중요한 업무·의료·법률·뉴스 관련 질문.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>답변 문장 끝에 출처 번호 칩을 붙이고, 올리면 출처 제목과 주소가 카드로 보이게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>번호만 있고 문장과 출처의 연결이 모호하면 오히려 "믿을 만해 보이게 하는 장식"이 됩니다. 어느 문장이 어느 출처인지 정확히 이어야 합니다. 모바일에는 올려 보기(hover)가 없으니 누르면 카드가 뜨게 하고, 출처 링크가 죽어 있을 때 보여줄 모양도 미리 정하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="feedback-buttons">
+      <div class="demo">
+        <div class="chat">
+          <div class="a">이 요약이 도움이 되었나요?
+            <div class="fb" role="radiogroup" aria-label="답변 평가">
+              <label><input type="radio" name="fb" style="position:absolute;opacity:0" aria-label="좋아요"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 2 2v4h6a2 2 0 0 1 2 2.300l-1.200 6A2 2 0 0 1 17.800 19H7"/></svg></label>
+              <label class="down"><input type="radio" name="fb" style="position:absolute;opacity:0" aria-label="싫어요"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 2 2v4h6a2 2 0 0 1 2 2.300l-1.200 6A2 2 0 0 1 17.800 19H7"/></svg></label>
+              <span class="ty">의견 고마워요</span>
+            </div>
+          </div>
+          <span class="d-cap">엄지를 눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">답변 피드백 <span class="en">Feedback buttons</span></h2>
+        <p class="desc">답변 아래의 엄지 위(좋아요), 엄지 아래(싫어요) 두 버튼입니다. 눌린 신호는 서비스가 답변 품질을 고치는 재료가 됩니다. 평가 후 이유를 묻는 짧은 창이 이어지기도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>답변이 끝난 직후, 사용자가 만족 여부를 가볍게 남기게 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>답변 아래에 좋아요·싫어요 버튼을 두고, 누르면 선택 상태로 바뀌며 싫어요일 때는 이유를 고르는 칩을 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>누른 뒤 아무 변화가 없으면 눌렀는지 모릅니다. 선택 상태와 짧은 감사 문구를 꼭 보여주세요. 싫어요를 눌렀을 때 곧바로 긴 설문을 띄우면 대부분 닫아 버리니, 이유는 선택 사항으로 두세요. 한 번 누른 평가를 취소·수정할 수 있어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="edit-and-resend">
+      <div class="demo">
+        <div class="chat ed">
+          <input type="checkbox" id="e1" aria-label="질문 고치기">
+          <div class="view"><label for="e1" class="ibtn" aria-label="질문 수정"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19l1-4L16 5l3 3L9 18z"/></svg></label><div class="u">부산 맛집 알려줘</div></div>
+          <div class="edit"><div class="t">부산 <b>비건</b> 맛집 알려줘</div><div class="row"><label for="e1" class="d-btn ghost" style="min-height:28px">취소</label><label for="e1" class="d-btn" style="min-height:28px">다시 보내기</label></div></div>
+          <div class="a" style="opacity:.7">부산에는 해운대 근처에…</div>
+          <span class="d-cap">연필을 눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">고쳐 묻기 <span class="en">Edit and resend</span></h2>
+        <p class="desc">이미 보낸 내 질문을 그 자리에서 고쳐서 다시 보내는 기능입니다. 새로 쓰지 않고 한 단어만 바꿔 다시 물을 수 있고, 그 아래 이어진 대화는 새 질문 기준으로 다시 만들어집니다.</p>
+        <p class="when"><b>언제 쓰나</b>오타를 냈거나 조건을 빠뜨려 질문을 살짝만 바꾸고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>내가 보낸 질문 옆에 연필 아이콘을 두고, 누르면 말풍선이 입력칸으로 바뀌어 고친 뒤 다시 보내기 할 수 있게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>고쳐 보내면 그 아래 대화가 사라지는지 남는지를 분명히 해야 합니다. 사라진다면 보내기 전에 한 줄로 알려 주고, 가능하면 이전 가지(분기)를 넘겨 볼 수 있게 하세요. 연필을 마우스를 올릴 때만 보이게 하면 모바일에서는 영영 못 찾습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="file-attachment">
+      <div class="demo">
+        <div class="fa">
+          <input type="checkbox" id="f1" aria-label="첨부 파일 제거">
+          <div class="file"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg><span>보고서.pdf <small>2.4MB</small></span><label for="f1" class="ibtn" aria-label="첨부 제거"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></label></div>
+          <div class="inp"><label for="f1" class="ibtn attach" aria-label="파일 첨부"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11l-8.500 8.500a5 5 0 0 1-7-7L13 4a3.500 3.500 0 0 1 5 5l-8.500 8.500a2 2 0 0 1-3-3L14 7"/></svg></label><span>이 파일을 요약해줘</span><span class="send"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 12l6-6 6 6"/></svg></span></div>
+        </div>
+        <span class="d-cap" style="position:absolute;bottom:8px">X 로 떼고, 클립으로 다시 붙여 보세요</span>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">파일 첨부 <span class="en">File attachment</span></h2>
+        <p class="desc">입력창에 사진·문서를 붙여 함께 보내는 기능입니다. 보내기 전에 파일 이름과 크기가 담긴 칩이 입력창 위에 놓이고, X 로 뗄 수 있습니다. 클립 모양이 표준 아이콘입니다.</p>
+        <p class="when"><b>언제 쓰나</b>문서 요약, 사진 설명, 표 분석처럼 AI에게 자료를 같이 줘야 하는 질문.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>입력창에 클립 버튼으로 파일을 붙이면 위에 파일 이름과 크기가 있는 칩이 생기고, X를 누르면 제거되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>업로드 중, 용량 초과, 지원하지 않는 형식, 올린 뒤 읽기 실패 같은 상태를 칩 안에서 보여줘야 합니다. 대부분 성공 경우만 시안에 그립니다. 파일이 여러 개일 때 가로로 흘러넘치는 모양과, 올린 파일에 개인정보가 담길 수 있다는 안내도 필요합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="agent-steps">
+      <div class="demo">
+        <div class="ag" role="img" aria-label="단계가 하나씩 완료되는 에이전트 진행 목록">
+          <ul>
+            <li><span class="ic"><i></i><svg viewBox="0 0 24 24"><path d="M6 12.500l4 4 8-9"/></svg></span>자료 찾기</li>
+            <li><span class="ic"><i></i><svg viewBox="0 0 24 24"><path d="M6 12.500l4 4 8-9"/></svg></span>내용 비교하기</li>
+            <li><span class="ic"><i></i><svg viewBox="0 0 24 24"><path d="M6 12.500l4 4 8-9"/></svg></span>답변 정리하기</li>
+          </ul>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">에이전트 단계 <span class="en">Agent steps</span></h2>
+        <p class="desc">AI가 여러 일을 순서대로 처리할 때 "지금 몇 번째 일을 하고 있는지"를 목록으로 보여주는 화면입니다. 대기(빈 원), 진행 중(도는 원), 완료(체크) 세 상태를 한 줄씩 바꿉니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색→비교→정리처럼 시간이 오래 걸리고 여러 도구를 쓰는 작업. 사용자가 중간 과정을 믿고 기다려야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>AI가 작업하는 동안 단계 목록을 보여주고, 각 단계는 대기·진행 중·완료 상태로 바뀌게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>단계 이름이 "처리 중 1/3"처럼 내용이 없으면 안 보여주는 편이 낫습니다. 실패한 단계(빨간 표시)와 다시 시도, 중간에 멈추는 버튼을 빠뜨리지 마세요. 완료된 뒤 목록을 접어서 답변 위에 요약으로 남기면 화면이 길어지지 않습니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">AI 화면을 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="disclaimer">
+      <div class="demo">
+        <div class="dc"><div class="box">메시지를 입력하세요</div><small>AI는 실수할 수 있어요. 중요한 내용은 확인하세요.</small></div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">면책 문구 <span class="en">AI disclaimer</span></h2>
+        <p class="desc">입력창 아래에 늘 붙어 있는 "AI는 틀릴 수 있습니다" 같은 작은 안내입니다. 답이 사실이 아닐 수 있다는 점을 미리 알려 기대치를 맞춥니다.</p>
+        <p class="when"><b>언제 쓰나</b>사실 확인이 필요한 분야의 AI 채팅. 입력창 아래나 첫 인사 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>입력창 아래에 회색 작은 글씨로 AI 답변은 틀릴 수 있다는 면책 문구를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>글자를 너무 작고 흐리게 하면 읽히지 않는 장식이 됩니다. 명도 대비는 4.5:1을 지키고, 의료·법률처럼 위험한 주제에서는 면책 한 줄보다 답변 안에서 직접 주의를 주는 편이 효과적입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="chat-history">
+      <div class="demo">
+        <div class="hs"><div class="g">오늘</div><div class="i on">여행 일정 짜기</div><div class="i">제목 추천</div><div class="g">어제</div><div class="i">보고서 요약</div><div class="i">메일 문장 다듬기</div></div>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">대화 기록 <span class="en">Chat history</span></h2>
+        <p class="desc">지난 대화를 날짜별로 모아 보여주는 목록으로, 보통 왼쪽 사이드바나 드로어에 있습니다. 눌러서 지난 대화를 이어 갈 수 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>같은 주제로 며칠씩 이어서 AI와 작업하는 서비스.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>왼쪽에 오늘·어제로 묶은 대화 기록 목록을 두고, 현재 대화는 강조하고 이름 변경과 삭제를 케밥 메뉴로 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>제목이 첫 질문 그대로 길게 잘려서 모두 비슷해 보입니다. AI가 짧은 제목을 자동으로 붙이되 사용자가 고칠 수 있게 하세요. 지우면 복구되지 않는다는 점을 확인 창에서 분명히 알려야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="empty-state">
+      <div class="demo">
+        <div class="es"><span class="logo"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.800 5.200L19 10l-5.200 1.800L12 17l-1.800-5.200L5 10l5.200-1.800z"/></svg></span><b style="font-size:15px">무엇을 도와드릴까요?</b><div class="row"><span class="d-chip">요약</span><span class="d-chip">번역</span><span class="d-chip">글쓰기</span></div></div>
+      </div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">빈 대화 화면 <span class="en">Empty state · Welcome screen</span></h2>
+        <p class="desc">대화를 시작하기 전의 첫 화면입니다. 인사말과 할 수 있는 일, 추천 질문 칩을 놓아 무엇을 물을지 힌트를 줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>새 대화를 열었을 때, 첫 질문을 보내기 전까지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>새 대화의 빈 화면에 인사말과 추천 질문 칩 3개를 가운데에 놓고, 첫 질문을 보내면 사라지게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>인사말이 매번 똑같은 문장이면 사용자는 아예 읽지 않습니다. 기능 소개보다 "지금 바로 해볼 수 있는 일" 위주로 쓰세요. 오프라인이거나 계정이 막혔을 때의 빈 화면은 일반 안내와 달라야 하니 따로 그려야 합니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

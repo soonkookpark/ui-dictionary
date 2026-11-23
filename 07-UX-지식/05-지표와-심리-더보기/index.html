@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="지표와 심리 용어 32가지 더 — 움직이는 예시로 보는 UI 용어 사전">
+<title>지표와 심리 더보기 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* 공통: 차례로 나타나기. --i 번호만큼 늦게 시작하고 중간에 쉰다 */
+.rv { animation: rv 6s infinite both; animation-delay: calc(var(--i) * .6s); }
+@keyframes rv { 0%, 3% { opacity: 0; transform: translateY(6px); } 10%, 82% { opacity: 1; transform: none; } 94%, 100% { opacity: 0; } }
+/* 공통: 차례로 강조. 1초씩 돌아가며 색이 켜진다 */
+.hl { animation: hl 5s infinite; animation-delay: calc(var(--i) * 1s); }
+@keyframes hl { 0%, 18% { background: var(--p); color: #fff; border-color: var(--p); } 20%, 100% { background: #fff; } }
+/* 공통: 차례로 두근거리기 */
+.pu { animation: pu 4s infinite; animation-delay: calc(var(--i) * .6s); }
+@keyframes pu { 0%, 20%, 100% { transform: scale(1); } 10% { transform: scale(1.18); } }
+/* 공통: 선 그리기 (pathLength=100 인 선에 쓴다) */
+.dr { stroke-dasharray: 100; animation: dr 5s ease-in-out infinite; animation-delay: calc(var(--i, 0) * .5s); }
+@keyframes dr { 0% { stroke-dashoffset: 100; } 40%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 100; } }
+.t { font-size: 11px; } .t10 { font-size: 10px; line-height: 1.3; }
+/* 북극성 지표: 별을 가운데 두고 입력 지표 선이 모인다(선 그리기 + 두근) */
+.ns { position: relative; width: 290px; height: 170px; }
+.ns svg { position: absolute; inset: 0; }
+.ns .st { position: absolute; left: 115px; top: 6px; width: 60px; height: 60px; display: grid; place-items: center; color: var(--warn); animation: pu 3s infinite; }
+.ns .st svg { position: static; fill: currentColor; stroke: none; width: 56px; height: 56px; }
+.ns .in { position: absolute; top: 118px; width: 88px; padding: 6px 4px; text-align: center; font-size: 11px; font-weight: 700; background: #fff; border: 1.5px solid var(--line); border-radius: 10px; }
+/* KPI vs OKR: 막대가 .fg 키프레임으로 차오른다 */
+.fl { height: 8px; border-radius: 99px; background: #d5daea; overflow: hidden; } .fl i { display: block; height: 100%; width: var(--w); background: var(--p); transform-origin: left; animation: fl 4s ease-out infinite; }
+@keyframes fl { from { transform: scaleX(0); } 60%, 100% { transform: scaleX(1); } }
+.mini { font-size: 11px; text-align: left; display: grid; gap: 6px; width: 100%; } .mini b { font-size: 12px; }
+/* AARRR: 단계마다 폭이 줄어드는 깔때기, 위에서 차례로 나타난다 */
+.fn { display: grid; gap: 4px; justify-items: center; width: 280px; }
+.fn > div { height: 26px; border-radius: 6px; background: var(--p); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; width: var(--w); }
+/* DAU·MAU: 두 막대 길이를 비교한다 */
+.da { width: 270px; display: grid; gap: 10px; font-size: 12px; font-weight: 700; }
+.da .r { display: grid; grid-template-columns: 44px 1fr 52px; gap: 8px; align-items: center; }
+.da .fl { height: 14px; }
+/* 고착도: 30칸 중 켜진 날이 차례로 채워진다 */
+.sk30 { display: grid; grid-template-columns: repeat(10, 22px); gap: 4px; }
+.sk30 i { height: 22px; border-radius: 5px; background: #d5daea; }
+.sk30 i.on { animation: on 6s infinite; animation-delay: calc(var(--i) * .3s); }
+@keyframes on { 0%, 5% { background: #d5daea; } 12%, 85% { background: var(--p); } 100% { background: #d5daea; } }
+/* 세그먼트: 섞여 있던 점이 색깔별 묶음 자리로 transform 으로 모인다 */
+.sg2 { position: relative; width: 250px; height: 100px; }
+.sg2 i { position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--c); animation: grp 5s ease-in-out infinite; }
+@keyframes grp { 0%, 12% { transform: translate(var(--x), var(--y)); } 45%, 85% { transform: translate(var(--gx), var(--gy)); } 100% { transform: translate(var(--x), var(--y)); } }
+/* LTV: 달마다 쌓이는 막대 */
+.bars { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+.bars i { width: 24px; height: calc(var(--h) * 1px); background: var(--p); border-radius: 4px 4px 0 0; transform-origin: bottom; animation: gr 5s ease-out infinite; animation-delay: calc(var(--i) * .25s); }
+@keyframes gr { from { transform: scaleY(0); } 40%, 100% { transform: scaleY(1); } }
+/* CTR: 열 번 보여준 중 클릭된 두 번이 번쩍인다 */
+.ct { display: grid; grid-template-columns: repeat(5, 36px); gap: 8px; }
+.ct i { height: 36px; border-radius: 8px; background: #d5daea; }
+.ct i.k { animation: hit 3s infinite; animation-delay: calc(var(--i) * .8s); }
+@keyframes hit { 0%, 20%, 100% { background: #d5daea; } 8% { background: var(--p); transform: scale(1.12); } }
+/* 코호트: 삼각형 표에서 칸이 대각선으로 나타난다 */
+.co { display: grid; grid-template-columns: 42px repeat(4, 44px); gap: 3px; font-size: 10px; text-align: center; align-items: center; }
+.co b { color: var(--mute); } .co i { font-style: normal; height: 26px; line-height: 26px; border-radius: 4px; color: #fff; font-weight: 700; background: rgba(79,70,229,var(--a)); }
+/* 통계적 유의성: 체크하면 표본이 늘어 두 종 모양 곡선이 좁아진다 */
+.sg svg { width: 280px; height: 110px; } .sg .c1, .sg .c2 { transform-origin: var(--o) 100px; transition: transform .7s; }
+.sg .c1 { --o: 110px; } .sg .c2 { --o: 170px; }
+.sg:has(input:checked) .c1, .sg:has(input:checked) .c2 { transform: scaleX(.45); }
+.sg label { display: flex; gap: 6px; align-items: center; font-weight: 700; cursor: pointer; justify-content: center; margin-top: 6px; }
+.sg .msg { text-align: center; font-weight: 800; } .sg .m0 { color: var(--warn); } .sg .m1 { display: none; color: var(--ok); } .sg:has(input:checked) .m0 { display: none; } .sg:has(input:checked) .m1 { display: block; }
+/* 대조군: 오른쪽 무리에만 변경 표시가 켜진다 */
+.cg { display: flex; gap: 18px; } .cg .grp { display: grid; gap: 6px; justify-items: center; font-weight: 700; }
+.cg .dots { display: grid; grid-template-columns: repeat(4, 16px); gap: 5px; padding: 8px; background: #fff; border-radius: 10px; border: 1.5px solid var(--line); }
+.cg .dots i { width: 16px; height: 16px; border-radius: 50%; background: #9ca3d6; }
+.cg .v i { animation: tint 4s infinite; animation-delay: calc(var(--i) * .15s); }
+@keyframes tint { 0%, 15% { background: #9ca3d6; } 30%, 85% { background: var(--ok); } 100% { background: #9ca3d6; } }
+/* 가드레일: 주 지표는 오르고 가드레일 지표가 선을 넘으면 붉게 깜박인다 */
+.gd { width: 270px; display: grid; gap: 12px; font-size: 11px; font-weight: 700; }
+.gd .tr { position: relative; height: 12px; border-radius: 99px; background: #d5daea; overflow: visible; }
+.gd .tr i { display: block; height: 100%; border-radius: 99px; background: var(--ok); transform-origin: left; animation: fl 4s ease-out infinite; width: 75%; }
+.gd .tr.bad i { width: 88%; animation: bad 4s ease-out infinite; }
+.gd .line { position: absolute; left: 70%; top: -4px; width: 2px; height: 20px; background: var(--ink); }
+@keyframes bad { from { transform: scaleX(0); background: var(--ok); } 60% { transform: scaleX(1); background: var(--ok); } 75%, 100% { transform: scaleX(1); background: var(--danger); } }
+/* 과업 시간: 초시계 링이 한 바퀴 돈다 */
+.sw { width: 90px; height: 90px; position: relative; display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+.sw svg { position: absolute; inset: 0; width: 90px; height: 90px; transform: rotate(-90deg); fill: none; stroke-width: 8; }
+.sw circle:last-child { stroke: var(--p); stroke-dasharray: 100; animation: dr 5s linear infinite; stroke-linecap: round; }
+/* CES: 1~7 점수 중 하나를 눌러 고른다 */
+.ces { display: grid; gap: 8px; text-align: center; width: 280px; } .ces .row { display: flex; gap: 6px; justify-content: center; }
+.ces label { cursor: pointer; } .ces input { position: absolute; opacity: 0; }
+.ces label span { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; border: 1.5px solid var(--line); background: #fff; font-weight: 800; }
+.ces input:checked + span { background: var(--p); color: #fff; border-color: var(--p); } .ces label:has(:focus-visible) span { outline: 3px solid var(--p); }
+.ces .ends { display: flex; justify-content: space-between; font-size: 10px; color: var(--mute); }
+/* 허영 지표: 누적 숫자는 계속 오르지만 매주 활성은 제자리 */
+.vn { width: 270px; display: grid; gap: 10px; }
+.vn .big { font-size: 22px; font-weight: 800; } .vn .big span { display: inline-block; animation: pu 3s infinite; }
+/* 확증 편향: 내 생각과 맞는 근거만 밝아지고 나머지는 흐려진다 */
+.cb { width: 270px; display: grid; gap: 6px; }
+.cb > div { padding: 6px 10px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font-size: 12px; animation: dim 5s infinite; }
+.cb > div.yes { animation: lit 5s infinite; }
+@keyframes dim { 0%, 20% { opacity: 1; } 40%, 85% { opacity: .25; } 100% { opacity: 1; } }
+@keyframes lit { 0%, 20% { opacity: 1; } 40%, 85% { opacity: 1; background: #dcfce7; border-color: var(--ok); } 100% { opacity: 1; } }
+/* 현상 유지: 공이 언덕을 오르다 계속 제자리로 굴러 내려온다 */
+.sq { position: relative; width: 280px; height: 110px; }
+.sq svg { position: absolute; inset: 0; width: 280px; height: 110px; }
+.sq .ball { position: absolute; left: 130px; top: 68px; width: 22px; height: 22px; border-radius: 50%; background: var(--p); animation: climb 4s ease-in-out infinite; }
+@keyframes climb { 0%, 10% { transform: none; } 45% { transform: translate(70px, -42px); } 70%, 100% { transform: none; } }
+/* 매몰 비용: 이미 쓴 돈 막대는 잠겨 있고 앞으로 갈 길이 둘로 갈린다 */
+.sc { width: 270px; display: grid; gap: 10px; font-size: 11px; font-weight: 700; }
+.sc .sunk { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: #e5e7eb; color: #4b5563; }
+.sc .opt { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .sc .opt div { padding: 8px; border-radius: 10px; background: #fff; border: 1.5px solid var(--line); text-align: center; }
+.sc .bub { justify-self: start; background: #fee2e2; color: var(--danger); padding: 2px 10px; border-radius: 99px; animation: pu 3s infinite; }
+/* 보유 효과: 내 것이 되면 가격표가 커 보인다 */
+.ed { display: flex; gap: 16px; align-items: center; font-weight: 700; text-align: center; }
+.ed .tag { padding: 10px 14px; border-radius: 10px; background: #fff; border: 1.5px solid var(--line); }
+.ed .mine { border-color: var(--p); color: var(--p); animation: big 4s ease-in-out infinite; }
+@keyframes big { 0%, 30% { transform: scale(1); } 60%, 90% { transform: scale(1.25); } 100% { transform: scale(1); } }
+/* 이케아 효과: 조각이 날아와 의자 모양으로 조립된다 */
+.ik { position: relative; width: 120px; height: 120px; }
+.ik i { position: absolute; background: var(--p); border-radius: 3px; animation: asm 5s ease-out infinite; }
+@keyframes asm { 0%, 10% { transform: translate(var(--x), var(--y)) rotate(40deg); opacity: .4; } 45%, 85% { transform: none; opacity: 1; } 100% { transform: translate(var(--x), var(--y)) rotate(40deg); opacity: .4; } }
+/* 디코이: 미끼 카드를 놓으면 큰 옵션이 돋보인다 */
+.dc3 { display: grid; grid-template-columns: repeat(3, 84px); gap: 8px; font-size: 11px; text-align: center; font-weight: 700; }
+.dc3 > div { padding: 10px 4px; border-radius: 10px; background: #fff; border: 1.5px solid var(--line); }
+.dc3 .d { animation: decoy 5s infinite; }
+@keyframes decoy { 0%, 15% { opacity: 0; } 30%, 90% { opacity: 1; } 100% { opacity: 0; } }
+.dc3 .best { animation: best 5s infinite; }
+@keyframes best { 0%, 20% { border-color: var(--line); background: #fff; } 40%, 90% { border-color: var(--p); background: var(--p-soft); } 100% { border-color: var(--line); background: #fff; } }
+/* 밴드왜건: 점들이 하나둘 오른쪽 무리로 옮겨 간다 */
+.bw { position: relative; width: 280px; height: 110px; display: flex; justify-content: space-between; }
+.bw .pen { width: 120px; border: 2px dashed #c9cfe6; border-radius: 12px; font-size: 11px; font-weight: 700; padding: 4px 8px; } .bw .pen.b { border-color: var(--p); color: var(--p); }
+.bw i { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #9ca3d6; left: calc(var(--x) * 1px); top: calc(var(--y) * 1px); animation: join 6s ease-in-out infinite; animation-delay: calc(var(--i) * .5s); }
+@keyframes join { 0%, 15% { transform: none; background: #9ca3d6; } 50%, 85% { transform: translateX(var(--d)); background: var(--p); } 100% { transform: none; background: #9ca3d6; } }
+/* 권위 편향: 배지가 붙은 후기가 더 믿음직해 보인다 */
+.au2 { display: grid; gap: 8px; width: 260px; } .au2 .rv2 { display: flex; gap: 8px; align-items: center; padding: 8px 10px; border-radius: 10px; background: #fff; border: 1.5px solid var(--line); font-size: 12px; }
+.au2 .av { width: 28px; height: 28px; border-radius: 50%; background: #9ca3d6; flex: none; } .au2 .exp { border-color: var(--p); } .au2 .exp .av { background: var(--p); }
+.au2 em { font-style: normal; font-size: 10px; font-weight: 800; padding: 1px 8px; border-radius: 99px; background: var(--p-soft); color: var(--p); animation: pu 3s infinite; display: inline-block; }
+/* 상호성: 먼저 선물을 주고 나서 부탁이 나타난다 */
+.rc { display: flex; gap: 12px; align-items: center; width: 280px; }
+.rc .gift { width: 64px; height: 64px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); border-radius: 14px; animation: bob 2.4s ease-in-out infinite; }
+.rc .gift svg { width: 32px; height: 32px; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+.rc .ask { flex: 1; display: grid; gap: 6px; }
+/* 목표 가속: 막대가 끝에 가까울수록 빨라진다 */
+.gg { width: 270px; display: grid; gap: 8px; font-weight: 700; font-size: 12px; }
+.gg .fl { height: 14px; } .gg .fl i { animation: gga 5s cubic-bezier(.5, 0, 1, 1) infinite; width: 100%; }
+@keyframes gga { from { transform: scaleX(0); } 85%, 100% { transform: scaleX(1); } }
+/* 서열 위치: 처음과 끝 항목만 또렷하고 가운데는 흐려진다 */
+.sp { width: 240px; display: grid; gap: 5px; font-size: 12px; }
+.sp > div { padding: 5px 10px; border-radius: 8px; background: #fff; border: 1px solid var(--line); } .sp .mid { animation: dim2 5s infinite; }
+@keyframes dim2 { 0%, 20% { opacity: 1; } 45%, 85% { opacity: .2; } 100% { opacity: 1; } }
+.sp .ends { border-color: var(--p); font-weight: 800; }
+/* 심미적 사용성: 같은 폼을 못생기게/예쁘게, 마우스를 올리면 예쁜 쪽이 돋보인다 */
+.ae { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 290px; } .ae .f { display: grid; gap: 6px; justify-items: stretch; text-align: center; font-weight: 700; font-size: 11px; }
+.ae .ugly { padding: 8px; background: #d4d4d4; border: 2px solid #000; font-family: serif; } .ae .ugly input, .ae .ugly button { border: 1px solid #000; background: #fff; border-radius: 0; font: 11px serif; padding: 3px; }
+.ae .pretty { padding: 10px; background: #fff; border-radius: 14px; box-shadow: 0 8px 20px rgba(79,70,229,.2); animation: bob 3s ease-in-out infinite; }
+.ae .pretty .d-input { min-height: 26px; } .ae .pretty .d-btn { min-height: 28px; }
+/* 포스텔: 여러 모양으로 넣어도 한 모양으로 받아 준다 */
+.po { display: grid; gap: 8px; width: 280px; font-size: 12px; }
+.po .in { display: flex; gap: 6px; flex-wrap: wrap; } .po .in span { padding: 3px 10px; border-radius: 6px; border: 1px dashed #9ca3d6; background: #fff; font-weight: 600; }
+.po .out { padding: 8px 12px; border-radius: 10px; background: var(--p); color: #fff; font-weight: 800; text-align: center; animation: pu 3s infinite; }
+/* 호손 효과: 지켜보는 눈이 있을 때 점이 더 빨리 움직인다 */
+.hw { display: grid; gap: 10px; width: 280px; font-size: 11px; font-weight: 700; }
+.hw .ln { position: relative; height: 30px; background: #fff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.hw .ln i { position: absolute; top: 8px; left: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--p); animation: run 3s linear infinite; }
+.hw .ln.w i { animation-duration: 1.2s; } .hw .ln svg { position: absolute; right: 8px; top: 4px; width: 22px; height: 22px; color: var(--danger); }
+@keyframes run { to { transform: translateX(240px); } }
+/* 넛지: 길은 열려 있지만 한쪽으로 살짝 기울어져 있다 */
+.nu { position: relative; width: 280px; height: 120px; }
+.nu .doors { position: absolute; right: 0; top: 0; display: grid; gap: 40px; } .nu .doors div { padding: 8px 12px; border-radius: 10px; background: #fff; border: 1.5px solid var(--line); font-size: 11px; font-weight: 700; }
+.nu .doors .pick { border-color: var(--ok); color: var(--ok); }
+.nu .ramp { position: absolute; left: 10px; top: 56px; width: 170px; height: 4px; background: var(--ink); border-radius: 4px; transform: rotate(-12deg); transform-origin: left; }
+.nu .ball { position: absolute; left: 12px; top: 20px; width: 20px; height: 20px; border-radius: 50%; background: var(--p); animation: roll 4s ease-in infinite; }
+@keyframes roll { 0%, 10% { transform: none; } 80%, 100% { transform: translate(160px, 44px); } }
+
+/* 피드백 루프: 점이 세 단계를 한 바퀴씩 돈다(rotate) */
+.fb { position: relative; width: 150px; height: 150px; border-radius: 50%; border: 3px dashed #c9cfe6; }
+.fb .orb { position: absolute; inset: -3px; animation: spin 4s linear infinite; }
+.fb .orb::before { content: ""; position: absolute; left: 50%; top: -9px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--p); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.fb .n { position: absolute; padding: 3px 10px; border-radius: 99px; background: #fff; border: 1.5px solid var(--line); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.fb .n1 { left: 42px; top: -14px; } .fb .n2 { right: -22px; bottom: 28px; } .fb .n3 { left: -26px; bottom: 28px; }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">UX 지식</a><span class="sep">›</span>
+  <span>지표와 심리 더보기</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>지표와 심리 용어 32가지 더</h1>
+    <p class="lead">숫자와 마음을 읽는 말도 이름이 있어요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term added" id="north-star">
+      <div class="demo"><div class="ns"><svg viewBox="0 0 290 170"><g fill="none" stroke="#c9cfe6" stroke-width="2"><path d="M145 66L48 116" pathLength="100" class="dr"/><path d="M145 66V116" pathLength="100" class="dr" style="--i:1"/><path d="M145 66L242 116" pathLength="100" class="dr" style="--i:2"/></g></svg><div class="st"><svg viewBox="0 0 24 24"><path d="M12 2l3 7 7 .6-5.3 4.7 1.7 7.2L12 17.700 5.600 21.500l1.700-7.200L2 9.600 9 9z"/></svg></div><div class="in" style="left:4px">신규 가입</div><div class="in" style="left:101px">첫 구매</div><div class="in" style="left:198px">재방문</div></div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">북극성 지표 <span class="en">North star metric</span></h2>
+        <p class="desc">서비스가 사용자에게 주는 핵심 가치를 가장 잘 나타내는 단 하나의 지표입니다. 이 숫자가 오르면 사업도 건강해진다고 팀이 합의한 별입니다. 가입, 구매 같은 여러 입력 지표가 이 숫자를 밀어 올립니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>팀마다 보는 숫자가 달라 서로 다른 방향으로 일하고 있을 때, 한 주의 성과를 한 줄로 말해야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>우리 서비스의 북극성 지표 후보를 세 개 제안하고, 각각을 움직이는 입력 지표를 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>가입자 수나 방문자 수처럼 쉽게 오르는 숫자를 북극성으로 잡으면 사용자 가치와 상관없이 숫자만 커집니다. 사용자가 서비스에서 핵심 가치를 실제로 얻은 횟수(예: 끝까지 읽은 글, 완료한 주문)가 더 맞는 후보입니다. 북극성은 하나여야 하고, 두세 개가 되면 별이 아니라 대시보드입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="kpi-vs-okr">
+      <div class="demo"><div class="d-pair"><div class="side"><b>KPI</b><div class="d-box mini"><span class="d-cap">월 활성 사용자</span><b style="font-size:16px">12,400</b><div class="fl"><i style="--w:80%"></i></div><span class="d-cap">지켜볼 숫자</span></div></div><div class="mid">vs</div><div class="side"><b>OKR</b><div class="d-box mini"><b>목표: 첫 구매를 쉽게</b><span class="d-cap">핵심 결과 1</span><div class="fl"><i style="--w:60%"></i></div><span class="d-cap">핵심 결과 2</span><div class="fl"><i style="--w:35%"></i></div></div></div></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">KPI <span class="vs">vs</span> OKR <span class="en">KPI vs OKR</span></h2>
+        <p class="desc">계속 지켜보는 건강 숫자면 KPI(핵심 성과 지표), 이번 분기에 이루려는 도전적인 목표와 그 진척을 재는 숫자면 OKR(목표와 핵심 결과)입니다. KPI는 상태를 보여주고 OKR은 방향을 바꾸는 데 씁니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>평소 유지해야 하는 수준은 KPI로 두고, 이번에 크게 바꾸고 싶은 일은 OKR로 세울 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이번 분기 OKR을 목표 하나와 핵심 결과 셋으로 정리하고, 같이 지켜볼 KPI도 따로 적어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>핵심 결과에 "기능 3개 출시"처럼 한 일을 적으면 OKR이 아니라 할 일 목록입니다. 결과는 사용자 행동이나 숫자의 변화여야 합니다. OKR 달성률로 개인 평가를 하기 시작하면 모두 쉬운 목표만 쓰게 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="aarrr">
+      <div class="demo"><div class="d-col" style="width:280px;gap:10px;text-align:center"><div class="rv" style="--i:0;width:100%;margin:0 auto;height:26px;border-radius:6px;background:var(--p);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;opacity:1">획득 Acquisition</div><div class="rv" style="--i:1;width:82%;margin:0 auto;height:26px;border-radius:6px;background:var(--p);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;opacity:.9">활성화 Activation</div><div class="rv" style="--i:2;width:64%;margin:0 auto;height:26px;border-radius:6px;background:var(--p);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;opacity:.8">유지 Retention</div><div class="rv" style="--i:3;width:46%;margin:0 auto;height:26px;border-radius:6px;background:var(--p);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;opacity:.7">수익 Revenue</div><div class="rv" style="--i:4;width:30%;margin:0 auto;height:26px;border-radius:6px;background:var(--p);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;opacity:.6">추천 Referral</div></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">AARRR 퍼널 <span class="en">Pirate metrics</span></h2>
+        <p class="desc">사용자가 서비스를 만나 가입하고 쓰고 돈을 내고 남에게 알리기까지의 다섯 단계를 이름 붙인 틀입니다. 다섯 단계의 머리글자를 이어 AARRR이라 하며, 해적의 외침 소리 같다고 해서 <strong>해적 지표</strong>라고도 부릅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>어느 단계에서 사람이 가장 많이 새는지 찾아 개선할 한 가지를 고를 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>우리 서비스를 AARRR 다섯 단계로 나누고 단계별로 측정할 이벤트와 지표 이름을 표로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>다섯 단계를 한꺼번에 개선하려 하면 아무것도 못 바꿉니다. 지금 가장 좁은 단계 하나만 고르세요. 서비스에 따라 순서도 달라서, 추천이 수익보다 앞서는 서비스도 있습니다. 단계 이름보다 "활성화를 우리는 무엇으로 정의할지"가 진짜 숙제입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="dau-mau">
+      <div class="demo"><div class="da"><div class="r"><span>DAU</span><div class="fl"><i style="--w:30%"></i></div><span>3,000</span></div><div class="r"><span>MAU</span><div class="fl"><i style="--w:100%"></i></div><span>10,000</span></div><span class="d-cap" style="text-align:center">하루 동안 쓴 사람과 한 달 동안 쓴 사람 (도식 속 가상 숫자)</span></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">활성 사용자 DAU·MAU <span class="en">Daily/Monthly active users</span></h2>
+        <p class="desc">정해진 기간에 서비스를 실제로 쓴 사람 수입니다. 하루 기준이 DAU, 한 달 기준이 MAU입니다. 가입자 수와 달리 "썼는지"로 세는 것이 핵심입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>서비스가 실제로 쓰이는 규모를 말해야 할 때, 사용 빈도가 중요한 서비스의 건강을 볼 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>대시보드에 일간, 월간 활성 사용자(DAU, MAU) 추이 카드를 넣고 활성의 기준 이벤트를 주석으로 적어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>활성의 정의가 팀마다 다르면 숫자 회의가 길어집니다. 앱을 열기만 해도 활성인지, 핵심 행동을 해야 활성인지 먼저 정하세요. 자동 알림으로 앱이 열린 것까지 세어 숫자가 부풀기도 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="stickiness">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:10px"><div class="sk30"><i class="on" style="--i:0"></i><i></i><i class="on" style="--i:2"></i><i class="on" style="--i:3"></i><i></i><i></i><i class="on" style="--i:6"></i><i></i><i></i><i class="on" style="--i:9"></i><i></i><i></i><i class="on" style="--i:12"></i><i class="on" style="--i:13"></i><i></i><i></i><i></i><i class="on" style="--i:17"></i><i></i><i></i><i class="on" style="--i:20"></i><i class="on" style="--i:21"></i><i></i><i></i><i class="on" style="--i:24"></i><i></i><i></i><i class="on" style="--i:27"></i><i class="on" style="--i:28"></i><i></i></div><span class="d-cap">한 달 30일 중 이 사람이 찾아온 날</span></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">고착도 <span class="en">Stickiness (DAU/MAU)</span></h2>
+        <p class="desc">월간 활성 사용자 중 얼마나 자주 돌아오는지를 나타내는 비율로, 보통 DAU를 MAU로 나눠 구합니다. 같은 MAU여도 날마다 오는 서비스와 한 달에 한 번 오는 서비스는 고착도가 크게 다릅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>서비스가 습관이 되었는지, 방문 빈도가 높아졌는지 볼 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>일간 활성을 월간 활성으로 나눈 고착도를 주별 선 그래프로 보여주는 카드를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>고착도가 높다고 모두 좋은 것은 아닙니다. 매일 써야 하는 서비스(메신저)와 가끔 쓰는 서비스(여행 예약)는 기준이 다릅니다. 서비스 성격에 맞는 사용 주기를 먼저 정하고, 다른 서비스의 숫자와 비교하지 마세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="segment">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="sg2"><i style="--c:#4f46e5;--x:10px;--y:60px;--gx:0px;--gy:0px"></i><i style="--c:#ea580c;--x:70px;--y:10px;--gx:100px;--gy:0px"></i><i style="--c:#16a34a;--x:130px;--y:70px;--gx:200px;--gy:0px"></i><i style="--c:#4f46e5;--x:40px;--y:20px;--gx:20px;--gy:0px"></i><i style="--c:#ea580c;--x:100px;--y:60px;--gx:120px;--gy:0px"></i><i style="--c:#16a34a;--x:160px;--y:30px;--gx:220px;--gy:0px"></i><i style="--c:#4f46e5;--x:90px;--y:40px;--gx:0px;--gy:24px"></i><i style="--c:#ea580c;--x:20px;--y:70px;--gx:100px;--gy:24px"></i><i style="--c:#16a34a;--x:60px;--y:70px;--gx:200px;--gy:24px"></i></div><span class="d-cap">섞여 있던 사용자를 같은 특징끼리 나눕니다</span></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">세그먼트 <span class="en">Segment</span></h2>
+        <p class="desc">전체 사용자를 나이, 가입 시기, 쓰는 기능, 구매 횟수처럼 공통된 특징으로 나눈 묶음입니다. 평균 하나로 보면 묻히는 차이가 묶음별로 보이게 됩니다. 시장을 나누는 마케팅의 세그멘테이션과 같은 말입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>전체 숫자는 안 변했는데 어떤 사람들에게만 좋아지고 나빠졌는지 알아볼 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>대시보드에서 신규 사용자와 기존 사용자 세그먼트를 나눠 전환율을 비교하는 필터를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>세그먼트를 너무 잘게 나누면 사람 수가 적어 숫자가 우연으로 흔들립니다. 분석하고 나서 나눈 기준이 마음에 드는 결과가 나오게 맞춘 것은 아닌지 의심하세요. 서비스 개편은 세그먼트별로 영향이 반대일 수 있어 평균만 보고 판단하면 위험합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="ltv">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="bars"><i style="--h:14;--i:0"></i><i style="--h:26;--i:1"></i><i style="--h:38;--i:2"></i><i style="--h:50;--i:3"></i><i style="--h:62;--i:4"></i><i style="--h:74;--i:5"></i><i style="--h:86;--i:6"></i><i style="--h:98;--i:7"></i></div><span class="d-cap">한 사람이 쓰는 돈이 달마다 쌓임 (가상)</span></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">고객 생애 가치 <span class="en">Customer lifetime value (LTV)</span></h2>
+        <p class="desc">한 명의 고객이 서비스를 쓰는 전체 기간 동안 가져다줄 것으로 예상되는 총 수익입니다. 영어 약자로 <strong>LTV</strong>라 부릅니다. 한 번 산 금액이 아니라 오래 쓰는 값어치를 봅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>고객 한 명을 얻는 데 얼마까지 쓸 수 있는지(획득 비용과 비교) 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>월 구독 서비스의 고객 생애 가치를 월 매출, 유지 기간, 이익률로 계산하는 방법과 표를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>LTV는 예측값이라 가정에 따라 크게 흔들립니다. 가입한 지 석 달 된 고객으로 3년치를 말하는 순간 근거가 약해집니다. 매출로만 계산하지 말고 서비스 운영 비용을 뺀 이익 기준인지 같이 적으세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="cac">
+      <div class="demo"><div class="d-col" style="width:280px;gap:10px;text-align:center"><div class="d-box rv" style="--i:0">광고·영업에 쓴 돈 <b>100만 원</b></div><b class="rv" style="--i:1">÷</b><div class="d-box rv" style="--i:2">새로 생긴 고객 <b>50명</b></div><b class="rv" style="--i:3">=</b><div class="fill rv" style="--i:4;padding:6px;font-size:14px;border-radius:10px;background:var(--p);color:#fff">1명당 2만 원 (가상)</div></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">고객 획득 비용 <span class="en">Customer acquisition cost (CAC)</span></h2>
+        <p class="desc">새 고객 한 명을 데려오는 데 든 평균 비용입니다. 마케팅과 영업에 쓴 돈을 같은 기간에 새로 생긴 고객 수로 나눕니다. 영어 약자로 <strong>CAC</strong>라 부릅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>광고 채널을 비교할 때, 고객 생애 가치(LTV)와 견주어 남는 장사인지 볼 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>채널별 고객 획득 비용을 광고비와 신규 가입 수로 계산해 막대 그래프로 비교하는 화면을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>광고로 온 사람만 세면 입소문으로 온 사람이 섞여 비용이 낮아 보입니다. 광고비만 넣는 팀과 인건비까지 넣는 팀의 숫자는 비교할 수 없습니다. CAC만 보고 싸다 비싸다 말하지 말고 LTV와 한 쌍으로 보세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="arpu">
+      <div class="demo"><div class="d-col" style="width:280px;gap:10px;text-align:center"><div class="d-row rv" style="--i:0;gap:3px"><div style="flex:1;height:24px;background:var(--p);border-radius:4px;opacity:1"></div><div style="flex:1;height:24px;background:var(--p);border-radius:4px;opacity:.8"></div><div style="flex:1;height:24px;background:var(--p);border-radius:4px;opacity:.6"></div><div style="flex:1;height:24px;background:var(--p);border-radius:4px;opacity:.4"></div></div><span class="d-cap rv" style="--i:1">총매출 400만 원을 사용자 200명으로 나누면 (가상)</span><div class="fill rv" style="--i:2;padding:6px;font-size:14px;border-radius:10px;background:var(--p);color:#fff">1인당 2만 원</div></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">사용자당 평균 매출 <span class="en">ARPU</span></h2>
+        <p class="desc">일정 기간의 총매출을 사용자 수로 나눈 값으로, 사용자 한 명이 평균 얼마를 쓰는지 보여줍니다. 영어 약자로 <strong>ARPU</strong>라 부릅니다. 고객 생애 가치와 달리 기간을 정해 놓고 봅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>요금제 개편 전후를 비교할 때, 유료 사용자 비중이 변했는지 볼 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>월별 사용자당 평균 매출(ARPU) 추이를 선 그래프와 숫자로 보여주는 카드를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>평균은 큰손 몇 명에게 끌려 올라가기 쉽습니다. 무료 사용자를 분모에 넣는지 유료만 넣는지를 반드시 적어 두세요. ARPU가 올랐는데 사용자가 줄어든 것일 수도 있으니 사용자 수와 같이 보세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="ctr">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:10px"><div class="ct"><i></i><i></i><i class="k" style="--i:0"></i><i></i><i></i><i></i><i></i><i class="k" style="--i:1"></i><i></i><i></i></div><span class="d-cap">10번 보여줬고 2번 눌렀다면 클릭률 20% (가상)</span></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">클릭률 <span class="en">Click-through rate (CTR)</span></h2>
+        <p class="desc">버튼이나 배너가 보인 횟수 중 몇 번이 눌렸는지의 비율입니다. 영어 약자로 <strong>CTR</strong>이라 부릅니다. 누른 횟수를 노출 횟수로 나눕니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>배너 문구나 버튼 색 등 두 안 중 어느 쪽이 더 눌리는지 비교할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>배너가 보인 횟수와 클릭 횟수를 기록해 클릭률(CTR)을 계산하고 두 배너 안을 비교하는 표를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>클릭률이 높아도 눌러서 실망했다면 의미가 없습니다. 자극적인 문구는 클릭률만 올리고 이후 이탈을 키웁니다. 노출의 기준(화면에 실제로 보였는가, 페이지에 로드만 되었는가)을 먼저 정하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="cohort">
+      <div class="demo"><div class="co"><span></span><b>가입 직후</b><b>1달 뒤</b><b>2달 뒤</b><b>3달 뒤</b><b>1월 가입</b><i class="rv" style="--i:0;--a:1">100</i><i class="rv" style="--i:1;--a:.6">45</i><i class="rv" style="--i:2;--a:.45">32</i><i class="rv" style="--i:3;--a:.35">26</i><b>2월 가입</b><i class="rv" style="--i:1;--a:1">100</i><i class="rv" style="--i:2;--a:.65">52</i><i class="rv" style="--i:3;--a:.5">38</i><span></span><b>3월 가입</b><i class="rv" style="--i:2;--a:1">100</i><i class="rv" style="--i:3;--a:.7">58</i><span></span><span></span></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">코호트 분석 <span class="en">Cohort analysis</span></h2>
+        <p class="desc">사용자를 가입한 달처럼 같은 시기에 같은 경험을 한 묶음(코호트)으로 나눠 시간이 지나며 어떻게 달라지는지 보는 표입니다. 전체 평균 하나로는 보이지 않는 개선과 악화가 드러납니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>개편한 뒤 가입한 사람들이 이전 사람들보다 오래 남는지 확인할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>가입 월별 코호트를 행으로, 경과 월을 열로 한 리텐션 코호트 표를 색 농도로 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>전체 평균이 안정적이어도 최근 코호트가 나빠지고 있을 수 있어서 이 표가 필요합니다. 표본이 작은 코호트의 칸은 숫자가 크게 흔들립니다. 색만으로 읽게 두지 말고 칸 안에 숫자도 같이 적으세요. (도식 속 숫자는 가상입니다.)</p>
+      </div>
+    </article>
+
+    <article class="term added" id="significance">
+      <div class="demo"><div class="sg"><svg viewBox="0 0 280 110"><path class="c1" d="M30 100C70 100 80 25 110 25C140 25 150 100 190 100Z" fill="rgba(79,70,229,.3)" stroke="#4f46e5" stroke-width="2"/><path class="c2" d="M90 100C130 100 140 25 170 25C200 25 210 100 250 100Z" fill="rgba(234,88,12,.3)" stroke="#ea580c" stroke-width="2"/><path d="M10 100H270" stroke="#3b3f5c" stroke-width="2"/></svg><div class="msg"><span class="m0">겹침이 커서 차이를 장담하기 어렵습니다</span><span class="m1">겹침이 줄어 차이가 분명해졌습니다</span></div><label><input type="checkbox"> 표본 늘리기 (눌러 보세요)</label></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">통계적 유의성 <span class="en">Statistical significance</span></h2>
+        <p class="desc">A와 B의 차이가 우연으로 생겼을 가능성이 충분히 낮다고 볼 수 있는 정도입니다. 표본이 작으면 결과가 크게 달라 보여도 우연일 수 있고, 표본이 크면 작은 차이도 분명해집니다. 흔히 p값이라는 숫자로 판단합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>A/B 테스트 결과를 보고 "B로 바꾸자"를 결정하기 전에.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>A/B 테스트 결과 화면에 두 안의 전환율과 신뢰 수준, 표본 수, 통계적으로 유의한지 여부를 같이 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>결과가 중간에 유의해졌다고 바로 멈추면 우연을 성과로 착각하기 쉽습니다. 테스트 전에 표본 수와 기간을 정해 두고 끝까지 돌리세요. 유의하다는 것은 차이가 중요하다는 뜻이 아니라, 우연은 아닐 가능성이 높다는 뜻일 뿐입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="control-group">
+      <div class="demo"><div class="cg"><div class="grp">대조군<div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="d-cap">기존 화면</span></div><div class="grp">실험군<div class="dots v"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i></div><span class="d-cap">새 화면</span></div></div></div>
+      <div class="body">
+        <p class="num">13</p>
+        <h2 class="term-name">대조군 <span class="en">Control group</span></h2>
+        <p class="desc">실험에서 아무것도 바꾸지 않고 비교 기준으로 남겨 두는 집단입니다. 새 화면을 보여주는 쪽은 실험군이라고 부릅니다. 대조군이 있어야 변화가 우리가 한 일 때문인지 알 수 있습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>개편 효과를 확인할 때. 전체를 한꺼번에 바꾸지 않고 일부는 그대로 둘 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>신규 사용자를 무작위로 대조군과 실험군 둘로 나누고 각각 다른 온보딩 화면을 보여주도록 구현해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>개편 전과 후를 비교하는 것은 대조군이 아닙니다. 그 사이에 계절, 이벤트, 광고가 바뀌었을 수 있기 때문입니다. 두 집단은 무작위로 나눠야 하고, 한 사람은 처음부터 끝까지 같은 집단에 있어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="guardrail-metric">
+      <div class="demo"><div class="gd"><div><div>가입 전환 (좋아지길 바람)</div><div class="tr"><i></i></div></div><div><div>환불 신청 (넘으면 안 됨)</div><div class="tr bad"><i></i><span class="line"></span></div></div></div></div>
+      <div class="body">
+        <p class="num">14</p>
+        <h2 class="term-name">가드레일 지표 <span class="en">Guardrail metric</span></h2>
+        <p class="desc">목표 지표를 올리는 동안 망가지면 안 되는 지표입니다. 가입 전환율을 올렸더니 환불이나 불만이 급증하는 일을 막으려고, 실험 전에 선을 정해 둡니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>A/B 테스트에서 성과 지표가 올랐는데 다른 곳이 나빠지지 않았는지 확인할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>실험 결과 화면에 목표 지표와 가드레일 지표(환불률, 고객센터 문의 수)를 함께 보여주고 기준선을 넘으면 빨갛게 표시해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>가드레일을 결과가 나온 뒤에 정하면 아무 의미가 없습니다. 속도, 오류율, 환불, 사용자 불만처럼 서비스를 지키는 숫자를 미리 정하세요. 가드레일이 없는 실험은 한 방향만 보고 달리는 경주입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="time-on-task">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="sw"><svg viewBox="0 0 90 90"><circle cx="45" cy="45" r="36" stroke="#d5daea"/><circle cx="45" cy="45" r="36" pathLength="100"/></svg><span>34.2초</span></div><span class="d-cap">“결제까지” 과업이 끝나기까지 (가상)</span></div></div>
+      <div class="body">
+        <p class="num">15</p>
+        <h2 class="term-name">과업 시간 <span class="en">Time on task</span></h2>
+        <p class="desc">사용자가 과업(예: 상품 찾기부터 결제까지)을 끝내는 데 걸린 시간입니다. 사용성 테스트의 대표적인 숫자로, 짧을수록 쓰기 쉽다고 봅니다. 완료 여부와 오류 횟수를 같이 적습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>개편 전후의 쓰기 쉬움을 숫자로 비교할 때, 같은 과업을 두 안이 얼마나 빨리 끝내는지 볼 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>사용성 테스트 결과표에 과업별 완료율, 과업 시간(중앙값), 오류 횟수 열을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>평균보다 중앙값으로 보세요. 한 사람이 헤매서 오래 걸리면 평균이 크게 흔들립니다. 짧은 시간이 항상 좋은 것은 아니고, 천천히 읽고 신중히 고르길 바라는 과업(계약, 약관)에서는 빠르다고 좋은 게 아닙니다. 완료하지 못한 사람은 시간 계산에서 따로 빼세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="ces">
+      <div class="demo"><div class="ces"><b>문제를 해결하기가 쉬웠나요?</b><div class="row"><label><input type="radio" name="ces" aria-label="1점"><span>1</span></label><label><input type="radio" name="ces" aria-label="2점"><span>2</span></label><label><input type="radio" name="ces" aria-label="3점"><span>3</span></label><label><input type="radio" name="ces" aria-label="4점"><span>4</span></label><label><input type="radio" name="ces" aria-label="5점"><span>5</span></label><label><input type="radio" name="ces" aria-label="6점"><span>6</span></label><label><input type="radio" name="ces" aria-label="7점"><span>7</span></label></div><div class="ends"><span>매우 어려웠다</span><span>매우 쉬웠다</span></div><span class="d-cap">눌러 보세요</span></div></div>
+      <div class="body">
+        <p class="num">16</p>
+        <h2 class="term-name">고객 노력 점수 <span class="en">Customer effort score (CES)</span></h2>
+        <p class="desc">고객이 일을 처리하는 데 얼마나 힘이 들었는지 묻는 설문 점수입니다. 영어 약자로 <strong>CES</strong>라 부릅니다. 만족했는지가 아니라 쉬웠는지를 물어 고객이 다시 이용할지 가늠합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>고객센터 상담, 환불, 가입처럼 한 번의 과업이 끝난 직후.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>과업이 끝난 직후 화면에 "처리하기 쉬웠나요?" 1~7점 고객 노력 점수 질문을 한 번만 띄워줘</q></p>
+        <p class="senior"><b>20년차 메모</b>질문을 너무 일찍 띄우면 과업을 방해하고, 너무 늦으면 기억이 흐려집니다. 점수 하나만 모으지 말고 낮은 점수를 준 사람에게 이유를 한 줄 적게 하세요. 1점이 어려움인지 쉬움인지 방향을 척도 양끝에 글자로 꼭 적으세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="vanity-metric">
+      <div class="demo"><div class="vn"><div><span class="d-cap">누적 가입자</span><div class="big"><span>120,000</span></div></div><div><span class="d-cap">이번 주에 실제로 쓴 사람</span><svg viewBox="0 0 270 50" width="270" height="50"><path d="M4 28H266" stroke="#4f46e5" stroke-width="3" fill="none" pathLength="100" class="dr"/></svg></div><span class="d-cap">크기만 커 보이고 행동은 없는 숫자 (가상)</span></div></div>
+      <div class="body">
+        <p class="num">17</p>
+        <h2 class="term-name">허영 지표 <span class="en">Vanity metric</span></h2>
+        <p class="desc">커 보이지만 사업의 진짜 상태나 다음 행동을 알려주지 않는 숫자입니다. 누적 가입자 수, 누적 다운로드 수, 페이지뷰 같은 것이 대표적입니다. 줄어들지 않고 늘기만 해서 기분은 좋습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>보고용 숫자와 판단용 숫자를 가를 때, 지표 후보를 고르면서 "이 숫자가 바뀌면 우리가 무엇을 바꾸나"를 물을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>대시보드의 누적 가입자 카드를 이번 주 활성 사용자와 그 주 대비 변화율 카드로 바꿔줘</q></p>
+        <p class="senior"><b>20년차 메모</b>누적 숫자는 정의상 줄지 않아서 아무 일도 안 해도 오릅니다. 비율이나 주기 단위 숫자로 바꾸면 훨씬 정직해집니다. 숫자가 좋아 보이면 기쁘기 전에 "이 숫자가 나빠질 수 있는 숫자인가"를 물어보세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="confirmation-bias">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="cb"><div class="yes">내 생각과 같은 후기</div><div>반대 의견 후기</div><div class="yes">내 생각과 같은 기사</div><div>다른 결과가 나온 조사</div></div><span class="d-cap">보고 싶은 것만 밝게 남고 나머지는 흐려집니다</span></div></div>
+      <div class="body">
+        <p class="num">18</p>
+        <h2 class="term-name">확증 편향 <span class="en">Confirmation bias</span></h2>
+        <p class="desc">자기가 이미 믿는 것을 뒷받침하는 정보만 찾고 믿고, 반대되는 정보는 무시하거나 깎아내리는 경향입니다. 사용자뿐 아니라 조사하는 팀도 빠집니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>인터뷰나 데이터를 해석할 때 스스로 점검할 수 있게 반대 근거를 일부러 찾는 규칙을 둘 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>사용자 인터뷰 요약에서 우리 가설을 지지하는 발언과 반대하는 발언을 나눠 같은 비중으로 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>기획자가 인터뷰를 직접 하면 자기 아이디어에 "맞아요"라고 답해 주는 사람만 기억에 남습니다. 질문을 "이 기능이 좋은가요?"처럼 유도하면 확증 편향을 공장처럼 찍어냅니다. 반대 의견이 나온 인터뷰를 따로 표시해 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="status-quo-bias">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:6px"><div class="sq"><svg viewBox="0 0 280 110"><path d="M20 20C80 110 200 110 260 20" fill="none" stroke="#3b3f5c" stroke-width="3"/></svg><div class="ball"></div></div><span class="d-cap">바꾸려고 올라가다가도 늘 제자리로 돌아옵니다</span></div></div>
+      <div class="body">
+        <p class="num">19</p>
+        <h2 class="term-name">현상 유지 편향 <span class="en">Status quo bias</span></h2>
+        <p class="desc">특별한 이유가 없으면 지금 쓰던 것을 계속 쓰려는 경향입니다. 바꾸는 데 드는 수고와 잃을 위험이 이득보다 크게 느껴지기 때문입니다. 새 기능을 아무도 안 쓰는 이유의 대부분입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>새 화면이나 요금제로 옮겨 가는 비용을 줄여야 할 때, 사용자가 기존 방식을 고수하는 이유를 설명할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>개편된 화면으로 처음 들어올 때 기존 화면과의 차이를 짧게 안내하고 "이전 방식으로 보기" 선택을 한 번 제공해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>디자이너 눈에 훨씬 좋아진 개편도 사용자는 "왜 바꿨냐"고 화를 냅니다. 개편 직후 불만은 이 편향이 대부분이니, 며칠 지켜보고 판단하세요. 반대로 이 편향을 이용해 해지를 어렵게 만들면 다크 패턴으로 넘어갑니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="sunk-cost">
+      <div class="demo"><div class="sc"><div class="sunk"><svg class="d-svg" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>이미 쓴 12만 원 · 되찾을 수 없음</div><div class="opt"><div>계속하기</div><div>그만두기</div></div><span class="bub">아깝다</span></div></div>
+      <div class="body">
+        <p class="num">20</p>
+        <h2 class="term-name">매몰 비용 <span class="en">Sunk cost fallacy</span></h2>
+        <p class="desc">이미 써서 되돌릴 수 없는 시간, 돈, 노력이 아까워 앞으로의 손해가 더 커질 일도 계속하게 되는 경향입니다. 지금부터 얼마가 더 들고 얼마를 얻을지만 보고 정해야 합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>오래 만든 기능을 접을지 정할 때, 사용자가 입력하다 만 긴 폼을 이어서 쓰게 도울 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>긴 신청 폼에서 중간에 나가도 입력한 내용을 임시 저장하고, 다시 들어오면 이어서 쓰도록 안내해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>디자인 팀이 석 달 만든 안을 버리지 못하는 것이 가장 비싼 매몰 비용입니다. 회의에서 "그동안 쓴 시간은 빼고 지금 시작한다면?"이라고 묻는 규칙이 효과적입니다. 사용자 쪽에서는 포인트 소멸이나 진행률 표시가 이 심리를 이용하는 경우가 많으니 쓸 때 윤리를 점검하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="endowment-effect">
+      <div class="demo"><div class="ed"><div class="tag">사려는 사람<br><span style="font-size:15px">8,000원</span></div><div class="tag mine">내 것이 되면<br><span style="font-size:15px">12,000원</span></div></div></div>
+      <div class="body">
+        <p class="num">21</p>
+        <h2 class="term-name">보유 효과 <span class="en">Endowment effect</span></h2>
+        <p class="desc">무언가를 내 것으로 갖고 나면 같은 물건도 더 값지게 느끼는 경향입니다. 무료 체험이 끝날 때 아까워서 결제하게 되는 것도 이 심리와 연결됩니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>무료 체험, 장바구니, 저장한 데이터처럼 사용자가 "내 것"이라고 느낄 장치를 설계할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>무료 체험 사용자가 만든 프로젝트와 저장한 데이터가 체험 종료 후에도 얼마 동안 남아 있는지 안내하는 문구를 추가해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>무료 체험이 끝난 뒤 데이터를 갑자기 지우는 화면은 보유 효과를 악용한 협박으로 읽힙니다. 데이터를 내려받을 길을 반드시 남겨 두세요. 가진 사람과 사려는 사람의 평가가 다르다는 것은 가격 실험에서도 흔히 만나는 함정입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="ikea-effect">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="ik"><i style="left:20px;top:8px;width:10px;height:62px;--x:-40px;--y:-20px"></i><i style="left:20px;top:60px;width:62px;height:10px;--x:50px;--y:-30px;--i:1"></i><i style="left:20px;top:70px;width:10px;height:40px;--x:-30px;--y:30px"></i><i style="left:72px;top:70px;width:10px;height:40px;--x:40px;--y:30px"></i></div><span class="d-cap">내가 직접 조립한 의자</span></div></div>
+      <div class="body">
+        <p class="num">22</p>
+        <h2 class="term-name">이케아 효과 <span class="en">IKEA effect</span></h2>
+        <p class="desc">자기가 직접 노력해서 만든 것에 더 큰 애착을 느끼는 경향입니다. 가구를 조립해 본 사람이 완성품보다 자기 것을 더 아끼는 데서 이름이 붙었습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>프로필 꾸미기, 취향 설정, 맞춤 설정처럼 사용자가 직접 참여해 결과물이 생기는 온보딩을 설계할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>온보딩에서 사용자가 관심사를 직접 골라 나만의 홈 화면이 만들어지는 과정을 단계별로 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>노력이 너무 크거나 막히면 애착이 아니라 포기가 생깁니다. 선택 단계를 짧게 하고, 중간에 건너뛰기를 줘야 합니다. 노력이 결과에 실제로 반영되지 않으면 사용자는 속았다고 느낍니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="decoy-effect">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:8px"><div class="dc3"><div>소<br>5,000원</div><div class="d">중<br>8,500원</div><div class="best">대<br>9,000원</div></div><span class="d-cap">미끼(중)가 나타나면 대가 돋보입니다</span></div></div>
+      <div class="body">
+        <p class="num">23</p>
+        <h2 class="term-name">디코이 효과 <span class="en">Decoy effect</span></h2>
+        <p class="desc">고를 가치가 낮은 세 번째 옵션(미끼)을 끼워 넣으면 비교 대상이 생겨 특정 옵션이 더 좋아 보이는 현상입니다. <strong>미끼 옵션</strong>이라고도 부릅니다. 요금제 표에서 흔히 봅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>요금제나 상품 구성 표에서 사용자가 왜 가운데나 가장 큰 것을 고르는지 설명할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>요금제 비교 화면에서 세 가지 플랜을 나란히 보여주고 추천 플랜에만 강조 테두리를 줘</q></p>
+        <p class="senior"><b>20년차 메모</b>디코이를 일부러 쓸모없이 만들면 사용자가 알아채고 신뢰를 잃습니다. 미끼처럼 보이는 옵션이라도 실제로 쓸모가 있어야 합니다. 설명 없이 가격만 늘어놓는 것보다 각 플랜이 누구에게 맞는지를 적는 것이 오래 갑니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="bandwagon">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:6px"><div class="bw"><div class="pen">A안</div><div class="pen b">B안</div><i style="--x:14;--y:32;--d:150px;--i:0"></i><i style="--x:50;--y:32;--d:150px;--i:1"></i><i style="--x:86;--y:32;--d:0px;--i:2"></i><i style="--x:14;--y:58;--d:150px;--i:3"></i><i style="--x:50;--y:58;--d:0px;--i:4"></i><i style="--x:86;--y:58;--d:150px;--i:5"></i><i style="--x:14;--y:84;--d:0px;--i:6"></i><i style="--x:50;--y:84;--d:150px;--i:7"></i></div><span class="d-cap">많은 사람이 고르면 따라 고릅니다</span></div></div>
+      <div class="body">
+        <p class="num">24</p>
+        <h2 class="term-name">밴드왜건 <span class="en">Bandwagon effect</span></h2>
+        <p class="desc">많은 사람이 하는 쪽으로 나도 따라가려는 경향입니다. 유행 열차(밴드왜건)에 올라탄다는 뜻입니다. 사회적 증거와 비슷하지만, 남이 많이 고른 쪽을 따라 하게 되는 흐름 자체를 가리킵니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>인기 순위, 많이 본 글, "지금 많은 사람이 보고 있어요" 같은 장치가 사용자 선택을 어떻게 바꾸는지 볼 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>게시글 목록에 "많이 읽은 글" 섹션을 넣되 조회수가 실제 데이터로만 계산되도록 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>숫자를 부풀리거나 거짓으로 보여주면 신뢰가 한 번에 무너집니다. 인기 순위가 계속 같은 항목을 위로 올려 새 항목이 보일 기회를 막는 문제도 있습니다. 초반의 소수 표에 쏠림이 커지니 평점 화면에서 특히 주의하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="authority-bias">
+      <div class="demo"><div class="au2"><div class="rv2"><div class="av"></div><div>써 보니 만족스러워요<br><span class="d-cap">일반 사용자</span></div></div><div class="rv2 exp"><div class="av"></div><div>성분 근거를 확인했어요 <em>전문가 검증</em><br><span class="d-cap">전문가</span></div></div></div></div>
+      <div class="body">
+        <p class="num">25</p>
+        <h2 class="term-name">권위 편향 <span class="en">Authority bias</span></h2>
+        <p class="desc">전문가, 공식 기관, 직함이 있는 사람의 말을 내용보다 더 쉽게 믿는 경향입니다. 인증 마크나 전문가 추천 같은 표시가 신뢰를 올리는 이유입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>신뢰가 낮은 첫 화면, 건강이나 금융처럼 믿음이 중요한 서비스에서 근거를 보여줄 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>제품 상세 화면에 전문가 검증 배지를 달고 누르면 검증 기관과 날짜가 보이게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>실제로 받지 않은 인증 마크나 가짜 전문가 후기는 사기이고 법적 문제로 이어질 수 있습니다. 권위를 보여주려면 누가, 언제, 어떤 기준으로 확인했는지가 같이 보여야 합니다. 마크만 크게 달고 근거를 숨기면 오히려 의심을 삽니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="reciprocity">
+      <div class="demo"><div class="rc"><div class="gift"><svg class="d-svg" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 8v12M3 12h18M12 8c-2-4-6-3-5 0 M12 8c2-4 6-3 5 0"/></svg></div><div class="ask"><b>무료 체크리스트 받기</b><input class="d-input" placeholder="이메일" aria-label="이메일"><button class="d-btn" type="button">받기</button></div></div></div>
+      <div class="body">
+        <p class="num">26</p>
+        <h2 class="term-name">상호성 <span class="en">Reciprocity</span></h2>
+        <p class="desc">무언가를 받으면 비슷하게 돌려주고 싶어지는 마음입니다. 먼저 유용한 것을 주면 사용자가 가입이나 구독 같은 작은 부탁을 들어줄 가능성이 올라갑니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>무료 가이드, 체험판, 첫 구매 쿠폰처럼 먼저 가치를 주고 다음 행동을 청할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>뉴스레터 구독 화면에서 먼저 무료 체크리스트를 보여주고 이메일을 입력하면 받도록 흐름을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>선물을 줬다고 이메일을 필수로 만들면 선물이 아니라 거래가 됩니다. 정말 도움 되는 선물을 줘야 하고, 받기 전에 미리 부담을 느끼게 하면 반대로 불쾌감이 생깁니다. 받은 뒤에 요청하되, 거절해도 불이익이 없다는 것을 보여주세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="goal-gradient">
+      <div class="demo"><div class="gg"><div>프로필 완성 중</div><div class="fl"><i></i></div><span class="d-cap">끝이 가까워질수록 점점 빨라집니다</span></div></div>
+      <div class="body">
+        <p class="num">27</p>
+        <h2 class="term-name">목표 가속 효과 <span class="en">Goal-gradient effect</span></h2>
+        <p class="desc">목표에 가까워질수록 더 열심히, 더 빠르게 하게 되는 경향입니다. 진행 바나 스탬프 카드에서 끝이 보이면 사람들이 속도를 올립니다. 시작부터 몇 칸을 채워 주면 효과가 커지기도 합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>프로필 완성도, 스탬프 카드, 가입 단계처럼 완료까지 여러 단계가 있는 화면에 진행 상황을 보여줄 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>회원가입 마지막 단계에서 "거의 다 됐어요, 1단계 남았어요" 진행 표시를 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>남은 일이 실제보다 적어 보이게 속이면 마지막에 이탈이 커집니다. 단계가 늘어나는 순간 진행 바가 뒤로 가는 화면은 최악의 경험입니다. 단계 수는 처음에 정직하게 알려 주세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="serial-position">
+      <div class="demo"><div class="sp"><div class="ends">1 처음 (초두 효과)</div><div class="mid">2</div><div class="mid">3</div><div class="mid">4</div><div class="mid">5</div><div class="mid">6</div><div class="ends">7 마지막 (최신 효과)</div></div></div>
+      <div class="body">
+        <p class="num">28</p>
+        <h2 class="term-name">서열 위치 효과 <span class="en">Serial position effect</span></h2>
+        <p class="desc">목록에서 맨 앞(초두 효과)과 맨 뒤(최신 효과)의 항목이 가운데 항목보다 더 잘 기억되는 현상입니다. 메뉴, 탭, 가격표의 순서를 정할 때 중요합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>하단 탭바나 메뉴에서 가장 중요한 항목을 어디에 둘지 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>하단 탭바 항목을 중요도 순서로 정리하고 가장 중요한 두 항목을 맨 앞과 맨 뒤에 배치해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>맨 앞과 맨 뒤를 가장 중요한 것에 쓰고, 가운데에는 덜 중요한 것을 두라는 말은 맞지만 이름이나 아이콘이 눈에 안 띄면 효과가 없습니다. 가격 순 정렬처럼 사용자가 목록을 능동적으로 훑는 화면에서는 효과가 약해질 수 있습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="aesthetic-usability">
+      <div class="demo"><div class="ae"><div class="f ugly"><span>기본 모양</span><input aria-label="아이디" placeholder="아이디"><button type="button">로그인</button></div><div class="f pretty"><span>다듬은 모양</span><input class="d-input" aria-label="아이디" placeholder="아이디"><button class="d-btn" type="button">로그인</button></div></div></div>
+      <div class="body">
+        <p class="num">29</p>
+        <h2 class="term-name">심미적 사용성 효과 <span class="en">Aesthetic-usability effect</span></h2>
+        <p class="desc">같은 기능이라도 보기 좋은 화면을 사용자가 더 쓰기 쉽다고 느끼는 경향입니다. 예쁘면 작은 문제를 더 너그럽게 봐 줍니다. 그래서 첫인상 디자인이 중요합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>프로토타입을 사용성 테스트에 쓸 때, 시각 완성도가 평가에 끼치는 영향을 생각할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이 화면의 여백, 정렬, 색 대비를 정리해서 같은 내용이 더 쓰기 쉬워 보이도록 다듬어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>예쁘다고 쓰기 쉬운 것은 아닙니다. 이 효과 때문에 예쁜 시안에서는 사용성 문제가 가려져 테스트에서 놓칩니다. 사용성 테스트는 일부러 투박한 와이어프레임으로도 해 보세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="postels-law">
+      <div class="demo"><div class="po"><div class="in"><span>010 1234 5678</span><span>010-1234-5678</span><span>01012345678</span></div><svg class="d-svg" viewBox="0 0 24 24" style="align-self:center;color:var(--p)"><path d="M12 4v16M6 14l6 6 6-6"/></svg><div class="out">010-1234-5678</div></div></div>
+      <div class="body">
+        <p class="num">30</p>
+        <h2 class="term-name">포스텔의 법칙 <span class="en">Postel's law</span></h2>
+        <p class="desc">"보내는 것은 엄격하게, 받는 것은 너그럽게"라는 설계 원칙입니다. 컴퓨터 과학자 존 포스텔이 네트워크 통신에서 말한 것으로 알려져 있고, UI에서는 사용자가 어떤 모양으로 입력해도 받아 주고 시스템이 정리하는 태도를 가리킵니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>전화번호, 날짜, 금액처럼 사람마다 쓰는 모양이 다른 입력.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>전화번호 입력에서 하이픈, 공백, 붙여쓰기를 모두 받아들이고 저장할 때 010-0000-0000 형태로 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>받아 주는 것과 알려 주는 것은 별개입니다. 정리한 결과를 입력칸에 바로 보여줘야 사용자가 잘 들어갔는지 압니다. 너그러움이 보안 쪽까지 번지면 안 되니, 서버에서는 반드시 다시 검증하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="hawthorne-effect">
+      <div class="demo"><div class="hw"><div><span>지켜보지 않을 때</span><div class="ln"><i></i></div></div><div><span>지켜볼 때</span><div class="ln w"><svg class="d-svg" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><i></i></div></div></div></div>
+      <div class="body">
+        <p class="num">31</p>
+        <h2 class="term-name">호손 효과 <span class="en">Hawthorne effect</span></h2>
+        <p class="desc">누가 지켜본다는 것을 알면 평소와 다르게 행동하는 현상입니다. 이름은 미국 호손 공장에서 한 작업 환경 실험에서 따왔습니다. 사용성 테스트와 현장 관찰의 결과가 실제와 다를 수 있는 이유입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>사용성 테스트, 관찰 조사, 인터뷰 결과를 해석할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>사용성 테스트 진행 대본에 "당신을 평가하는 것이 아니라 화면을 평가하는 것"이라는 안내 문장을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>테스트에서 사용자가 평소보다 잘해 보이거나 신중해 보이면 이 효과를 의심하세요. 기록 카메라와 질문자가 많을수록 심해집니다. 테스트 결과는 실제 사용 데이터(로그, 리플레이)와 함께 보면 균형이 맞습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="feedback-loop">
+      <div class="demo"><div class="fb"><div class="orb"></div><div class="n n1">행동</div><div class="n n2">결과</div><div class="n n3">다시 행동</div></div></div>
+      <div class="body">
+        <p class="num">32</p>
+        <h2 class="term-name">피드백 루프 <span class="en">Feedback loop</span></h2>
+        <p class="desc">행동의 결과가 다시 다음 행동에 영향을 주어 한 바퀴를 도는 순환입니다. 결과가 행동을 키우면 강화 루프(연속 출석이 쌓일수록 접속하게 됨), 줄이면 균형 루프(경고를 받고 멈춤)가 됩니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>스트릭, 좋아요 알림, 추천 알고리즘처럼 사용 습관이 스스로 커지거나 줄어드는 서비스 구조를 설명할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>학습 앱에서 연속 학습 일수를 보여주고 하루를 놓치면 알려주는 피드백 루프를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>강화 루프는 한쪽으로만 계속 달리기 때문에 중독이나 쏠림이 됩니다. 좋아요 알림을 늘릴수록 접속이 늘지만 피로도 같이 쌓이니, 루프를 만든 뒤에는 멈추는 장치(방해 금지, 휴식 안내)도 같이 설계하세요. 루프가 눈에 안 보이면 조정도 못 합니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="숫자 보여주는 그래프 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>그래프 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+
+/* 01 막대 그래프: 막대마다 height 를 값에 맞추고 아래에서 위로 자라게(scaleY) */
+.bc { display: flex; align-items: flex-end; gap: 14px; height: 130px; padding: 0 6px; border-bottom: 2px solid #aeb5cf; }
+.bw { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 34px; }
+.bw i { display: block; width: 100%; border-radius: 5px 5px 0 0; background: var(--p); transform-origin: bottom; animation: grow 4s ease-out infinite; }
+.bw span { position: absolute; top: 100%; margin-top: 4px; font-size: 11px; color: var(--mute); }
+@keyframes grow { 0% { transform: scaleY(0); } 30%, 90% { transform: scaleY(1); } 100% { transform: scaleY(0); } }
+/* 02 선 그래프: SVG polyline 을 stroke-dashoffset 으로 왼쪽부터 그려 나간다 */
+.ln { width: 250px; height: 120px; }
+.ln .l { fill: none; stroke: var(--p); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 400; animation: draw 4s ease-out infinite; }
+@keyframes draw { from { stroke-dashoffset: 400; } 40%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.ax { stroke: #aeb5cf; stroke-width: 1.5; } .gl { stroke: #e3e7f5; stroke-width: 1; }
+/* 03 도넛 차트: 원의 테두리(stroke)를 dasharray 로 조각 내어 이어 붙인다 */
+.dn { width: 120px; height: 120px; transform: rotate(-90deg); } .dn circle { fill: none; stroke-width: 18; }
+.lg { display: grid; gap: 6px; font-size: 12px; } .lg span { display: flex; align-items: center; gap: 6px; } .lg i { width: 10px; height: 10px; border-radius: 2px; }
+.c1 { background: var(--p); } .c2 { background: #f59e0b; } .c3 { background: #10b981; }
+/* 04 스파크라인: 축도 글자도 없이 선 모양만 작게 */
+.sp { width: 90px; height: 28px; } .sp polyline { fill: none; stroke: var(--p); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+/* 05 게이지: 반원 테두리 + 바늘을 transform: rotate 로 흔든다 */
+.gg { position: relative; width: 180px; height: 100px; overflow: hidden; }
+.gg svg { width: 180px; height: 100px; } .needle { position: absolute; left: 89px; bottom: 6px; width: 3px; height: 70px; background: var(--ink); border-radius: 3px; transform-origin: bottom center; animation: nd 4s ease-in-out infinite; }
+.gg::after { content: ""; position: absolute; left: 82px; bottom: 0; width: 18px; height: 18px; border-radius: 50%; background: var(--ink); }
+@keyframes nd { 0%, 10% { transform: rotate(-80deg); } 50%, 90% { transform: rotate(35deg); } 100% { transform: rotate(-80deg); } }
+/* 06 진행 링: 원 하나의 테두리를 dashoffset 으로 비운다/채운다 */
+.rg { width: 100px; height: 100px; transform: rotate(-90deg); } .rg circle { fill: none; stroke-width: 10; stroke-linecap: round; }
+.rg .v { stroke: var(--p); stroke-dasharray: 264; animation: rgf 4s ease-out infinite; }
+@keyframes rgf { 0% { stroke-dashoffset: 264; } 40%, 90% { stroke-dashoffset: 66; } 100% { stroke-dashoffset: 264; } }
+.rgw { position: relative; } .rgw b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 20px; }
+/* 07 히트맵: 격자 칸마다 같은 색의 투명도만 달리해 많고 적음을 표현 */
+.hm { display: grid; grid-template-columns: repeat(7, 28px); gap: 3px; } .hm i { height: 28px; border-radius: 5px; background: var(--p); }
+.hmh { display: grid; grid-template-columns: repeat(7, 28px); gap: 3px; text-align: center; font-size: 10px; color: var(--mute); }
+.scale { display: flex; align-items: center; gap: 4px; } .scale i { width: 14px; height: 10px; border-radius: 2px; background: var(--p); }
+/* 08 KPI 카드: 큰 숫자 + 변화율 + 작은 추이선 */
+.kp { width: 220px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; display: grid; gap: 4px; box-shadow: 0 2px 8px rgba(30,27,75,.06); }
+.kp .big { font-size: 32px; font-weight: 800; line-height: 1.1; } .up { color: #15803d; font-weight: 700; font-size: 13px; }
+/* 09 누적 막대: 한 줄 안에 구성 비율을 flex 로 이어 붙인다 */
+.sb { display: grid; gap: 10px; width: 250px; } .sb .r { display: flex; height: 26px; border-radius: 6px; overflow: hidden; }
+.sb .r span { display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; } .sb .r .a { background: var(--p); } .sb .r .b { background: #b45309; } .sb .r .c { background: #047857; }
+/* 추가: 범례 / 축 / 툴팁(:hover 로 말풍선) */
+.mk { display: inline-block; width: 12px; height: 12px; } .mk.sq { background: var(--p); } .mk.ci { background: #b45309; border-radius: 50%; } .mk.tr { width: 0; height: 0; border: 7px solid transparent; border-bottom: 12px solid #047857; border-top: 0; }
+.mb { display: flex; align-items: flex-end; gap: 6px; height: 70px; border-bottom: 2px solid #aeb5cf; } .mb i { width: 22px; background: var(--p); border-radius: 3px 3px 0 0; }
+.tp { display: flex; align-items: flex-end; gap: 10px; height: 110px; border-bottom: 2px solid #aeb5cf; padding: 0 8px; }
+.tp .t { position: relative; width: 34px; background: var(--p); border-radius: 5px 5px 0 0; cursor: pointer; } .tp .t:hover, .tp .t:focus { background: #3730a3; outline: none; }
+.tp .t::after { content: attr(data-v); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); padding: 3px 8px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 11px; font-weight: 700; white-space: nowrap; opacity: 0; transition: opacity .15s; pointer-events: none; }
+.tp .t:hover::after, .tp .t:focus::after { opacity: 1; }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">화면 구성요소</a><span class="sep">›</span>
+  <span>그래프</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>숫자 보여주는 그래프 9가지</h1>
+    <p class="lead">숫자는 그래프를 잘 고르면 한눈에 읽힙니다</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="bar-chart">
+      <div class="demo"><div style="padding-bottom:16px"><div class="bc"><div class="bw"><i style="height:60px;animation-delay:0.0s"></i><span>월</span></div><div class="bw"><i style="height:95px;animation-delay:0.1s"></i><span>화</span></div><div class="bw"><i style="height:45px;animation-delay:0.2s"></i><span>수</span></div><div class="bw"><i style="height:120px;animation-delay:0.30000000000000004s"></i><span>목</span></div><div class="bw"><i style="height:80px;animation-delay:0.4s"></i><span>금</span></div></div></div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">막대 그래프 <span class="en">Bar chart</span></h2>
+        <p class="desc">값의 크기를 막대 길이로 보여줘서 항목끼리 크기를 비교하게 하는 그래프. 눈이 길이를 가장 정확하게 비교하기 때문에 가장 기본이 됩니다. 가로로 눕히면 <strong>가로 막대</strong>라 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>요일별 방문자, 지점별 매출, 항목 이름이 긴 순위처럼 "어느 것이 더 큰가"를 물을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>요일별 방문자 수를 막대 그래프로 보여주고 가장 큰 막대만 진한 색으로 강조해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>막대 그래프의 기준선은 반드시 0이어야 합니다. 중간부터 시작하면 작은 차이가 엄청나게 커 보입니다. 항목 이름이 길면 가로 막대로 눕히고, 막대 위에 값을 적어 읽는 수고를 줄이세요. 데이터가 없는 날은 빈 칸이 아니라 "데이터 없음"으로 구분해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="line-chart">
+      <div class="demo"><svg class="ln" viewBox="0 0 250 120" role="img" aria-label="점점 오르는 선 그래프"><line class="gl" x1="10" x2="245" y1="30" y2="30"/><line class="gl" x1="10" x2="245" y1="70" y2="70"/><line class="ax" x1="10" x2="245" y1="108" y2="108"/><polyline class="l" points="12,90 55,78 100,84 145,50 190,56 238,16"/></svg></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">선 그래프 <span class="en">Line chart</span></h2>
+        <p class="desc">시간에 따라 값이 어떻게 변하는지를 점을 이은 선으로 보여주는 그래프. 오르내림의 모양과 흐름을 보는 데 맞습니다. <strong>추이 그래프, 꺾은선 그래프</strong>라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>일별 가입자 수, 주가, 기온처럼 "시간이 지나며 어떻게 변했나"를 물을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>최근 30일 가입자 수를 선 그래프로 그리고 x축에는 날짜, 마지막 점에는 값을 표시해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>항목끼리 비교하는 데 선 그래프를 쓰면 안 됩니다. 선은 시간처럼 이어지는 값에만 쓰세요. 선이 5개를 넘으면 엉켜서 안 읽히니 강조할 한 줄만 진하게 하고 나머지는 연하게 두세요. 선을 색으로만 구분하지 말고 끝에 이름을 직접 붙이면 색약 사용자도 읽습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="donut-chart">
+      <div class="demo"><div class="d-row" style="gap:18px"><svg class="dn" viewBox="0 0 120 120" role="img" aria-label="도넛 차트: 앱 50, 웹 30, 기타 20퍼센트"><circle cx="60" cy="60" r="45" stroke="#10b981" stroke-dasharray="56.5 226.2" stroke-dashoffset="-226.2"/><circle cx="60" cy="60" r="45" stroke="#f59e0b" stroke-dasharray="84.8 197.9" stroke-dashoffset="-141.4"/><circle cx="60" cy="60" r="45" stroke="var(--p)" stroke-dasharray="141.4 141.4"/></svg><div class="lg"><span><i class="c1"></i>앱 50%</span><span><i class="c2"></i>웹 30%</span><span><i class="c3"></i>기타 20%</span></div></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">도넛 차트 <span class="en">Donut chart</span></h2>
+        <p class="desc">전체를 100%로 보고 조각이 얼마씩 차지하는지를 고리 모양으로 보여주는 그래프. 가운데 구멍에 합계를 적을 수 있는 점이 파이 차트와 다릅니다. 영어 그대로 도넛, 파이 차트의 변형입니다.</p>
+        <p class="when"><b>언제 쓰나</b>접속 기기 비율, 지출 구성처럼 "전체 중 몇 퍼센트"를 말할 때. 조각은 5개 이하일 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>지출 항목 비율을 도넛 차트로 만들고 가운데에 총 지출을 적고 오른쪽에 범례를 붙여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>조각이 비슷한 크기이면 어느 쪽이 큰지 구분이 안 되니 그때는 막대 그래프가 낫습니다. 5개가 넘으면 작은 조각을 "기타"로 묶으세요. 조각을 색으로만 구분하지 말고 이름과 퍼센트를 글로 붙이세요. 합이 100%가 되지 않는 값에는 쓰면 안 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="sparkline">
+      <div class="demo"><div class="d-box d-row" style="gap:14px"><div><div class="d-cap">이번 주 방문</div><b style="font-size:20px">1,240</b></div><svg class="sp" viewBox="0 0 90 28" role="img" aria-label="오르내리다 오르는 작은 추이선"><polyline points="2,20 14,16 26,22 38,10 50,14 62,8 76,12 88,3"/></svg></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">스파크라인 <span class="en">Sparkline</span></h2>
+        <p class="desc">축과 숫자 없이 선 모양만 작게 넣은 그래프. 정확한 값이 아니라 "요즘 오르는지 내리는지"의 느낌만 전합니다. 글 사이에 끼워 넣는 작은 그림이라는 뜻에서 이름이 붙었습니다.</p>
+        <p class="when"><b>언제 쓰나</b>표의 한 줄 안, KPI 카드 구석, 주식 목록처럼 좁은 자리에서 추세만 보여줄 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>대시보드의 각 숫자 옆에 최근 7일 변화를 보여주는 작은 스파크라인을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>값이 안 보이니 정확한 비교에는 쓰면 안 됩니다. 앞뒤 값 차이가 작은데도 선이 크게 출렁여 보이기 쉬우니 세로 범위를 신경 써야 합니다. 스크린리더에는 "7일간 상승" 같은 한 문장 설명을 따로 붙이세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="gauge">
+      <div class="demo"><div class="gg"><svg viewBox="0 0 180 100" role="img" aria-label="반원 게이지"><path d="M15 92 A75 75 0 0 1 165 92" fill="none" stroke="#10b981" stroke-width="16" stroke-dasharray="78 400" pathLength="235"/><path d="M15 92 A75 75 0 0 1 165 92" fill="none" stroke="#f59e0b" stroke-width="16" stroke-dasharray="0 78 78 400" pathLength="235"/><path d="M15 92 A75 75 0 0 1 165 92" fill="none" stroke="#dc2626" stroke-width="16" stroke-dasharray="0 156 79 400" pathLength="235"/></svg><div class="needle"></div></div><span class="d-cap" style="position:absolute;bottom:8px">낮음 &middot; 보통 &middot; 높음</span></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">게이지 <span class="en">Gauge</span></h2>
+        <p class="desc">바늘이 구간 위 어디를 가리키는지로 지금 값이 좋은지 나쁜지 보여주는 계기판 모양 그래프. 값 하나가 "범위 안에서 어느 정도"인지가 중요할 때 씁니다.</p>
+        <p class="when"><b>언제 쓰나</b>속도, 점수, 위험도, 신용 등급처럼 값 하나에 좋음·나쁨 구간이 정해진 경우.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>건강 점수를 반원 게이지로 보여주고 낮음, 보통, 높음 구간을 색과 글로 구분해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>구간이 빨강·노랑·초록뿐이면 색약 사용자는 구분이 안 되니 "낮음/보통/높음" 글을 같이 쓰세요. 바늘만 있고 숫자가 없으면 정확한 값을 몰라 답답합니다. 값 하나만 보여줄 거라면 숫자 크게 쓴 KPI 카드가 더 단순할 때가 많습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="progress-ring">
+      <div class="demo"><div class="rgw"><svg class="rg" viewBox="0 0 100 100" role="img" aria-label="75퍼센트 채워진 링"><circle cx="50" cy="50" r="42" stroke="#d5daea"/><circle class="v" cx="50" cy="50" r="42"/></svg><b>75%</b></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">진행 링 <span class="en">Progress ring</span></h2>
+        <p class="desc">목표 대비 얼마나 채웠는지를 고리 하나로 보여주는 그래프. 로딩 진행에 쓰는 진행 링과 같은 모양이지만 여기서는 걸음 수·목표 달성률 같은 <strong>달성률</strong>을 말합니다.</p>
+        <p class="when"><b>언제 쓰나</b>운동 목표, 학습 진도, 저장 공간 사용량 같은 한 가지 목표 대비 진행률.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>오늘 걸음 수 목표 달성률을 진행 링으로 보여주고 가운데에 퍼센트 숫자를 크게 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>100%를 넘었을 때 어떻게 보일지 정하지 않으면 링이 한 바퀴 돌고 끝나서 초과를 알 수 없습니다. 링 하나는 값 하나만 보여주니 여러 목표를 겹쳐 쓸 때는 색 말고 이름도 붙이세요. 0%일 때 빈 고리가 보이는지도 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="heatmap">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="hmh"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="hm" role="img" aria-label="요일별 활동량 히트맵"><i style="opacity:0.1"></i><i style="opacity:0.2"></i><i style="opacity:0.5"></i><i style="opacity:0.3"></i><i style="opacity:0.8"></i><i style="opacity:0.2"></i><i style="opacity:0.1"></i><i style="opacity:0.3"></i><i style="opacity:0.6"></i><i style="opacity:0.9"></i><i style="opacity:0.5"></i><i style="opacity:0.4"></i><i style="opacity:0.2"></i><i style="opacity:0.1"></i><i style="opacity:0.2"></i><i style="opacity:0.4"></i><i style="opacity:0.7"></i><i style="opacity:1"></i><i style="opacity:0.6"></i><i style="opacity:0.3"></i><i style="opacity:0.1"></i><i style="opacity:0.1"></i><i style="opacity:0.3"></i><i style="opacity:0.5"></i><i style="opacity:0.4"></i><i style="opacity:0.9"></i><i style="opacity:0.5"></i><i style="opacity:0.2"></i><i style="opacity:0.2"></i><i style="opacity:0.1"></i><i style="opacity:0.3"></i><i style="opacity:0.6"></i><i style="opacity:0.7"></i><i style="opacity:0.3"></i><i style="opacity:0.1"></i></div><div class="scale d-cap">적음<i style="opacity:.15"></i><i style="opacity:.45"></i><i style="opacity:.75"></i><i></i>많음</div></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">히트맵 <span class="en">Heatmap</span></h2>
+        <p class="desc">격자 칸마다 값의 크기를 색의 진하기로 칠한 그래프. 숫자를 읽는 게 아니라 "어디가 진한가"로 패턴을 찾는 용도입니다. 깃허브의 잔디가 대표적입니다.</p>
+        <p class="when"><b>언제 쓰나</b>요일·시간대별 접속량, 활동 기록, 클릭이 많은 영역처럼 두 기준이 겹치는 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>요일과 시간대별 주문 수를 히트맵으로 보여주고 아래에 적음에서 많음까지 범례를 붙여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>색의 진하기 차이는 사람이 정확히 읽을 수 없으니 칸을 누르거나 올렸을 때 실제 값이 나오게 하세요. 한 가지 색의 명도로만 단계를 만들되 단계는 5개 안쪽이 읽기 좋습니다. 빨강-초록 조합은 색약 사용자가 구분하지 못하니 피하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="kpi-card">
+      <div class="demo"><div class="kp"><span class="d-cap">이번 달 가입자</span><span class="big">3,482</span><div class="d-row" style="justify-content:space-between"><span class="up">&#9650; 12.4%</span><svg class="sp" style="width:70px" viewBox="0 0 90 28" aria-hidden="true"><polyline points="2,22 14,18 26,20 38,12 50,14 62,8 76,10 88,3"/></svg></div><span class="d-cap">지난달 3,098</span></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">KPI 카드 <span class="en">KPI card</span></h2>
+        <p class="desc">가장 중요한 숫자 하나를 크게 쓰고 그 옆에 지난 기간과의 변화를 붙인 카드. 그래프라기보다 숫자를 보여주는 틀이며 대시보드의 맨 윗줄에 놓입니다. KPI는 핵심 성과 지표(Key Performance Indicator)입니다.</p>
+        <p class="when"><b>언제 쓰나</b>대시보드 상단의 매출·가입자·전환율처럼 한눈에 알아야 하는 몇 개의 숫자.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>대시보드 맨 위에 이번 달 가입자 KPI 카드를 만들고 지난달 대비 증감률과 작은 추이선을 같이 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>증가가 항상 좋은 것은 아닙니다. 이탈률이나 오류 수는 늘어나면 나쁜데 초록 화살표로 칠하는 실수가 많으니 지표마다 좋고 나쁨 방향을 정하세요. 비교 기준(지난달, 어제)을 반드시 적고, 값이 아직 없을 때의 빈 상태도 그리세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="stacked-bar">
+      <div class="demo"><div class="sb" role="img" aria-label="월별 매출 구성: 앱 상품, 구독, 기타"><div><div class="d-cap">10월</div><div class="r"><span class="a" style="flex:50">앱 50</span><span class="b" style="flex:30">구독 30</span><span class="c" style="flex:20">기타</span></div></div><div><div class="d-cap">11월</div><div class="r"><span class="a" style="flex:40">앱 40</span><span class="b" style="flex:45">구독 45</span><span class="c" style="flex:15">기타</span></div></div></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">누적 막대 <span class="en">Stacked bar</span></h2>
+        <p class="desc">막대 하나를 여러 조각으로 나눠 전체 크기와 그 구성을 한꺼번에 보여주는 그래프. 막대 그래프와 도넛 차트의 장점을 합쳤지만, 맨 아래 조각 외에는 서로 비교하기 어렵습니다.</p>
+        <p class="when"><b>언제 쓰나</b>월별 매출을 상품군으로 쪼개 보거나, 전체 값과 내부 비율이 둘 다 중요할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>월별 매출을 상품군별로 쌓은 누적 막대 그래프로 보여주고 각 조각에 글자 라벨을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>조각이 4개를 넘으면 가운데 조각들은 비교가 안 되니 개수를 줄이세요. 조각 색을 서로 구분되게 하면서 글자 대비도 지켜야 하는데 어두운 색을 쓰는 이유가 그것입니다. 색만 믿지 말고 조각 안에 이름이나 값을 쓰세요. 전체 합이 중요하지 않으면 100% 기준 막대로 바꾸는 편이 낫습니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">실무에서 그래프를 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="legend">
+      <div class="demo"><div class="d-box d-col" style="gap:8px"><span class="d-row"><i class="mk sq"></i>앱 (사각형)</span><span class="d-row"><i class="mk ci"></i>웹 (원)</span><span class="d-row"><i class="mk tr"></i>기타 (삼각형)</span><span class="d-cap">색과 모양, 글을 같이 씁니다</span></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">범례 <span class="en">Legend</span></h2>
+        <p class="desc">그래프의 색과 모양이 무엇을 뜻하는지 알려주는 작은 안내표. 범례와 그래프를 오가며 보게 만드는 것이 단점이라 가능하면 값 옆에 이름을 직접 붙이는 편이 낫습니다.</p>
+        <p class="when"><b>언제 쓰나</b>조각이나 선이 두 개 이상인 모든 그래프.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>그래프 오른쪽에 범례를 붙이고 각 항목은 색 사각형과 이름을 함께 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>범례의 순서가 그래프의 쌓인 순서와 다르면 헷갈립니다. 색만으로 구분하면 색약 사용자가 읽을 수 없으니 모양이나 글을 더하고, 항목이 많으면 필요한 것만 강조하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="axis">
+      <div class="demo"><div class="d-row" style="gap:20px;align-items:flex-end"><div class="d-col" style="align-items:center"><div class="mb"><i style="height:40px"></i><i style="height:44px"></i><i style="height:48px"></i></div><span class="d-cap">0부터</span></div><div class="d-col" style="align-items:center"><div class="mb"><i style="height:10px"></i><i style="height:30px"></i><i style="height:50px"></i></div><span class="d-cap">중간부터 자름</span></div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">축 <span class="en">Axis</span></h2>
+        <p class="desc">그래프의 가로·세로 기준선과 눈금. 어디서부터 어디까지를 보여줄지 정하는 값의 범위가 그래프의 인상을 좌우합니다. 같은 데이터라도 축을 자르면 차이가 크게 보입니다.</p>
+        <p class="when"><b>언제 쓰나</b>모든 막대·선 그래프를 만들 때, 특히 값의 차이를 강조하고 싶은 유혹이 생길 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>막대 그래프의 y축은 0에서 시작하게 하고 눈금 선은 연한 회색으로 3개만 그려줘</q></p>
+        <p class="senior"><b>20년차 메모</b>축 눈금이 너무 많으면 정작 데이터가 묻힙니다. 막대는 0에서 시작해야 하고 선 그래프는 변화를 보려는 목적이면 자를 수 있지만 그럴 땐 자른 사실을 적어야 합니다. 단위(원, 명, %)를 빼먹는 일이 흔합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="tooltip">
+      <div class="demo"><div class="d-col" style="align-items:center;padding-top:26px"><div class="tp" role="group" aria-label="막대를 올리면 값이 나옵니다"><div class="t" tabindex="0" data-v="월 60" style="height:50px"></div><div class="t" tabindex="0" data-v="화 95" style="height:80px"></div><div class="t" tabindex="0" data-v="수 45" style="height:40px"></div><div class="t" tabindex="0" data-v="목 120" style="height:100px"></div></div><span class="d-cap">막대에 올리거나 눌러 보세요</span></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">툴팁 <span class="en">Tooltip</span></h2>
+        <p class="desc">그래프 위에 마우스를 올리거나 눌렀을 때 정확한 값을 말풍선으로 알려주는 작은 창. 막대 높이로는 알 수 없는 정확한 숫자를 보완합니다.</p>
+        <p class="when"><b>언제 쓰나</b>숫자 정확도가 필요하지만 모든 막대에 값을 적으면 복잡해지는 그래프.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>막대에 마우스를 올리거나 키보드로 포커스하면 항목 이름과 값이 보이는 툴팁을 붙여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>호버가 없는 모바일에서는 눌러야 보이므로 터치용 동작을 같이 설계해야 합니다. 툴팁에만 중요한 정보를 두면 키보드·스크린리더 사용자는 놓치니 그래프 아래에 표로도 제공하세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

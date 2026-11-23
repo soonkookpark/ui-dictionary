@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="글자 스타일 9가지 3부 — 움직이는 예시로 보는 UI 용어 사전">
+<title>글자 스타일 9가지 3부 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 글자 견본 무대. 확대(zoom) 전 기준 280x170 안에 "TYPE" 한 단어를 그린다 */
+.tp { position: relative; width: 280px; height: 170px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; font-size: 64px; line-height: 1; text-align: center; }
+.tp > * { position: relative; }
+.sans { font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; }
+.serif { font-family: Georgia, "Times New Roman", serif; }
+.mono { font-family: Consolas, "Courier New", monospace; }
+.imp { font-family: Impact, "Arial Narrow Bold", "Arial Black", sans-serif; }
+
+
+/* 01 네온 사인 핵심: 흰 글자 + 같은 색 text-shadow 를 반경을 키우며 4겹 쌓아 빛 번짐을 만들고, 가끔 깜박(opacity 키프레임) */
+.neon { background: #14041f; }
+.neon::before { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 100% 20px, linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 20px 100%; }
+.neon b { font: 400 66px/1 "Segoe Script", "Brush Script MT", "Snell Roundhand", cursive; color: #fff; text-shadow: 0 0 4px #fff, 0 0 12px #ff2bd6, 0 0 26px #ff2bd6, 0 0 48px #ff2bd6; animation: flick 4s infinite; }
+.neon i { position: absolute; left: 70px; right: 70px; bottom: 34px; height: 3px; border-radius: 3px; background: #7ff; box-shadow: 0 0 8px #0ff, 0 0 18px #0ff; }
+@keyframes flick { 0%, 88%, 92%, 100% { opacity: 1; } 89% { opacity: .45; } 90% { opacity: 1; } 91% { opacity: .55; } }
+
+/* 02 그래피티 핵심: 굵은 이탤릭(skew·rotate) + 검정 외곽선(text-stroke) + 색이 다른 어긋난 그림자 + 벽 질감의 연한 격자 */
+.graf { background-color: #d9d3c4; background-image: repeating-linear-gradient(0deg, transparent 0 21px, rgba(0, 0, 0, .08) 21px 22px), repeating-linear-gradient(90deg, transparent 0 21px, rgba(0, 0, 0, .08) 21px 22px); }
+.graf b { font: italic 900 74px/1 Impact, "Arial Black", sans-serif; letter-spacing: .01em; color: #ff3d6e; -webkit-text-stroke: 3px #151515; paint-order: stroke fill; text-shadow: 4px 4px 0 #1fc7c0, 7px 7px 0 #151515; transform: rotate(-6deg) skewX(-6deg); }
+
+/* 03 블랙레터 핵심: 중세 필사체 계열 글꼴(font-family: "Old English Text MT" 등) + 큰 첫 글자만 빨강 + 가는 이중 테두리 */
+.black { background: #eee3c9; }
+.black::before { content: ""; position: absolute; inset: 8px; border: 1px solid #8c7a4a; outline: 1px solid #8c7a4a; outline-offset: -5px; }
+.black b { font: 400 78px/1 "Old English Text MT", "Blackadder ITC", UnifrakturCook, "Luminari", Georgia, serif; color: #1c1710; }
+.black b i { font-style: normal; color: #b01c1c; }
+.black::after { content: ""; position: absolute; left: 50%; bottom: 26px; width: 8px; height: 8px; margin-left: -4px; background: #b01c1c; transform: rotate(45deg); }
+
+/* 04 스텐실 핵심: 글자를 가로로 가르는 틈(linear-gradient 로 중간을 투명하게 + background-clip: text) + 스텐실 글꼴 + 점선 박스 */
+.sten { background: #4d5a2b; }
+.sten::before { content: ""; position: absolute; inset: 8px; border: 2px dashed rgba(235, 228, 190, .6); }
+.sten b { font: 400 66px/1 "Stencil", "Stencil Std", Impact, "Arial Black", sans-serif; letter-spacing: .06em; background: linear-gradient(180deg, #ebe4be 0 44%, transparent 44% 52%, #ebe4be 52%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.sten small { position: absolute; bottom: 20px; left: 0; right: 0; font: 700 9px/1 Consolas, "Courier New", monospace; letter-spacing: .3em; color: #ebe4be; }
+
+/* 05 코믹 팝아트 핵심: 별 모양 폭발(clip-path: polygon) + 반복 점 무늬(radial-gradient 하프톤) + 굵은 기울임 글자와 흰 외곽 그림자 */
+.comic { background: #ffcc00 radial-gradient(circle, rgba(255, 90, 0, .55) 1.6px, transparent 2px) 0 0 / 9px 9px; }
+.comic .burst { position: absolute; left: 50%; top: 50%; width: 250px; height: 150px; margin: -75px 0 0 -125px; background: #fff; clip-path: polygon(100.0% 50.0%,86.1% 58.2%,95.0% 71.7%,78.9% 73.1%,81.2% 89.1%,66.1% 83.3%,61.1% 98.7%,50.0% 87.0%,38.9% 98.7%,33.9% 83.3%,18.8% 89.1%,21.1% 73.1%,5.0% 71.7%,13.9% 58.2%,0.0% 50.0%,13.9% 41.8%,5.0% 28.3%,21.1% 26.9%,18.8% 10.9%,33.9% 16.7%,38.9% 1.3%,50.0% 13.0%,61.1% 1.3%,66.1% 16.7%,81.2% 10.9%,78.9% 26.9%,95.0% 28.3%,86.1% 41.8%); animation: pop 2.6s ease-in-out infinite; }
+.comic b { z-index: 1; font: italic 900 60px/1 Impact, "Arial Black", sans-serif; color: #d8101a; letter-spacing: .01em; -webkit-text-stroke: 2px #111; paint-order: stroke fill; text-shadow: 3px 3px 0 #111; transform: rotate(-6deg) skewX(-8deg); }
+@keyframes pop { 0%, 55%, 100% { transform: scale(1); } 65% { transform: scale(1.08); } 75% { transform: scale(.98); } }
+
+/* 06 콜라주 핵심: 글자마다 다른 종이 조각(배경색·글꼴·rotate)을 붙이고 그림자(box-shadow)로 떠 있게 + 반투명 테이프 */
+.coll { background: #e8dfd0; }
+.coll .tape { position: absolute; left: 44px; top: 24px; width: 64px; height: 20px; background: rgba(255, 214, 102, .8); transform: rotate(-9deg); }
+.coll div { display: flex; align-items: center; }
+.coll span { display: grid; place-items: center; width: 48px; height: 64px; margin: 0 -1px; box-shadow: 2px 3px 6px rgba(0, 0, 0, .3); }
+.coll .a { background: #111; color: #fff; font: 900 44px/1 Georgia, serif; transform: rotate(-5deg); }
+.coll .b { background: #f6ecd2; color: #333; font: italic 400 38px/1 Georgia, serif; transform: rotate(4deg) translateY(6px); }
+.coll .c { background: #e2402a; color: #fff; font: 700 42px/1 Consolas, "Courier New", monospace; transform: rotate(-3deg) translateY(-4px); }
+.coll .d { background: #f7b6cf; color: #111; font: 700 32px/1 "Arial Black", Arial, sans-serif; transform: rotate(8deg) translateY(4px); width: 40px; height: 52px; }
+
+/* 07 3D 입체 핵심: 1px 씩 어긋난 같은 색 text-shadow 를 12겹 쌓아 두께를 만들고 맨 끝에 번지는 그림자를 한 겹 더 */
+.ext { background: #2e2163; }
+.ext b { font: 900 70px/1 "Arial Black", Impact, sans-serif; letter-spacing: .01em; color: #ffd24d; margin-right: 14px; margin-bottom: 12px; text-shadow: 1px 1px 0 #d6336c,2px 2px 0 #d6336c,3px 3px 0 #d6336c,4px 4px 0 #d6336c,5px 5px 0 #d6336c,6px 6px 0 #d6336c,7px 7px 0 #d6336c,8px 8px 0 #d6336c,9px 9px 0 #d6336c,10px 10px 0 #d6336c,11px 11px 0 #d6336c,12px 12px 0 #d6336c,14px 16px 14px rgba(0,0,0,.35); }
+
+/* 08 그라데이션 핵심: 글자 모양으로 배경을 오려내는 background-clip: text + 글자색 투명 + 천천히 흐르는 background-position */
+.grad { background: radial-gradient(circle at 25% 80%, rgba(200, 60, 120, .55), transparent 55%), radial-gradient(circle at 75% 20%, rgba(90, 70, 220, .5), transparent 55%), #0b0a1c; }
+.grad b { font: 800 78px/1 Pretendard, Arial, sans-serif; letter-spacing: -.02em; background: linear-gradient(90deg, #f9a8d4, #a78bfa, #60a5fa, #f9a8d4) 0 0 / 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: flow 5s linear infinite; }
+@keyframes flow { to { background-position: -200% 0; } }
+
+/* 09 엠보싱 핵심: 배경과 거의 같은 글자색 + 왼쪽 위 밝은 text-shadow, 오른쪽 아래 어두운 text-shadow 로 도장처럼 눌린 요철 */
+.emb { background: #dde3ee; }
+.emb b { font: 900 82px/1 "Arial Black", Arial, sans-serif; letter-spacing: -.01em; color: #dde3ee; text-shadow: -2px -2px 3px #fff, 3px 3px 4px rgba(120, 135, 165, .75); }
+
+/* 추가: 가변 글꼴 — 하나의 글꼴 파일에서 굵기 같은 축을 연속으로 바꾼다 */
+.vf { font: 400 58px/1 Bahnschrift, "Segoe UI Variable", Pretendard, Arial, sans-serif; color: var(--ink); transition: none; }
+.vfr { width: 220px; accent-color: var(--p); }
+/* 추가: 글꼴 스택 — 앞 글꼴이 없으면 뒤 글꼴로 이어서 쓴다 */
+.fs { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 8px 12px; background: #fff; border: 1px solid var(--line); border-radius: 10px; width: 100%; }
+.fs code { font: 11px/1.3 Consolas, monospace; color: var(--mute); text-align: left; }
+.fs b { font-size: 26px; line-height: 1; }
+/* 추가: 글자 대비 — 글자색과 배경색의 밝기 차이(WCAG 4.5:1 이상) */
+.cr { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; width: 100%; }
+.cr b { display: grid; place-items: center; height: 38px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font-size: 22px; }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">레이아웃과 스타일</a><span class="sep">›</span>
+  <span>글자 스타일 9가지 3부</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>글자 스타일 9가지 3부</h1>
+    <p class="lead">빛나고 붙이고 새기는 글자 — 스타일 마지막 묶음</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="neon-sign">
+      <div class="demo"><div class="tp neon" role="img" aria-label="분홍 빛이 번지는 네온 사인 Type 글자와 파란 밑줄"><b>Type</b><i></i></div><span class="d-cap" style="position:absolute;bottom:4px">가끔 깜박입니다. 없는 글꼴은 비슷한 필기체로 보입니다</span></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">네온 사인 <span class="en">Neon sign</span></h2>
+        <p class="desc">어두운 배경에 가는 선 글자가 스스로 빛나듯 보이게 하는 스타일입니다. 가운데는 흰색에 가깝게, 바깥은 짙은 색의 빛 번짐으로 칠하는 것이 요령입니다. <strong>네온 글로우</strong>라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>바·클럽·게임·야간 모드 콘셉트의 제목, 밤을 배경으로 한 이벤트 페이지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>네온 사인 스타일로 어두운 보라 배경에 흰색 필기체 Type 글자와 분홍색 네 겹 글로우, 파란 밑줄을 넣고 가끔 깜박이게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>밝은 배경에서는 빛 번짐이 보이지 않아 그냥 흐린 글자가 되고, 번짐이 너무 넓으면 작은 글자는 뭉개집니다. 큰 제목에만 쓰고 본문은 흰색 단색으로 두세요. 깜박임은 초당 3회를 넘기면 위험할 수 있어 가끔씩만 끄고 켜야 하며, 모션 줄이기 설정을 존중해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="graffiti">
+      <div class="demo"><div class="tp graf" role="img" aria-label="붉은 분홍색에 청록 그림자가 붙은 기울어진 그래피티 TYPE 글자"><b>TYPE</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 굵은 글꼴로 보입니다</span></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">그래피티 <span class="en">Graffiti</span></h2>
+        <p class="desc">스프레이로 벽에 그린 낙서에서 온 스타일로, 굵고 기울어진 글자, 검은 윤곽, 색이 다른 그림자와 겹침이 특징입니다. 글자가 서로 엉키는 것도 일부러 하는 표현입니다.</p>
+        <p class="when"><b>언제 쓰나</b>스트리트웨어, 힙합·댄스 이벤트, 청소년 대상 서비스의 캠페인 배너.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>그래피티 스타일로 벽 질감 배경에 기울어진 굵은 분홍색 TYPE 글자, 두꺼운 검정 외곽선과 청록색 어긋난 그림자를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>진짜 그래피티체는 글자 모양이 흐트러져 있어서 읽는 사람이 단어를 알고 있어야 합니다. 브랜드명처럼 처음 보는 단어에는 판독성이 떨어지니 짧고 익숙한 단어에만 쓰세요. 외곽선과 그림자가 겹겹이라 작게 줄이면 한 덩어리로 뭉개집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="blackletter">
+      <div class="demo"><div class="tp black" role="img" aria-label="중세 필사체 느낌의 Type 글자와 붉은 첫 글자"><b><i>T</i>ype</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 세리프로 보여 모양이 달라집니다</span></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">블랙레터 <span class="en">Blackletter</span></h2>
+        <p class="desc">중세 유럽 필사본에서 쓰던 각지고 촘촘한 글자체입니다. 획이 굵고 뾰족해서 검은 덩어리처럼 보여 이런 이름이 붙었고, <strong>고딕체(독일어권)</strong>, <strong>올드 잉글리시</strong>라고도 부릅니다. 한글 고딕과는 전혀 다른 말이니 혼동에 주의하세요.</p>
+        <p class="when"><b>언제 쓰나</b>수제 맥주·위스키·타투·힙합 브랜드 로고, 신문 제호처럼 전통이나 거친 개성이 필요한 제목.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>블랙레터 스타일로 크림색 양피지 배경에 블랙레터 글꼴 Type, 첫 글자 T 만 붉은색으로 하고 가는 이중 테두리와 작은 마름모 장식을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>블랙레터는 대문자만 길게 쓰면 거의 읽을 수 없습니다. 반드시 대소문자를 섞고 두세 단어 이내로 쓰세요. 한글 글꼴은 거의 없어서 한글 문구를 같이 쓰면 글꼴이 갑자기 바뀌어 어색해집니다. 이 글꼴은 기기에 없는 경우가 많아 로고는 이미지로 만들고 대체 텍스트를 달아야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="stencil">
+      <div class="demo"><div class="tp sten" role="img" aria-label="가운데가 가로로 끊긴 군용 상자 스타일 TYPE 글자"><b>TYPE</b><small>NO. 03 &nbsp;FRAGILE</small></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴이어도 틈은 CSS 로 만든 것이라 비슷하게 보입니다</span></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">스텐실 <span class="en">Stencil</span></h2>
+        <p class="desc">구멍을 뚫은 판 위에 페인트를 뿌려 찍은 글자처럼 획 사이사이에 틈이 있는 스타일입니다. 군용 상자, 공사 현장 표지, 택배 상자에서 보던 모양입니다.</p>
+        <p class="when"><b>언제 쓰나</b>아웃도어·밀리터리·공구 브랜드, 배송·물류 서비스의 라벨 느낌 제목, 거친 질감이 필요한 포스터.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>스텐실 스타일로 올리브색 배경에 크림색 스텐실 TYPE 글자를 틈이 가로로 지나가게 하고, 점선 테두리와 작은 일련번호 문구를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>틈이 있는 글자는 크기가 작아지면 틈이 노이즈로 보여 읽기 어렵습니다. 대문자 큰 제목으로만 쓰고, 한글은 획 구조 때문에 틈 위치를 일일이 손봐야 하므로 로고처럼 이미지로 만드는 편이 현실적입니다. 올리브 위 크림색은 대비가 충분하지만 군청·적갈색 배경에 쓰면 쉽게 무너집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="comic-pop-art">
+      <div class="demo"><div class="tp comic" role="img" aria-label="별 모양 폭발 안에 있는 붉은 기울임 TYPE 글자와 노란 점 무늬 배경"><div class="burst"></div><b>TYPE</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 굵은 글꼴로 보입니다</span></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">코믹 팝아트 <span class="en">Comic pop art</span></h2>
+        <p class="desc">만화책의 효과음과 하프톤(작은 점으로 면을 칠하는 인쇄) 무늬, 별 모양 폭발 말풍선으로 글자를 "터지는 소리"처럼 보이게 하는 스타일입니다. 굵은 검정 윤곽과 원색 대비가 핵심입니다.</p>
+        <p class="when"><b>언제 쓰나</b>어린이·게임·프로모션 배너, 놀람이나 할인 알림, 가벼운 이벤트의 한 줄 강조.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>코믹 팝아트 스타일로 노란 점 무늬 배경에 별 모양 흰 폭발 말풍선을 놓고 그 안에 붉은 기울임 TYPE 글자를 검정 외곽선과 함께 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>시선을 강하게 끄는 만큼 한 화면에 한 번만 쓰세요. 말풍선마다 이 스타일을 쓰면 아무것도 눈에 안 들어옵니다. 붉은 글자 위에 검정 외곽선을 둘렀으니 작은 크기에서는 외곽선이 글자를 먹어 버립니다. 점 무늬는 이미지가 아니라 CSS 그라데이션으로 만들어야 확대해도 깨지지 않습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="cutout-collage">
+      <div class="demo"><div class="tp coll" role="img" aria-label="글자마다 다른 종이 조각에 오려 붙인 Type 글자"><i class="tape"></i><div><span class="a">T</span><span class="b">y</span><span class="c">p</span><span class="d">e</span></div></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">콜라주 <span class="en">Cutout collage</span></h2>
+        <p class="desc">신문이나 잡지에서 글자를 오려 붙인 것처럼 글자마다 종이 색, 글꼴, 크기, 기울기를 다르게 하는 스타일입니다. 협박 편지 같다는 이미지가 있어 <strong>ransom note</strong>라고도 불립니다.</p>
+        <p class="when"><b>언제 쓰나</b>음악 앨범 커버, 패션·문화 행사 포스터, 개성이 강한 소규모 브랜드의 제목.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>콜라주 스타일로 글자 하나하나가 서로 다른 색 종이 조각에 붙은 것처럼 Type 을 만들고, 조각마다 다른 글꼴과 살짝 다른 기울기, 그림자를 줘</q></p>
+        <p class="senior"><b>20년차 메모</b>글꼴을 섞는 규칙이 없으면 그냥 엉성해 보이니, 글꼴은 서너 가지, 색은 같은 팔레트에서만 뽑으세요. 글자마다 요소가 나뉘어 있어 화면 읽기 프로그램이 한 글자씩 읽는 사고가 흔하니 전체에 aria-label 을 달고 조각은 숨겨야 합니다. 번역·글자 수 변경이 어려워 바뀌는 문구에는 쓰지 마세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="3d-extrude">
+      <div class="demo"><div class="tp ext" role="img" aria-label="노란 글자 뒤로 분홍 두께가 쌓인 3D 입체 TYPE 글자"><b>TYPE</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 굵은 글꼴로 보입니다</span></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">3D 입체 <span class="en">3D extrude</span></h2>
+        <p class="desc">글자를 한쪽으로 쭉 밀어 올린 듯한 두께가 있는 스타일입니다. 3D 프로그램이 없어도 같은 색 그림자를 1px 씩 어긋나게 열 겹 이상 쌓으면 만들 수 있습니다. <strong>익스트루드</strong>는 "밀어 늘린다"는 뜻입니다.</p>
+        <p class="when"><b>언제 쓰나</b>게임·이벤트 배너, 어린이 콘텐츠, 포스터의 큰 제목, 숫자 카운트 연출.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>3D 입체 스타일로 보라 배경에 노란 TYPE 글자를 만들고 분홍색 text-shadow 를 1px 씩 12겹 쌓아 두께를 만든 뒤 바닥 그림자를 한 겹 더 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>text-shadow 를 12겹 이상 쌓으면 글자가 많은 화면에서 그리기 비용이 커져 스크롤이 버벅일 수 있습니다. 제목 한두 줄에만 쓰세요. 두께가 한쪽으로만 늘어나는 단순한 방식이라 글자 크기가 달라지면 그림자 길이도 같이 계산해야 하고, 모바일에서는 길이를 줄여 주세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="gradient">
+      <div class="demo"><div class="tp grad" role="img" aria-label="분홍에서 보라와 파랑으로 흐르는 그라데이션 Type 글자"><b>Type</b></div><span class="d-cap" style="position:absolute;bottom:4px">색이 천천히 흐릅니다</span></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">그라데이션 <span class="en">Gradient</span></h2>
+        <p class="desc">글자 안에 색이 서서히 변하는 그라데이션을 채운 스타일입니다. CSS 에서는 글자 모양으로 배경을 오려내는 <strong>background-clip: text</strong> 와 글자색을 투명하게 만드는 것이 핵심입니다.</p>
+        <p class="when"><b>언제 쓰나</b>AI·핀테크·SaaS 서비스의 대표 제목, 어두운 배경의 소개 화면, 로고 옆의 슬로건.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>그라데이션 스타일로 짙은 배경 위에 분홍에서 보라, 파랑으로 이어지는 background-clip: text 제목 Type 을 만들고 색이 천천히 흐르게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>그라데이션 한쪽 끝이 배경과 비슷한 색이 되면 그 부분 글자가 사라집니다. 가장 어두운 색과 가장 밝은 색 모두에서 대비를 확인하세요. 글자색이 투명이므로 background-clip 을 지원하지 않는 환경에서는 글자가 안 보일 수 있어 대체 글자색을 먼저 지정해야 하고, 한두 줄 제목을 넘기면 지저분해집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="emboss">
+      <div class="demo"><div class="tp emb" role="img" aria-label="배경과 같은 색으로 도장처럼 솟아오른 Type 글자"><b>Type</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 굵은 글꼴로 보입니다</span></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">엠보싱 <span class="en">Emboss</span></h2>
+        <p class="desc">종이를 눌러 글자가 솟아오르거나 눌린 것처럼 보이게 하는 스타일입니다. 배경과 거의 같은 색에 왼쪽 위는 밝은 그림자, 오른쪽 아래는 어두운 그림자를 주면 만들어집니다. 눌린 쪽은 <strong>디보싱(debossing)</strong>이라고 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>고급 명함·카드 느낌의 제품 소개, 뉴모피즘 계열 화면의 제목, 질감을 보여주는 브랜드 페이지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>엠보싱 스타일로 연한 청회색 배경과 같은 색의 굵은 Type 글자를 왼쪽 위 흰 그림자, 오른쪽 아래 어두운 그림자로 솟아오르게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>배경과 같은 색이어서 글자와 배경의 명도 차이가 거의 없습니다. 이 스타일의 글자는 접근성 대비 기준(4.5:1)을 만족할 수 없으니 장식 제목에만 쓰고, 중요한 정보나 버튼 글자로는 쓰지 마세요. 햇빛이 센 야외 휴대폰에서는 아예 보이지 않을 수 있습니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">글자 스타일을 이야기할 때 실무에서 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="variable-font">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:10px"><span class="vf" id="vf-s">Type 가나</span><input class="vfr" id="vf-r" type="range" min="100" max="900" step="50" value="400" aria-label="글자 굵기" oninput="document.getElementById('vf-s').style.fontWeight=this.value"><span class="d-cap">슬라이더를 움직여 보세요. 가변 글꼴이 없는 기기에서는 단계로 끊겨 보입니다</span></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">가변 글꼴 <span class="en">Variable font</span></h2>
+        <p class="desc">굵기, 너비, 기울기 같은 값을 한 글꼴 파일 안에서 연속으로 바꿀 수 있는 글꼴입니다. 예전에는 굵기마다 파일을 따로 받았지만 가변 글꼴은 파일 하나로 해결합니다. 키네틱 타이포그래피에서 굵기가 부드럽게 변하는 효과의 바탕이 됩니다.</p>
+        <p class="when"><b>언제 쓰나</b>굵기를 여러 단계로 쓰는 화면, 화면 크기에 따라 글자 굵기·너비를 부드럽게 바꾸는 반응형 제목, 굵기가 변하는 모션.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>Pretendard 가변 글꼴을 쓰고 font-weight 를 100 에서 900 까지 연속으로 바꾸는 호버 효과를 제목에 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>가변 글꼴을 쓰면 파일 개수는 줄지만 파일 하나의 크기는 커질 수 있습니다. 쓰지 않는 굵기를 수없이 담고 있기도 하니 필요한 축만 남겨 부분 설정하세요. 한글 가변 글꼴은 파일이 크므로 로딩 중에 글자가 깜박이지 않도록 font-display 와 미리 불러오기도 함께 설계해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="font-stack">
+      <div class="demo"><div class="d-col" style="width:260px;gap:8px"><div class="fs"><code>font-family:<br>"없는글꼴", Georgia, serif</code><b style="font-family:'없는글꼴', Georgia, serif">Type</b></div><div class="fs"><code>font-family:<br>Impact, sans-serif</code><b style="font-family:Impact, sans-serif">Type</b></div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">글꼴 스택 <span class="en">Font stack · Fallback</span></h2>
+        <p class="desc">font-family 에 글꼴 이름을 쉼표로 여러 개 적어 두면 앞의 글꼴이 기기에 없을 때 뒤의 글꼴로 넘어갑니다. 이 페이지의 데모들이 "없는 글꼴은 비슷한 글꼴로 보입니다"라고 적은 이유가 이것입니다. <strong>폴백(fallback)</strong>이라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>시스템 글꼴만 쓰거나, 웹폰트를 불러오는 동안 임시로 보일 글꼴을 정할 때, 마지막에 serif·sans-serif 같은 계열을 꼭 적을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>font-family 를 Pretendard, Malgun Gothic, Apple SD Gothic Neo, sans-serif 순서로 지정하고 마지막에 계열 이름을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>시안은 디자이너 컴퓨터에 있는 글꼴로 보기 때문에 개발 화면과 달라지는 일이 흔합니다. 대체 글꼴이 글자 폭·높이가 달라 줄 바꿈이 바뀌고 레이아웃이 밀리는 것도 자주 봅니다. 폴백 글꼴을 켜 놓은 상태에서 한 번 확인하고, 마지막 글꼴은 항상 계열 이름(serif, sans-serif)으로 끝내세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="text-contrast">
+      <div class="demo"><div class="d-col" style="width:260px;gap:8px"><div class="cr"><b style="color:#000">Aa</b><span class="d-cap">검정, 21:1 통과</span></div><div class="cr"><b style="color:#767676">Aa</b><span class="d-cap">진한 회색, 약 4.5:1 경계</span></div><div class="cr"><b style="color:#aaa">Aa</b><span class="d-cap">연한 회색, 약 2.3:1 실패</span></div></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">글자 대비 <span class="en">Text contrast</span></h2>
+        <p class="desc">글자색과 배경색의 밝기 차이를 숫자로 나타낸 것입니다. 웹 접근성 기준(WCAG)은 일반 글자는 4.5:1, 큰 글자(약 24px 이상)는 3:1 이상을 권장합니다. 네온·엠보싱·그라데이션처럼 색 효과가 강한 스타일이 가장 자주 걸립니다.</p>
+        <p class="when"><b>언제 쓰나</b>새 색 조합을 정했을 때, 이미지·그라데이션 위에 글자를 얹을 때, 비활성 버튼이 너무 흐린지 확인할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>모든 글자색과 배경색 조합의 대비가 4.5:1 이상인지 점검하고 미달하는 곳은 색을 조정해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>디자이너 모니터에서 보기 좋은 연한 회색 글씨가 휴대폰에서 햇빛 아래에서는 안 보이는 경우가 가장 흔한 사고입니다. 그라데이션 글자는 가장 어두운 지점과 가장 밝은 지점 양쪽에서 재야 합니다. 대비 검사 도구에 색 값을 넣어 숫자로 확인하는 습관을 들이세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

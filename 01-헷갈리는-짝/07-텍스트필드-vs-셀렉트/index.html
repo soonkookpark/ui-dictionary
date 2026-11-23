@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="텍스트 필드 vs 셀렉트 — 움직이는 예시로 보는 UI 용어 사전">
+<title>텍스트 필드 vs 셀렉트 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+
+/* 공통: 라벨 + 입력칸 */
+.f { display: grid; gap: 4px; width: 100%; text-align: left; }
+.f > label { font-size: 12px; font-weight: 700; }
+.hint { font-size: 11px; color: var(--mute); }
+/* 01 텍스트 필드 상태: 상태마다 테두리·배경만 바꾼다. 포커스(.fo)는 고정해서 보여 준다 */
+.st { display: grid; grid-template-columns: 44px 1fr; gap: 4px 8px; align-items: center; width: 270px; }
+.st .d-cap { text-align: right; }
+.st .d-input { min-height: 28px; font-size: 12px; }
+.st .fo { border-color: var(--p); box-shadow: 0 0 0 3px var(--p-soft); }
+.st .er { border-color: var(--danger); }
+.st input:disabled { background: #eceef6; color: #8b93ad; border-style: dashed; cursor: not-allowed; }
+/* 02 셀렉트: 네이티브 <select> 와, 열린 목록을 흉내 낸 그림 */
+.sel { width: 100%; min-height: 36px; padding: 0 8px; border: 1.5px solid #c9cfe6; border-radius: 8px; background: #fff; font: 13px var(--font); color: var(--ink); }
+.open { width: 100%; background: #fff; border: 1.5px solid var(--p); border-radius: 8px; font-size: 12px; font-weight: 600; overflow: hidden; }
+.open div { padding: 6px 10px; }
+.open div.on { background: var(--p-soft); color: var(--p); }
+/* 추가: 멀티 셀렉트 칩, 라디오 vs 셀렉트, 읽기 전용 */
+.chp input { position: absolute; opacity: 0; }
+.chp span { cursor: pointer; }
+.chp:has(:checked) span { background: var(--p); color: #fff; border-color: var(--p); }
+.chp:has(:focus-visible) span { outline: 3px solid var(--p); }
+.opt { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.opt input { width: 18px; height: 18px; accent-color: var(--p); margin: 0; }
+.cust { position: relative; width: 100%; }
+.cust summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; min-height: 36px; align-items: center; padding: 0 10px; border: 1.5px solid #c9cfe6; border-radius: 8px; background: #fff; font-size: 13px; }
+.cust summary::-webkit-details-marker { display: none; }
+.cust[open] summary { border-color: var(--p); }
+.cust .lst { position: absolute; top: calc(100% + 4px); left: 0; right: 0; padding: 4px; background: #fff; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 18px rgba(30,27,75,.18); z-index: 2; }
+.cust .lst div { padding: 5px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.cust .lst div:hover { background: var(--p-soft); }
+.d-input[readonly] { background: #f6f7fc; }
+.d-input:disabled { background: #eceef6; color: #8b93ad; border-style: dashed; cursor: not-allowed; }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">헷갈리는 짝</a><span class="sep">›</span>
+  <span>텍스트 필드 vs 셀렉트</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>텍스트 필드 vs 셀렉트</h1>
+    <p class="lead">텍스트 필드랑 셀렉트, 뭐가 달라요?</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="text-field-states">
+      <div class="demo"><div class="st"><span class="d-cap">기본</span><input class="d-input" placeholder="이메일" aria-label="기본"><span class="d-cap">포커스</span><input class="d-input fo" placeholder="이메일" aria-label="포커스"><span class="d-cap">입력 중</span><input class="d-input" value="woody@mail.com" aria-label="입력 중"><span class="d-cap">오류</span><input class="d-input er" value="woody@mail" aria-label="오류"><span class="d-cap">비활성</span><input class="d-input" placeholder="이메일" disabled aria-label="비활성"></div><span class="d-cap" style="position:absolute;bottom:6px">가운데 칸들을 눌러 입력해 보세요</span></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">텍스트 필드 상태 <span class="en">Text field states</span></h2>
+        <p class="desc">입력칸은 하나라도 상황에 따라 모습이 달라지는데, 이 각각을 상태라고 부릅니다. 보통 기본(아직 건드리지 않음), 포커스(커서가 들어옴), 입력 중(값이 있음), 오류(값이 틀림), 비활성(지금은 쓸 수 없음)을 나란히 디자인합니다.</p>
+        <p class="when"><b>언제 쓰나</b>폼을 디자인하거나 AI에게 입력칸을 시킬 때, 한 가지 모습만이 아니라 다섯 가지 상태를 함께 요청할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이메일 입력칸을 기본, 포커스, 입력 중, 오류, 비활성의 다섯 가지 상태로 구분해서 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>시안에 기본 상태만 있고 오류와 비활성이 없으면 개발자가 임의로 만들어 서비스마다 제각각이 됩니다. 포커스 상태는 키보드로 이동하는 사용자가 현재 위치를 알려 주는 유일한 표시라서 테두리가 배경과 3:1 이상 대비돼야 합니다. 비활성은 왜 비활성인지 말해 주지 않으면 사용자가 고장으로 오해하니 이유를 문구로 적어 주세요.</p>
+      </div>
+    </article>
+    <article class="term" id="select">
+      <div class="demo"><div class="d-col" style="width:240px"><label class="d-cap" for="s2">희망 직무</label><select class="sel" id="s2" style="font-weight:700"><option>UX 디자이너</option><option selected>프로덕트 디자이너</option><option>개발자</option></select><div class="open" aria-hidden="true"><div>UX 디자이너</div><div class="on">프로덕트 디자이너</div><div>개발자</div></div><span class="d-cap">위: 직접 눌러 보세요 / 아래: 열린 모습</span></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">셀렉트 <span class="en">Select</span></h2>
+        <p class="desc">여러 보기 중에서 정해진 것 하나를 골라 칸에 채우는 입력입니다. <strong>드롭다운, 셀렉트 박스, 콤보 상자</strong>라고도 부르며, 텍스트 필드와 달리 목록에 없는 값은 입력할 수 없습니다.</p>
+        <p class="when"><b>언제 쓰나</b>국가·직무·월처럼 선택지가 정해져 있고 5개 이상일 때. 오타 없이 정해진 값만 받고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>희망 직무는 텍스트 필드가 아니라 선택지 목록에서 고르는 셀렉트로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>선택지가 2~4개뿐이면 셀렉트는 한 번 더 눌러야 해서 라디오가 낫습니다. 선택 전 '선택하세요' 같은 안내 항목을 첫 줄에 두되, 선택된 뒤에는 그 항목을 못 고르게 해야 합니다. 모바일에서는 기기 기본 선택창이 뜨는 쪽이 보통 가장 쓰기 편합니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">텍스트 필드와 셀렉트를 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="combobox">
+      <div class="demo"><div class="f" style="width:240px"><label for="cb7">도시</label><input class="d-input" id="cb7" list="dl7" placeholder="서 입력해 보세요"><datalist id="dl7"><option value="서울"><option value="서귀포"><option value="부산"><option value="대구"></datalist><span class="hint">입력하면 목록이 좁혀져요</span></div><span class="d-cap" style="position:absolute;bottom:6px">직접 입력해 보세요</span></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">콤보박스 <span class="en">Combobox</span></h2>
+        <p class="desc">글자를 직접 입력해서 목록을 좁히거나, 목록에서 고를 수도 있는 입력칸입니다. 셀렉트와 텍스트 필드를 합친 모양이며 <strong>검색 가능한 셀렉트</strong>라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>선택지가 수십 개 이상인 국가·도시·학교 선택처럼 목록을 스크롤해 찾기 번거로울 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>도시 입력칸은 글자를 치면 목록이 좁혀지고 목록에서 고를 수도 있는 콤보박스로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>목록에 없는 값을 쳤을 때 허용할지 막을지를 정해야 합니다. 허용하면 오타 데이터가 쌓이고, 막으면 사용자가 왜 안 되는지 모릅니다. 한글 입력은 조합 중에도 목록이 갱신되는지 개발과 확인하세요.</p>
+      </div>
+    </article>
+    <article class="term added" id="multi-select">
+      <div class="demo"><div class="d-col" style="width:250px"><span class="d-cap">관심 분야 (여러 개 선택)</span><div class="d-row" style="flex-wrap:wrap"><label class="chp"><input type="checkbox" checked><span class="d-chip">디자인</span></label><label class="chp"><input type="checkbox"><span class="d-chip">개발</span></label><label class="chp"><input type="checkbox" checked><span class="d-chip">기획</span></label><label class="chp"><input type="checkbox"><span class="d-chip">마케팅</span></label></div></div><span class="d-cap" style="position:absolute;bottom:6px">눌러 보세요</span></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">멀티 셀렉트 <span class="en">Multi select</span></h2>
+        <p class="desc">목록에서 하나가 아니라 여러 개를 고르는 선택입니다. 고른 항목이 칩이나 체크 표시로 남습니다. 셀렉트가 한 개 선택이라면 멀티 셀렉트는 여러 개 선택입니다.</p>
+        <p class="when"><b>언제 쓰나</b>관심사 태그, 참석자 지정, 필터 조건처럼 중복해서 고르는 입력.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>관심 분야는 여러 개를 고르고 선택한 항목이 칩으로 보이는 멀티 셀렉트로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>선택된 칩이 많아지면 칸 높이가 한없이 늘어나니 최대 개수나 '+3개 더'로 접는 규칙을 정하세요. 네모 체크로 고르는 모양이 눈에 보이지 않으면 사용자는 여러 개 선택이 되는 줄 모르니 안내 문구가 필요합니다.</p>
+      </div>
+    </article>
+    <article class="term added" id="radio-vs-select">
+      <div class="demo"><div class="d-pair" style="grid-template-columns:1fr auto 1fr"><div class="side"><div class="d-col" style="text-align:left"><label class="opt"><input type="radio" name="r7" checked>남</label><label class="opt"><input type="radio" name="r7">여</label><label class="opt"><input type="radio" name="r7">선택 안 함</label></div><span class="d-cap">보기 5개 이하</span></div><div class="mid">vs</div><div class="side"><select class="sel" aria-label="국가"><option>대한민국</option><option>일본</option><option>미국</option></select><span class="d-cap">보기가 많을 때</span></div></div><span class="d-cap" style="position:absolute;bottom:6px">눌러 보세요</span></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">라디오 그룹 <span class="vs">vs</span> 셀렉트 <span class="en">Radio group vs Select</span></h2>
+        <p class="desc">선택지를 전부 펼쳐 놓고 누르면 라디오 그룹, 접어 두었다가 눌러서 펼치면 셀렉트입니다. 보기 개수가 기준이 됩니다.</p>
+        <p class="when"><b>이렇게 구분</b>보기가 5개 이하이고 비교해서 골라야 하면 라디오 그룹, 6개 이상이거나 자리가 좁으면 셀렉트.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>성별처럼 선택지가 세 개 이하면 라디오 그룹으로, 국가 선택처럼 많으면 셀렉트로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>보기가 적은데 셀렉트를 쓰면 매번 한 번 더 눌러야 하고 선택지가 숨어 있어 비교도 못 합니다. 반대로 라디오가 10개를 넘으면 화면이 길어지고 스크롤이 먼저 일어납니다. 모바일은 셀렉트를 누르면 기기 기본 선택창이 떠서 라디오보다 빠를 때도 있습니다.</p>
+      </div>
+    </article>
+    <article class="term added" id="native-vs-custom-select">
+      <div class="demo"><div class="d-pair" style="grid-template-columns:1fr auto 1fr;align-items:start"><div class="side"><select class="sel" aria-label="네이티브"><option>최신순</option><option>인기순</option></select><span class="d-cap">브라우저 기본</span></div><div class="mid" style="margin-top:10px">vs</div><div class="side"><details class="cust"><summary>최신순<span>▾</span></summary><div class="lst"><div>최신순</div><div>인기순</div></div></details><span class="d-cap" >직접 디자인</span></div></div><span class="d-cap" style="position:absolute;bottom:6px">두 칸을 눌러 비교해 보세요</span></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">네이티브 셀렉트 <span class="vs">vs</span> 커스텀 셀렉트 <span class="en">Native vs Custom select</span></h2>
+        <p class="desc">브라우저와 폰이 기본으로 주는 선택 상자를 그대로 쓰면 네이티브, 모양을 우리 디자인에 맞춰 직접 만들면 커스텀입니다.</p>
+        <p class="when"><b>이렇게 구분</b>접근성과 모바일 사용성이 중요하면 네이티브, 브랜드 디자인이 중요하거나 항목 안에 아이콘·설명이 들어가면 커스텀.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>정렬 선택은 기본 네이티브 셀렉트를 쓰고, 직무 선택만 아이콘이 들어간 커스텀 셀렉트로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>커스텀 셀렉트는 겉모양만 만들면 끝이 아닙니다. 키보드 위아래·Enter·Esc·글자 입력 이동과 스크린 리더 지원을 전부 다시 만들어야 해서 개발 비용이 크게 늡니다. 모바일에서는 네이티브가 기기 선택창을 열어 주므로 커스텀이 오히려 불편해지는 일이 흔합니다.</p>
+      </div>
+    </article>
+    <article class="term added" id="readonly-vs-disabled">
+      <div class="demo"><div class="d-pair" style="grid-template-columns:1fr auto 1fr"><div class="side"><div class="f"><input class="d-input" value="woody@mail.com" readonly aria-label="읽기 전용"></div><span class="d-cap">읽기 전용: 복사 가능</span></div><div class="mid">vs</div><div class="side"><div class="f"><input class="d-input" value="woody@mail.com" disabled aria-label="비활성"></div><span class="d-cap">비활성: 못 누름</span></div></div><span class="d-cap" style="position:absolute;bottom:6px">두 칸을 눌러 보세요</span></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">읽기 전용 <span class="vs">vs</span> 비활성 <span class="en">Read-only vs Disabled</span></h2>
+        <p class="desc">값은 보이지만 고칠 수 없는 칸에는 두 종류가 있습니다. 읽기 전용은 선택하고 복사할 수 있고 폼에 포함되며, 비활성은 아예 눌리지도 않고 폼에서 빠집니다.</p>
+        <p class="when"><b>언제 쓰나</b>고칠 수는 없어도 복사해 가야 하는 값(주문번호, 가입 이메일)은 읽기 전용, 조건이 맞아야 켜지는 칸은 비활성.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>가입 이메일은 복사할 수 있는 읽기 전용 칸으로, 다른 조건이 있어야 쓰는 칸은 비활성 스타일로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>비활성 칸은 키보드 포커스도 못 받아서 스크린 리더 사용자는 존재 자체를 놓칠 수 있습니다. 비활성을 쓸 때는 왜 지금 못 쓰는지를 가까이에 문구로 적어 주세요. 비활성 칸의 값은 폼 제출에서 빠지니 개발자가 서버로 보내야 하는 값이라면 읽기 전용을 쓰라고 알려 주세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="화면 배치 이름 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>화면 배치 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 회색 블록으로 그린 와이어프레임. display:grid 로 칸을 나눈다 */
+.wf { width: 260px; height: 170px; padding: 6px; display: grid; gap: 5px; background: #fff; border: 1px solid var(--line); border-radius: 10px; position: relative; overflow: hidden; }
+.wf i { display: block; background: #cfd5ea; border-radius: 4px; }
+.wf i.d { background: #7f89b5; } .wf i.p { background: var(--p); } .wf i.s { background: var(--p-soft); }
+.wf .c { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+
+/* 01 히어로: 화면 전체를 한 덩어리로 쓰고 가운데 정렬(flex + align-items:center) */
+.w-hero { grid-template-rows: 12px 1fr; }
+.w-hero .c { align-items: center; background: var(--p-soft); border-radius: 6px; }
+
+/* 02 벤토: grid-area 로 칸 크기를 제각각 합친다(4열 x 3행) */
+.w-bento { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); }
+.w-bento i:nth-child(1) { grid-area: 1/1/3/3; background: var(--p); }
+.w-bento i:nth-child(2) { grid-area: 1/3/2/5; background: #7f89b5; }
+.w-bento i:nth-child(3) { grid-area: 2/3/3/4; background: #f5b97a; }
+.w-bento i:nth-child(4) { grid-area: 2/4/4/5; background: #a7d8b5; }
+.w-bento i:nth-child(5) { grid-area: 3/1/4/3; background: #cfd5ea; }
+.w-bento i:nth-child(6) { grid-area: 3/3/4/4; background: #e9a6c4; }
+
+/* 03 스플릿: 두 칸 반반(grid-template-columns:1fr 1fr) */
+.w-split { grid-template-columns: 1fr 1fr; gap: 0; padding: 0; }
+.w-split > i { border-radius: 0; background: var(--p); }
+.w-split .c { padding: 14px; }
+
+/* 04 카드 그리드: 같은 크기 칸을 반복(repeat(3,1fr)) */
+.w-cards { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); }
+.w-cards i { background: linear-gradient(#9fa8d0 0 55%, #e6e9f6 55%); }
+
+/* 05 사이드바: 고정 폭 한 칸 + 남는 폭 한 칸(58px 1fr) */
+.w-side { grid-template-columns: 58px 1fr; }
+.w-side .m { display: grid; grid-template-rows: 14px 1fr; gap: 5px; }
+
+/* 06 매거진: 6열 격자 위에 큰 사진과 단(column)으로 나뉜 글 */
+.w-mag { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(4, 1fr); }
+.w-mag i:nth-child(1) { grid-area: 1/1/4/4; background: var(--p); }
+.w-mag i:nth-child(2) { grid-area: 1/4/2/7; background: #7f89b5; }
+.w-mag i:nth-child(3) { grid-area: 2/4/4/5; } .w-mag i:nth-child(4) { grid-area: 2/5/4/6; } .w-mag i:nth-child(5) { grid-area: 2/6/4/7; }
+.w-mag i:nth-child(6) { grid-area: 4/1/5/7; background: var(--p-soft); }
+
+/* 07 대시보드: 왼쪽 메뉴 + 위 숫자 카드 + 아래 차트와 목록 */
+.w-dash { grid-template-columns: 30px repeat(3, 1fr); grid-template-rows: 12px 34px 1fr; }
+.w-dash > i:nth-child(1) { grid-area: 1/1/4/2; background: #7f89b5; }
+.w-dash > i:nth-child(2) { grid-area: 1/2/2/5; }
+.w-dash .st { background: var(--p-soft) !important; }
+.w-dash .ch { grid-area: 3/2/4/4; display: flex; align-items: flex-end; gap: 4px; padding: 6px; background: #eef0f9; border-radius: 4px; }
+.w-dash .ch i { flex: 1; background: var(--p); }
+.w-dash .ls { grid-area: 3/4/4/5; }
+
+/* 08 Z 패턴: 눈이 지나가는 선을 SVG 로 위에 얹고, 선이 그려지게(stroke-dashoffset) 움직인다 */
+.w-z { grid-template-rows: 14px 1fr 18px; }
+.w-z .row { display: flex; justify-content: space-between; align-items: center; }
+.w-z svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.w-z path { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; animation: zdraw 3.6s ease-in-out infinite; }
+@keyframes zdraw { 0% { stroke-dashoffset: 100; } 60%, 90% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+
+/* 09 풀블리드: 안쪽 여백(padding)을 0 으로 두고 그림이 화면 가장자리까지 닿는다 */
+.w-bleed { padding: 0; gap: 0; grid-template-rows: 22px 1fr 36px; }
+.w-bleed i.p { border-radius: 0; }
+
+/* 추가: 그리드 시스템 — 12열 안내선(분홍) 위에 블록을 열 단위로 맞춘다 */
+.gs { position: relative; width: 260px; height: 150px; }
+.gs .g, .gs .b { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
+.gs .g i { background: rgba(236,72,153,.22); }
+.gs .b { grid-template-rows: 1fr 1fr; gap: 4px; padding: 6px 0; }
+.gs .b i { background: var(--p); border-radius: 4px; opacity: .85; }
+/* 추가: 여백 — 같은 내용을 padding 만 바꿔서 비교 */
+.ws { width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 8px; display: grid; gap: 3px; }
+/* 추가: 반응형 — 상자의 폭을 줄였다 늘리면 auto-fit 이 칸 수를 알아서 바꾼다 */
+.rs { display: grid; grid-template-columns: repeat(auto-fit, minmax(54px, 1fr)); gap: 6px; padding: 8px; background: #fff; border: 1px solid var(--line); border-radius: 10px; animation: rw 6s ease-in-out infinite; }
+.rs i { height: 44px; border-radius: 6px; background: linear-gradient(#9fa8d0 0 55%, #e6e9f6 55%); }
+@keyframes rw { 0%, 20% { width: 270px; } 45%, 70% { width: 130px; } 95%, 100% { width: 270px; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">레이아웃과 스타일</a><span class="sep">›</span>
+  <span>화면 배치</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>화면 배치 이름 9가지</h1>
+    <p class="lead">&quot;레이아웃 잡아줘&quot; 대신 이름으로 말해 보세요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="hero">
+      <div class="demo"><div class="wf w-hero"><i></i><div class="c"><i class="d" style="width:70%;height:12px"></i><i style="width:50%;height:6px"></i><i class="p" style="width:30%;height:14px"></i></div></div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">히어로 <span class="en">Hero section</span></h2>
+        <p class="desc">웹사이트 맨 위의 첫 화면을 큼직한 문구 하나와 버튼 하나로 채우는 배치입니다. 스크롤하기 전에 보이는 영역이라서 "이 사이트가 무엇인지"를 한 번에 말해야 합니다. <strong>히어로 영역·히어로 배너</strong>라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>서비스 소개 페이지, 랜딩 페이지, 행사 안내처럼 첫인상이 중요한 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>랜딩 페이지 맨 위에 큰 제목, 한 줄 설명, 가입 버튼 하나만 있는 히어로 섹션을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>버튼을 두세 개 늘어놓으면 히어로가 아니라 메뉴판이 됩니다. 행동은 하나로 좁히고, 큰 배경 사진 위 글자는 대비(4.5:1)를 꼭 재세요. 모바일에서 화면 높이를 100vh 로 잡으면 주소창 때문에 버튼이 잘리는 일이 자주 있습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="bento-grid">
+      <div class="demo"><div class="wf w-bento"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">벤토 그리드 <span class="en">Bento grid</span></h2>
+        <p class="desc">도시락(벤토)처럼 크기가 다른 네모 칸을 빈틈없이 맞춰 넣는 배치입니다. 칸마다 기능 하나, 숫자 하나를 담고, 칸의 크기로 중요도를 나타냅니다. 칸 크기가 모두 같으면 카드 그리드입니다.</p>
+        <p class="when"><b>언제 쓰나</b>기능 소개 페이지, 포트폴리오 첫 화면, 앱 소개처럼 서로 다른 장점을 한 화면에 훑어 보이게 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>기능 6가지를 크기가 다른 둥근 카드로 보여주는 벤토 그리드 섹션을 CSS grid 로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>칸을 다 채우려고 억지로 내용을 늘리는 일이 많습니다. 큰 칸은 가장 중요한 것에만 주세요. 모바일에서는 한 줄로 쌓이므로 읽는 순서가 의도와 맞는지(위에서 아래로) 따로 확인해야 하고, 칸 사이 간격은 모두 같아야 정돈돼 보입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="split-screen">
+      <div class="demo"><div class="wf w-split"><i></i><div class="c"><i class="d" style="height:10px;width:80%"></i><i style="height:6px"></i><i style="height:6px;width:70%"></i><i class="p" style="height:14px;width:50%"></i></div></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">스플릿 <span class="en">Split screen</span></h2>
+        <p class="desc">화면을 반으로 갈라 한쪽은 그림이나 색, 다른 쪽은 글이나 입력창으로 쓰는 배치입니다. 두 칸이 똑같은 무게를 가져서 대비가 또렷합니다. 벤토처럼 칸 크기를 섞지 않는 것이 특징입니다.</p>
+        <p class="when"><b>언제 쓰나</b>로그인·회원가입 화면, 제품 비교, 두 가지 선택지를 나란히 보여줄 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>왼쪽엔 큰 이미지, 오른쪽엔 로그인 폼이 있는 50대50 스플릿 스크린 레이아웃을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>좁은 화면에서는 반으로 가를 수 없으니 위아래로 쌓을지 한쪽을 숨길지 미리 정해야 합니다. 그림 쪽을 숨길 때 정보가 그림에만 있으면 안 됩니다. 두 칸 모두 눈길을 끌면 시선이 갈 곳을 잃으니 한쪽은 조용하게 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="card-grid">
+      <div class="demo"><div class="wf w-cards"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">카드 그리드 <span class="en">Card grid</span></h2>
+        <p class="desc">같은 모양의 카드를 일정한 간격으로 반복해서 늘어놓는 배치입니다. 상품, 글, 영상처럼 종류가 같은 것을 비교하며 고르는 화면에 가장 흔합니다. <strong>카드 목록·갤러리 그리드</strong>라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>쇼핑몰 상품 목록, 블로그 글 목록, 템플릿 갤러리.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상품 카드를 한 줄에 4개씩 반응형으로 늘어놓는 카드 그리드를 만들어줘. 화면이 좁아지면 열 수가 줄어들게</q></p>
+        <p class="senior"><b>20년차 메모</b>카드마다 글 길이가 달라 높이가 들쭉날쭉해지는 문제를 꼭 점검하세요. 제목은 두 줄까지만 보이게 자르고 높이를 맞춥니다. 마지막 줄 카드가 한두 개만 남는 경우와 목록이 비었을 때의 화면도 그려 두어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="sidebar-layout">
+      <div class="demo"><div class="wf w-side"><i class="d"></i><div class="m"><i></i><i class="s"></i></div></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">사이드바 레이아웃 <span class="en">Sidebar layout</span></h2>
+        <p class="desc">화면 한쪽(보통 왼쪽)에 메뉴를 세로로 두고 나머지를 본문으로 쓰는 배치입니다. 메뉴가 항상 눈에 보이므로 오가는 화면이 많은 서비스에 맞습니다. 위쪽 가로 메뉴를 쓰는 배치와는 메뉴의 개수와 깊이로 가릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>관리자 페이지, 문서 사이트, 메일·메신저처럼 메뉴 항목이 많은 서비스.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>왼쪽에 접을 수 있는 사이드바 메뉴가 있고 오른쪽이 본문인 레이아웃을 만들어줘. 모바일에서는 햄버거 버튼으로 열리게</q></p>
+        <p class="senior"><b>20년차 메모</b>사이드바가 폭을 차지하는 만큼 본문은 좁아집니다. 접었을 때 아이콘만 남기면 무슨 메뉴인지 알 수 없으니 툴팁이나 라벨이 필요합니다. 모바일에서는 보통 서랍(drawer) 형태로 바뀌므로 데스크톱 시안만 주면 개발자가 임의로 정하게 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="magazine">
+      <div class="demo"><div class="wf w-mag"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">매거진 <span class="en">Magazine layout</span></h2>
+        <p class="desc">잡지처럼 큰 사진, 큰 제목, 여러 단으로 나뉜 글을 겹치듯 배치하는 방식입니다. 읽을 거리가 많은 화면에서 크기와 위치로 읽는 순서를 만듭니다. 똑같은 칸의 반복인 카드 그리드와 달리 칸마다 역할이 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>뉴스·칼럼·브랜드 스토리처럼 사진과 글이 함께 어우러지는 콘텐츠.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>큰 대표 이미지와 제목, 3단으로 나뉜 본문이 있는 매거진 스타일 기사 레이아웃을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>단을 나눈 글은 폭이 좁아 한 줄이 10자 안쪽이 되면 오히려 읽기 힘듭니다. 한 줄 글자 수(대략 한글 25~40자)를 확인하세요. 편집된 화면이라 글이 길어지거나 사진이 없는 글이 들어오면 모양이 쉽게 무너지니, 그런 경우의 대체 배치도 정해 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="dashboard">
+      <div class="demo"><div class="wf w-dash"><i></i><i></i><i class="st"></i><i class="st"></i><i class="st"></i><div class="ch"><i style="height:40%"></i><i style="height:70%"></i><i style="height:55%"></i><i style="height:90%"></i><i style="height:65%"></i></div><div class="ls c" style="gap:4px"><i style="height:6px"></i><i style="height:6px"></i><i style="height:6px"></i><i style="height:6px"></i></div></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">대시보드 <span class="en">Dashboard</span></h2>
+        <p class="desc">숫자, 차트, 목록 같은 정보를 한 화면에 모아 상태를 한눈에 보게 하는 배치입니다. 읽는 글이 아니라 훑어보는 화면이라서, 위쪽에 가장 중요한 숫자를 두고 아래로 갈수록 자세한 내용을 둡니다.</p>
+        <p class="when"><b>언제 쓰나</b>매출 현황, 서비스 관리자 화면, 운동·가계부 앱의 요약 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>위에 핵심 숫자 카드 3개, 아래에 막대 차트와 최근 활동 목록이 있는 대시보드 레이아웃을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모든 지표를 올리면 아무것도 안 보입니다. "이 화면을 보고 사용자가 무엇을 결정하나"를 기준으로 5~7개만 남기세요. 데이터가 없는 신규 사용자의 빈 상태와 숫자가 아주 큰 경우(1,234,567,890)에 카드가 깨지는지도 확인해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="z-pattern">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="wf w-z"><div class="row"><i class="d" style="width:34px;height:10px"></i><i style="width:90px;height:8px"></i></div><i class="s"></i><div class="row"><i style="width:80px;height:8px"></i><i class="p" style="width:46px;height:14px"></i></div><svg viewBox="0 0 260 170" aria-hidden="true"><path pathLength="100" d="M26 18 L232 18 L26 150 L232 152"/></svg></div><span class="d-cap">선이 시선이 움직이는 길입니다</span></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">Z 패턴 <span class="en">Z-pattern</span></h2>
+        <p class="desc">사람의 눈이 왼쪽 위에서 오른쪽 위로, 대각선으로 왼쪽 아래로, 다시 오른쪽 아래로 Z자를 그리며 움직인다는 전제로 요소를 놓는 방식입니다. 글이 적은 화면에서 맞고, 글이 많은 화면의 읽는 길인 F 패턴과는 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>글이 적은 랜딩 페이지, 광고 배너, 행사 포스터. 로고 → 메뉴 → 핵심 문구 → 버튼 순서를 만들 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>Z 패턴 시선 흐름에 맞춰 왼쪽 위에 로고, 오른쪽 위에 메뉴, 가운데 핵심 문구, 오른쪽 아래에 행동 버튼을 놓은 랜딩 레이아웃을 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>Z 패턴은 법칙이 아니라 경향입니다. 시안에 Z 선을 긋고 만족하지 말고, 눈이 가야 할 곳(주 버튼)이 실제로 가장 진하고 큰지 확인하세요. 글이 많거나 모바일 세로 화면에서는 위에서 아래로 한 줄로 읽으므로 Z 는 의미가 없습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="full-bleed">
+      <div class="demo"><div class="wf w-bleed"><i style="margin:7px 10px;height:8px;width:90px"></i><i class="p"></i><div class="c" style="padding:0 10px;gap:4px"><i style="height:6px"></i><i style="height:6px;width:70%"></i></div></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">풀블리드 <span class="en">Full bleed</span></h2>
+        <p class="desc">그림이나 색을 여백 없이 화면 가장자리까지 끝에서 끝으로 펼치는 방식입니다. 글이 있는 영역은 여백이 있지만 그림만 가장자리까지 나간다는 점이 핵심입니다. 인쇄에서 재단선 밖으로 그림을 내보내는 것(블리드)에서 온 말입니다.</p>
+        <p class="when"><b>언제 쓰나</b>기사의 대표 사진, 브랜드 소개 영상 배경, 제품 사진을 크게 보여주는 구간.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>본문은 가운데 정렬하고, 중간의 이미지 섹션만 화면 폭 100%로 가장자리까지 닿는 풀블리드로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>와이드 모니터에서 그림이 너무 늘어나 흐려지거나 중요한 부분이 잘리는 문제가 흔합니다. 사진의 핵심 인물은 가운데 가까이에 두고, 최대 높이를 정하세요. 가장자리까지 닿는 그림 위에 글을 얹을 때는 어두운 막(오버레이)을 깔아 대비를 확보합니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">실무에서 화면 배치를 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="grid-system">
+      <div class="demo"><div class="gs"><div class="g"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="b"><i style="grid-column:1/5"></i><i style="grid-column:5/9"></i><i style="grid-column:9/13"></i><i style="grid-column:1/9"></i><i style="grid-column:9/13"></i></div></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">그리드 시스템 <span class="en">Grid system</span></h2>
+        <p class="desc">화면을 보이지 않는 세로줄(보통 12열)로 나누고 모든 요소를 그 줄에 맞춰 놓는 약속입니다. 앞의 배치 이름들은 모두 이 격자 위에서 만들어집니다.</p>
+        <p class="when"><b>언제 쓰나</b>디자인 시작할 때 12열·간격·바깥 여백을 정해 두고, 블록 폭을 "4열짜리", "8열짜리"처럼 열 수로 말할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>12열 그리드 시스템 기준으로 카드 3개는 4열씩, 아래 배너는 8열과 4열로 나눠 배치해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>피그마에 격자를 깔아 놓고도 개발에서 같은 열 수를 쓰지 않아 한 칸씩 어긋나는 경우가 많습니다. 열 수, 간격(gutter), 바깥 여백을 숫자로 문서에 적어 개발자와 합의하세요. 모바일은 보통 4열로 줄어듭니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="whitespace">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ws" style="padding:2px"><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar"></div><div class="d-bar" style="width:60%"></div></div><span class="d-cap">여백 없음</span></div><span class="mid"></span><div class="side"><div class="ws" style="padding:14px;gap:8px"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:60%"></div></div><span class="d-cap">여백 충분</span></div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">여백 <span class="en">Whitespace</span></h2>
+        <p class="desc">요소 사이와 바깥을 일부러 비워 두는 공간입니다. 빈 곳이 낭비가 아니라 묶음을 나누고 눈이 쉴 자리를 만드는 도구입니다. <strong>네거티브 스페이스</strong>라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>모든 배치에서, 특히 히어로·사이드바 본문처럼 한 가지에 시선을 모으고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>여백을 8px 단위(8, 16, 24, 32)로만 쓰고, 섹션 사이는 80px, 카드 안쪽은 24px 로 맞춰줘</q></p>
+        <p class="senior"><b>20년차 메모</b>"비어 보여서 허전하다"는 의견에 밀려 여백을 채우기 시작하면 화면이 빠르게 시끄러워집니다. 관련 있는 것끼리는 가깝게, 다른 묶음은 멀게 두는 비율이 핵심입니다. 여백 값은 임의 숫자 대신 4·8의 배수로 정해 두면 개발에서도 재사용됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="breakpoint">
+      <div class="demo"><div class="d-col" style="align-items:flex-start;width:270px"><div class="rs"><i></i><i></i><i></i><i></i></div><span class="d-cap">폭이 줄면 칸 수가 바뀝니다</span></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">반응형과 브레이크포인트 <span class="en">Responsive · Breakpoint</span></h2>
+        <p class="desc">화면 폭에 따라 배치가 스스로 바뀌게 만드는 방식을 반응형이라고 하고, 배치가 바뀌는 폭의 경계(예: 768px, 1024px)를 브레이크포인트라고 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>데스크톱에서 4열이던 카드 그리드를 태블릿 2열, 모바일 1열로 바꿀 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>브레이크포인트는 768px 와 1200px 로 하고, 카드 그리드가 4열, 2열, 1열로 바뀌는 반응형으로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>기기 이름(아이폰, 아이패드)이 아니라 내용이 깨지는 지점을 기준으로 브레이크포인트를 잡으세요. 시안은 데스크톱과 모바일 두 장만 주지 말고, 그 사이 폭에서 어떻게 되는지도 한 줄로 알려 줘야 개발자가 추측하지 않습니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

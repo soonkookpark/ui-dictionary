@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="색과 디자인 토큰 — 움직이는 예시로 보는 UI 용어 사전">
+<title>색과 디자인 토큰 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 이 페이지의 데모는 CSS 변수(--이름)를 실제로 써서 만든다. 변수 = 값에 붙인 이름표 = 토큰의 재료 */
+.dm-root { /* 원시값(primitive): 색의 이름 없는 재료 */
+  --indigo-50:#eef2ff; --indigo-100:#e0e7ff; --indigo-200:#c7d2fe; --indigo-300:#a5b4fc; --indigo-400:#818cf8;
+  --indigo-500:#6366f1; --indigo-600:#4f46e5; --indigo-700:#4338ca; --indigo-800:#3730a3; --indigo-900:#312e81;
+}
+.tk { --indigo-600:#4f46e5; --green-600:#16a34a; --orange-500:#f97316; }
+.sw { width: 100%; height: 28px; border-radius: 6px; border: 1px solid rgba(0,0,0,.08); }
+.cap2 { color: var(--mute); font-size: 11px; font-weight: 700; text-align: center; }
+
+/* 01 주색/보조색/강조색: 역할별 변수 세 개를 정하고 UI 부품에 꽂는다 */
+.rl { --primary: #4f46e5; --secondary: #e0e7ff; --accent: #ea580c; display: grid; gap: 10px; width: 250px; }
+.rl .sws { display: flex; height: 44px; border-radius: 10px; overflow: hidden; }
+.rl .sws i { display: block; }
+.rl .b1 { background: var(--primary); color: #fff; } .rl .b2 { background: var(--secondary); color: var(--primary); } .rl .b3 { background: var(--accent); color: #fff; }
+.rl .btns { display: flex; gap: 8px; align-items: center; }
+.rl .btns span { padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 12px; }
+
+/* 02 시맨틱 컬러: 이름이 "무슨 뜻인지"를 말하는 변수 네 개 */
+.sm { --success:#15803d; --success-bg:#dcfce7; --warning:#b45309; --warning-bg:#fef3c7; --danger2:#b91c1c; --danger-bg:#fee2e2; --info:#1d4ed8; --info-bg:#dbeafe; display: grid; gap: 6px; width: 260px; }
+.sm div { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-weight: 700; font-size: 12px; }
+.sm .s { color: var(--success); background: var(--success-bg); } .sm .w { color: var(--warning); background: var(--warning-bg); }
+.sm .e { color: var(--danger2); background: var(--danger-bg); } .sm .i { color: var(--info); background: var(--info-bg); }
+.sm svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 03 디자인 토큰 3단계: 원시값 → 의미값 → 컴포넌트값을 var() 로 이어 붙인다 */
+.tk { --blue-600: #4f46e5;                 /* 1단계 원시: 색 그 자체 */
+      --color-action: var(--blue-600);      /* 2단계 의미: "눌러서 행동하는 색" */
+      --btn-bg: var(--color-action);        /* 3단계 컴포넌트: 버튼 배경 */
+      display: grid; gap: 8px; width: 260px; justify-items: center; }
+.tk:has(input:checked) { --color-action: var(--green-600); }  /* 2단계만 가리키는 곳을 바꾸면 3단계가 따라온다 */
+.tk .chain { display: flex; align-items: center; gap: 4px; font: 700 11px ui-monospace, Consolas, monospace; }
+.tk .chain span { padding: 3px 7px; border-radius: 6px; background: #fff; border: 1px solid var(--line); }
+.tk .chain span.n2 { background: var(--color-action); color: #fff; border-color: transparent; }
+.tk .c1, .tk .c2 { display: inline; font-weight: 700; } .tk .c2 { display: none; }
+.tk:has(input:checked) .c1 { display: none; } .tk:has(input:checked) .c2 { display: inline; }
+.tk .tbtn { min-height: 36px; padding: 0 20px; border: 0; border-radius: 10px; background: var(--btn-bg); color: #fff; font: 700 13px var(--font); transition: background .2s; }
+.tk label { display: inline-flex; gap: 6px; align-items: center; font-weight: 700; font-size: 12px; cursor: pointer; }
+
+/* 04 색 단계: 한 색을 밝은 50부터 어두운 900까지 열 칸으로 나눈다 */
+.scl { display: grid; grid-template-columns: repeat(10, 1fr); width: 280px; border-radius: 8px; overflow: hidden; }
+.scl b { display: block; height: 90px; padding: 4px 0; font-size: 9px; text-align: center; }
+.scl b:nth-child(-n+4) { color: #312e81; } .scl b:nth-child(n+5) { color: #fff; }
+.scl b:nth-child(1){background:var(--indigo-50)} .scl b:nth-child(2){background:var(--indigo-100)} .scl b:nth-child(3){background:var(--indigo-200)}
+.scl b:nth-child(4){background:var(--indigo-300)} .scl b:nth-child(5){background:var(--indigo-400)} .scl b:nth-child(6){background:var(--indigo-500)}
+.scl b:nth-child(7){background:var(--indigo-600)} .scl b:nth-child(8){background:var(--indigo-700)} .scl b:nth-child(9){background:var(--indigo-800)} .scl b:nth-child(10){background:var(--indigo-900)}
+
+/* 05 중립색: 순수 회색과, 브랜드 색을 아주 조금 섞은 회색을 비교 */
+.gr { border: 1px solid rgba(0,0,0,.12); display: grid; grid-template-columns: repeat(5, 1fr); border-radius: 8px; overflow: hidden; width: 100%; }
+.gr i { display: block; height: 34px; }
+.gr.pure i:nth-child(1){background:#f5f5f5} .gr.pure i:nth-child(2){background:#d4d4d4} .gr.pure i:nth-child(3){background:#a3a3a3} .gr.pure i:nth-child(4){background:#525252} .gr.pure i:nth-child(5){background:#171717}
+.gr.tint i:nth-child(1){background:#f3f4fa} .gr.tint i:nth-child(2){background:#d5d8ea} .gr.tint i:nth-child(3){background:#9ca0bd} .gr.tint i:nth-child(4){background:#4c5070} .gr.tint i:nth-child(5){background:#1e1b4b}
+
+/* 06 다크 모드: 체크하면 같은 이름의 변수 값을 통째로 갈아 끼운다(색 반전이 아님) */
+.th { --bg:#ffffff; --surface:#f1f3fa; --text:#1e1b4b; --sub:#55607a; --brand:#4f46e5; --on-brand:#fff; --bd:#d9def0; width: 250px; display: grid; gap: 8px; justify-items: center; }
+.th:has(input:checked) .scr { --bg:#12131f; --surface:#1d2033; --text:#e8eaf6; --sub:#a3a9c7; --brand:#a5b4fc; --on-brand:#1e1b4b; --bd:#2f3350; }  /* 다크: 브랜드색은 더 밝게, 회색은 순수 검정이 아닌 짙은 남색 */
+.th .scr { width: 100%; padding: 12px; border-radius: 12px; background: var(--bg); border: 1px solid var(--bd); color: var(--text); transition: background .25s, color .25s; }
+.th .card2 { padding: 10px; border-radius: 10px; background: var(--surface); margin: 8px 0; }
+.th .card2 p { margin: 0; font-size: 11px; color: var(--sub); }
+.th .go { display: inline-block; padding: 6px 14px; border-radius: 8px; background: var(--brand); color: var(--on-brand); font-weight: 800; font-size: 12px; }
+.th label { display: inline-flex; gap: 6px; align-items: center; font-weight: 700; font-size: 12px; cursor: pointer; }
+
+/* 07 엘리베이션: box-shadow 의 번짐과 세기를 단계별로 키운다 */
+.el { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 280px; }
+.el div { height: 62px; border-radius: 10px; background: #fff; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: var(--mute); transition: transform .2s, box-shadow .2s; }
+.el .e0 { box-shadow: none; border: 1px solid var(--line); }
+.el .e1 { box-shadow: 0 1px 3px rgba(30,27,75,.18); }
+.el .e2 { box-shadow: 0 6px 14px rgba(30,27,75,.18); }
+.el .e3 { box-shadow: 0 16px 32px rgba(30,27,75,.28); }
+.el div:hover { transform: translateY(-3px); }
+
+/* 08 모서리 반경: border-radius 를 단계 변수로 */
+.rd { --r-sm: 4px; --r-md: 10px; --r-lg: 20px; --r-full: 999px; display: flex; gap: 10px; align-items: end; }
+.rd div { display: grid; gap: 4px; justify-items: center; }
+.rd i { display: block; width: 50px; height: 50px; background: var(--p); }
+.rd .a i { border-radius: 0; } .rd .b i { border-radius: var(--r-sm); } .rd .c i { border-radius: var(--r-md); } .rd .d i { border-radius: var(--r-lg); } .rd .f i { border-radius: var(--r-full); }
+
+/* 09 간격 스케일: 4의 배수 변수로 가로 막대 길이를 만든다 */
+.spx { --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s6: 24px; --s8: 32px; display: grid; gap: 6px; width: 260px; }
+.spx div { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 700; color: var(--mute); }
+.spx div b { width: 52px; font-weight: 700; }
+.spx i { display: block; height: 14px; background: var(--p); border-radius: 3px; }
+
+/* 10 60-30-10: 화면 면적 비율을 막대로 보여주고, 같은 비율로 칠한 미니 화면 */
+.sx { display: grid; gap: 8px; width: 240px; }
+.sx .bar { display: flex; height: 22px; border-radius: 6px; overflow: hidden; font-size: 10px; font-weight: 800; }
+.sx .bar span { display: grid; place-items: center; }
+.sx .p60 { width: 60%; background: #fff; color: var(--mute); border: 1px solid var(--line); } .sx .p30 { width: 30%; background: #e0e7ff; color: #4338ca; } .sx .p10 { width: 10%; background: var(--accent); color: #fff; }
+.sx .scr { height: 110px; border-radius: 12px; background: #fff; border: 1px solid var(--line); padding: 10px; display: grid; gap: 6px; align-content: start; }
+.sx .scr .panel { border-radius: 8px; background: #e0e7ff; padding: 8px; display: grid; gap: 5px; }
+.sx .scr .cta { justify-self: end; padding: 5px 12px; border-radius: 8px; background: var(--accent); color: #fff; font-size: 11px; font-weight: 800; }
+
+/* 11 상태 색(state layer): 원래 색 위에 글자색을 반투명하게 한 겹 덮어서 호버·눌림을 만든다 */
+.stl { --layer: 0; position: relative; min-height: 40px; padding: 0 22px; border: 0; border-radius: 12px; background: #4f46e5; color: #fff; font: 700 13px var(--font); cursor: pointer; overflow: hidden; }
+.stl::after { content: ""; position: absolute; inset: 0; background: currentColor; opacity: var(--layer); transition: opacity .12s; }  /* 덮는 겹: 투명도만 바뀐다 */
+.stl:hover { --layer: .08; } .stl:focus-visible { --layer: .12; outline: 3px solid #1e1b4b; outline-offset: 2px; } .stl:active { --layer: .16; }
+.stl.light { background: #e0e7ff; color: #4338ca; }
+</style>
+</head>
+<body class="dm-root">
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">캡쳐에 없는 기본기</a><span class="sep">›</span>
+  <span>색과 디자인 토큰</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>색과 디자인 토큰</h1>
+    <p class="lead">색은 고르는 것이 아니라 체계로 정하는 것</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="primary-secondary-accent">
+      <div class="demo">
+        <div class="rl">
+          <div class="sws"><i class="b1" style="flex:3"></i><i class="b2" style="flex:2"></i><i class="b3" style="flex:1"></i></div>
+          <div class="btns"><span class="b1">주색</span><span class="b2">보조색</span><span class="b3">강조색</span></div>
+          <span class="d-cap">넓이도 3 : 2 : 1 로 다릅니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">주색·보조색·강조색 <span class="en">Primary · Secondary · Accent</span></h2>
+        <p class="desc"><strong>주색</strong>은 브랜드를 대표하고 주 버튼에 쓰는 색, <strong>보조색</strong>은 주색을 받쳐주는 연한 색이나 보조 버튼, <strong>강조색</strong>은 딱 한 곳에 시선을 모을 때만 쓰는 색입니다.</p>
+        <p class="when"><b>언제 쓰나</b>브랜드 색을 정할 때, 버튼 위계를 나눌 때(주 버튼은 주색, 보조 버튼은 보조색), 배지·알림 점 같은 눈에 띄어야 하는 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>주색은 인디고, 보조색은 연한 인디고, 강조색은 주황으로 정해서 CSS 변수로 만들고 버튼에 적용해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>강조색을 여기저기 쓰면 강조가 아니라 소음입니다. 화면 하나에 강조색은 한두 군데만 허용하세요. 또 주색과 강조색을 보색(정반대 색)으로 고르면 나란히 놓았을 때 눈이 아픕니다. 채도 높은 색끼리 큰 면적으로 붙여 놓지 마세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="semantic-color">
+      <div class="demo">
+        <div class="sm">
+          <div class="s"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>저장되었습니다</div>
+          <div class="w"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3zM12 10v4M12 17v.01"/></svg>용량이 90% 찼습니다</div>
+          <div class="e"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.500v5.500M12 16.500v.01"/></svg>결제에 실패했습니다</div>
+          <div class="i"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></svg>새 버전이 있습니다</div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">시맨틱 컬러 <span class="en">Semantic color</span></h2>
+        <p class="desc">색의 모양이 아니라 <strong>의미</strong>로 이름 붙인 색. "초록"이 아니라 "성공(success)", "빨강"이 아니라 "오류(danger)"라고 부릅니다. 보통 성공·경고·오류·정보 네 가지를 먼저 정합니다.</p>
+        <p class="when"><b>언제 쓰나</b>토스트, 알림 배너, 입력 오류, 상태 배지, 차트의 증감 표시처럼 색이 의미를 전달하는 모든 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>성공, 경고, 오류, 정보 네 가지 시맨틱 컬러를 글자색과 배경색 쌍으로 CSS 변수에 정의해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>문화권마다 색의 의미가 다릅니다. 국내 증권앱은 상승이 빨강이고 해외는 초록인 것처럼요. 시맨틱 컬러를 "빨강 = 위험"으로 고정하면 상승을 빨강으로 쓰는 화면과 충돌합니다. 의미 이름이 있어야 이럴 때 한 곳만 바꿔 대응할 수 있고, 항상 아이콘이나 문구를 함께 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="design-token">
+      <div class="demo">
+        <div class="tk">
+          <div class="chain"><span><b class="c1">blue-600</b><b class="c2">green-600</b></span>→<span class="n2">color-action</span>→<span>btn-bg</span></div>
+          <button class="tbtn" type="button">구매하기</button>
+          <label><input type="checkbox"> 브랜드 색을 초록으로 바꾸기</label>
+          <span class="d-cap">원시 → 의미 → 컴포넌트. 가운데 연결만 바꿨습니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">디자인 토큰 <span class="en">Design token</span></h2>
+        <p class="desc">색, 간격, 글자 크기 같은 디자인 값에 이름을 붙여 저장한 것. 코드에서는 CSS 변수가 그 역할을 합니다. 보통 <strong>원시값(blue-600) → 의미값(color-action) → 컴포넌트값(button-bg)</strong> 세 단계로 이어서 만듭니다.</p>
+        <p class="when"><b>언제 쓰나</b>디자인 시스템을 만들 때, 다크 모드·브랜드 변경·여러 앱 지원이 필요할 때, 디자이너와 개발자가 같은 이름으로 대화하고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>색을 디자인 토큰 3단계(원시, 의미, 컴포넌트)로 나눠서 CSS 변수로 정의하고, 컴포넌트는 의미 토큰만 참조하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>컴포넌트가 원시값(blue-600)을 직접 가져다 쓰기 시작하면 토큰을 만든 의미가 사라집니다. 규칙은 하나, 화면의 부품은 항상 "의미 토큰"만 부른다는 것입니다. 반대로 작은 프로젝트에서 3단계를 전부 만들면 과합니다. 두 단계(원시+의미)로 시작해도 충분합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="color-scale">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="scl"><b>50</b><b>100</b><b>200</b><b>300</b><b>400</b><b>500</b><b>600</b><b>700</b><b>800</b><b>900</b></div>
+          <span class="d-cap">밝음 ← 인디고 한 가지 색 → 어두움</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">색 단계 <span class="en">Color scale · 50~900</span></h2>
+        <p class="desc">한 가지 색을 가장 밝은 50부터 가장 어두운 900까지 열 단계 안팎으로 나눈 팔레트. 숫자가 클수록 어둡습니다. 보통 500~600이 "대표색", 50~100이 연한 배경, 800~900이 어두운 글자에 쓰입니다.</p>
+        <p class="when"><b>언제 쓰나</b>호버·눌림처럼 같은 색의 진하기가 필요할 때, 연한 배경과 진한 글자 쌍을 만들 때, 다크 모드를 만들 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>주색 인디고의 50부터 900까지 색 단계를 만들어 CSS 변수로 정의해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>단순히 색을 어둡게 하면 칙칙해져서, 어두운 쪽 단계는 채도를 조금 낮추거나 색조를 살짝 돌려서 맞춰야 합니다. 색 단계마다 흰 글자가 가능한지(4.5:1)를 표로 미리 정리해 두면, 개발자가 "이 위에 어떤 글자색?"이라고 물어볼 일이 사라집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="neutral-gray">
+      <div class="demo">
+        <div class="d-pair">
+          <div class="side"><div class="gr pure"><i></i><i></i><i></i><i></i><i></i></div><span class="d-cap">순수 회색</span></div>
+          <div class="mid">vs</div>
+          <div class="side"><div class="gr tint"><i></i><i></i><i></i><i></i><i></i></div><span class="d-cap">색조를 섞은 회색</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">중립색 <span class="en">Neutral · Gray scale</span></h2>
+        <p class="desc">회색 계열의 색 단계. 글자, 테두리, 배경, 구분선처럼 화면에서 가장 넓은 면적을 차지합니다. 브랜드 색을 5% 정도 섞은 회색은 화면의 분위기가 주색과 어울려 보입니다.</p>
+        <p class="when"><b>언제 쓰나</b>본문 글자(900 근처), 보조 글자(600), 비활성(400), 테두리(200), 배경(50). 글자와 배경을 정할 때마다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>순수 회색 대신 주색 색조를 살짝 섞은 중립색 10단계를 만들어 글자·테두리·배경 변수로 나눠줘</q></p>
+        <p class="senior"><b>20년차 메모</b>본문을 순수 검정(#000)으로 쓰면 흰 배경에서 너무 날카로워 눈이 피곤합니다. 아주 진한 회색이나 남색 계열을 쓰세요. 반대로 보조 글자를 너무 연하게 쓰면 대비 기준 미달이 되니, 중립색 표에 어떤 단계가 글자로 쓸 수 있는지 표시해 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="dark-mode">
+      <div class="demo">
+        <div class="th">
+          <div class="scr">
+            <b style="font-size:14px">오늘의 일정</b>
+            <div class="card2"><p>오후 3시 디자인 리뷰</p></div>
+            <span class="go">추가</span>
+          </div>
+          <label><input type="checkbox"> 다크 모드</label>
+          <span class="d-cap">배경만 어두워지는 게 아닙니다. 주색도 바뀝니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">다크 모드 <span class="en">Dark mode</span></h2>
+        <p class="desc">어두운 배경에 밝은 글자를 쓰는 화면 테마. 흰색과 검정을 뒤집는 반전이 아니라, 같은 토큰 이름에 어두운 값을 따로 정해 갈아 끼우는 것입니다. 데모에서 주색이 더 밝은 값(인디고 300)으로 바뀌는 것에 주목하세요.</p>
+        <p class="when"><b>언제 쓰나</b>야간 사용이 많은 앱, 영상·사진 위주 서비스, 개발자 도구, 사용자가 기기 설정에서 다크를 켠 모든 경우.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>의미 토큰에 다크 모드 값을 따로 정의하고, prefers-color-scheme 에 따라 자동으로 바뀌게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>순수 검정(#000) 배경은 흰 글자와 대비가 너무 강해서 오히려 번져 보이니, 짙은 남색이나 아주 진한 회색을 씁니다. 다크 모드에서는 그림자가 안 보이므로 높이는 그림자 대신 면의 밝기 차이로 표현합니다. 흰 배경에 맞춰 만든 로고와 일러스트가 다크에서 사라지는 것도 흔한 사고입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="elevation">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="el"><div class="e0">0</div><div class="e1">1</div><div class="e2">2</div><div class="e3">3</div></div>
+          <span class="d-cap">마우스를 올려 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">엘리베이션 <span class="en">Elevation · 그림자 단계</span></h2>
+        <p class="desc">요소가 화면에서 얼마나 "위로 떠 있는지"를 그림자의 세기로 표현하는 단계. 바닥에 붙은 카드는 0단계, 메뉴·팝오버는 중간, 모달은 가장 높은 단계처럼 <strong>위에 있을수록 그림자가 크고 흐립니다</strong>.</p>
+        <p class="when"><b>언제 쓰나</b>카드, 드롭다운, 바텀시트, 모달, 눌렀을 때 떠오르는 버튼처럼 겹침의 순서를 알려줄 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>그림자를 엘리베이션 0부터 3까지 네 단계로 정의해서 카드, 메뉴, 모달에 단계별로 적용해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>그림자 값을 요소마다 새로 만들면 화면에 일곱 가지 그림자가 섞여 지저분합니다. 3~4단계만 정하고, 높이가 의미하는 바(카드=1, 메뉴=2, 모달=3)도 같이 정하세요. 진한 검정 그림자는 촌스러워 보이니 주색이나 남색을 섞은 투명한 그림자가 낫습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="radius-scale">
+      <div class="demo">
+        <div class="rd">
+          <div class="a"><i></i><span class="d-cap">0</span></div>
+          <div class="b"><i></i><span class="d-cap">sm 4</span></div>
+          <div class="c"><i></i><span class="d-cap">md 10</span></div>
+          <div class="d"><i></i><span class="d-cap">lg 20</span></div>
+          <div class="f"><i></i><span class="d-cap">full</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">모서리 반경 <span class="en">Radius scale</span></h2>
+        <p class="desc">모서리를 얼마나 둥글게 할지를 몇 단계로 정해 둔 것. 같은 서비스에서 버튼은 10px, 카드는 20px, 칩은 끝까지 둥글게(full)처럼 요소 종류마다 쓰는 단계가 정해져 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>버튼, 입력창, 카드, 이미지, 칩, 모달. 서비스의 성격(딱딱한지 친근한지)을 정하는 가장 쉬운 도구이기도 합니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>모서리 반경을 4, 10, 20, 완전 둥글게 네 단계 CSS 변수로 만들고 요소별로 적용해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>겹친 요소의 안쪽 반경은 바깥 반경에서 간격을 뺀 값이어야 자연스럽습니다. 카드(20px)에 12px 안쪽 여백을 두고 그 안에 이미지를 넣으면 이미지는 8px이 맞습니다. 이 규칙을 모르면 모서리가 어색하게 벌어져 보입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="spacing-scale">
+      <div class="demo">
+        <div class="spx">
+          <div><b>space-1</b><i style="width:var(--s1)"></i><span>4</span></div>
+          <div><b>space-2</b><i style="width:var(--s2)"></i><span>8</span></div>
+          <div><b>space-3</b><i style="width:var(--s3)"></i><span>12</span></div>
+          <div><b>space-4</b><i style="width:var(--s4)"></i><span>16</span></div>
+          <div><b>space-6</b><i style="width:var(--s6)"></i><span>24</span></div>
+          <div><b>space-8</b><i style="width:var(--s8)"></i><span>32</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">간격 스케일 <span class="en">Spacing scale · 4/8pt grid</span></h2>
+        <p class="desc">여백과 간격에 쓸 숫자를 4나 8의 배수(4, 8, 12, 16, 24, 32…)로만 제한하는 규칙. <strong>4pt 그리드</strong>, <strong>8pt 그리드</strong>라고도 부릅니다. 간격을 "대충 보기 좋게"가 아닌 정해진 목록에서 고르게 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>카드 안쪽 여백(padding), 요소 사이 간격(gap), 화면 가장자리 여백, 목록 행의 높이.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>모든 여백과 간격을 4px 단위 간격 스케일 변수로 정의하고 임의의 숫자는 쓰지 않게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>8의 배수만 고집하면 작은 아이콘 주변이 너무 넓어져서, 촘촘한 곳에서는 4를 허용하는 게 현실적입니다. 또 같은 요소 안의 간격은 좁게, 다른 묶음 사이는 넓게(가까이 있으면 한 묶음) 주는 것이 스케일 선택의 진짜 기준입니다. 숫자만 맞추고 이 관계를 놓치지 마세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="rule-60-30-10">
+      <div class="demo">
+        <div class="sx">
+          <div class="bar"><span class="p60">60%</span><span class="p30">30%</span><span class="p10"></span></div>
+          <div class="scr"><div class="d-bar dark" style="width:55%"></div><div class="panel"><div class="d-bar" style="background:#a5b4fc"></div><div class="d-bar" style="background:#a5b4fc;width:70%"></div></div><span class="cta">시작</span></div>
+          <span class="d-cap">바탕 60 · 보조 30 · 강조 10 (단순화한 예시)</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">60-30-10 규칙 <span class="en">60-30-10 rule</span></h2>
+        <p class="desc">화면 면적의 60%는 바탕색, 30%는 보조색, 10%는 강조색으로 칠하라는 색 배분 공식. 처음 색 조합을 잡을 때 쓰는 출발점이며, 정확히 지켜야 하는 법칙은 아닙니다.</p>
+        <p class="when"><b>언제 쓰나</b>랜딩 페이지, 앱의 홈 화면, 브랜드 색을 처음 화면에 입힐 때. 색이 너무 많아 산만해 보일 때의 점검 기준.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이 화면의 색 비율을 60-30-10 규칙에 맞춰서 바탕 흰색, 보조 연한 인디고, 강조 주황으로 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>숫자를 면적 그대로 믿지 말고 "강조색은 가장 작게, 가장 한 곳에"라는 원칙으로 읽으세요. 사진·영상이 화면을 채우는 서비스에서는 이 비율이 의미가 없습니다. 이럴 땐 사진이 바탕이고 UI 색은 그 위에서 읽히기만 하면 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="state-layer">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:12px">
+          <div class="d-row"><button class="stl" type="button">채운 버튼</button><button class="stl light" type="button">연한 버튼</button></div>
+          <span class="d-cap">올리고, 누르고, Tab 으로 가 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">상태 색 <span class="en">State layer</span></h2>
+        <p class="desc">호버·포커스·눌림 상태를 색을 일일이 새로 정하지 않고, 원래 색 위에 글자색을 <strong>반투명하게 한 겹</strong> 덮어 만드는 방식입니다. 보통 호버 8%, 포커스 12%, 눌림 16%처럼 투명도만 다릅니다. 구글 머티리얼 디자인에서 널리 알려졌습니다.</p>
+        <p class="when"><b>언제 쓰나</b>색이 다른 버튼이 여러 종류일 때, 다크 모드까지 같은 규칙으로 호버를 처리하고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>버튼의 호버, 포커스, 눌림 색을 따로 만들지 말고 상태 색 레이어를 투명도 8%, 12%, 16%로 덮어서 처리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모든 버튼이 색마다 호버 색을 각각 가지면 색 하나를 바꿀 때 상태 색 네 개를 다시 손봐야 합니다. 레이어 방식은 이 부담을 없애지만, 이미 아주 진하거나 아주 연한 색 위에서는 변화가 거의 안 보일 수 있으니 실제로 눌러 보며 투명도를 조정하세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="헷갈리는 부품 짝 28가지 더 — 움직이는 예시로 보는 UI 용어 사전">
+<title>부품 짝 더보기 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 작은 폰 화면(.ph), 3개 나란히(.tri), 숨김 입력(.sr) */
+.ph { width: 112px; height: 140px; background: #fff; border: 2px solid #c9cfe6; border-radius: 14px; overflow: hidden; position: relative; display: grid; align-content: start; gap: 6px; padding: 10px 8px; }
+.ph.s { width: 88px; height: 120px; padding: 8px 6px; }
+.tri { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; justify-items: center; }
+.tri .side { display: grid; justify-items: center; gap: 6px; text-align: center; }
+.sr { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.sr:focus-visible + .sw, .sr:focus-visible + span { outline: 3px solid var(--p); outline-offset: 2px; }
+.mb { height: 10px; border-radius: 4px; background: var(--p); }
+.mb.g { background: #d5daea; }
+.dim { position: absolute; inset: 0; background: rgba(30,27,75,.5); animation: fd 3.6s ease-in-out infinite; }
+/* 반복 애니메이션: 중간에 머무는 구간을 둔다 */
+@keyframes fd { 0%, 10%, 90%, 100% { opacity: 0; } 25%, 75% { opacity: 1; } }
+@keyframes pop { 0%, 10%, 90%, 100% { opacity: 0; transform: scale(.85); } 25%, 75% { opacity: 1; transform: none; } }
+@keyframes inl { 0%, 10%, 90%, 100% { transform: translateX(-105%); } 25%, 75% { transform: none; } }
+@keyframes inb { 0%, 10%, 90%, 100% { transform: translateY(110%); } 25%, 75% { transform: none; } }
+@keyframes ind { 0%, 10%, 90%, 100% { transform: translateY(-130%); } 25%, 75% { transform: none; } }
+@keyframes pls { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.sk { background: linear-gradient(90deg, #dfe3f0 25%, #f2f4fa 40%, #dfe3f0 55%) 0 0 / 300% 100%; animation: shimmer 1.4s linear infinite; border-radius: 6px; }
+/* 라디오 + 라벨로 탭·단계 전환(JS 없음): 체크된 순번의 패널만 보인다 */
+.tbs { display: grid; grid-template-columns: repeat(3, 1fr); align-content: start; }
+.tbs > label { padding: 5px 0; text-align: center; font-size: 11px; font-weight: 700; color: var(--mute); cursor: pointer; border-radius: 6px; }
+.tbs > .pn { display: none; grid-column: 1 / -1; gap: 6px; padding: 8px 0 0; align-content: start; font-size: 11px; }
+.tbs.bt { grid-template-rows: 1fr auto; height: 124px; }
+.tbs.bt > label { order: 2; padding: 6px 0; }
+.tbs.bt > .pn { order: 1; grid-row: 1; padding: 0; }
+.tbs input:nth-of-type(1):checked ~ label:nth-of-type(1) { background: var(--p-soft); color: var(--p); }
+.tbs input:nth-of-type(1):checked ~ .pn:nth-of-type(1) { display: grid; }
+.tbs input:nth-of-type(2):checked ~ label:nth-of-type(2) { background: var(--p-soft); color: var(--p); }
+.tbs input:nth-of-type(2):checked ~ .pn:nth-of-type(2) { display: grid; }
+.tbs input:nth-of-type(3):checked ~ label:nth-of-type(3) { background: var(--p-soft); color: var(--p); }
+.tbs input:nth-of-type(3):checked ~ .pn:nth-of-type(3) { display: grid; }
+
+/* 01 모달·다이얼로그·팝업: 같은 상자도 뒤를 막는지(dim), 무엇을 묻는지, 어디에 뜨는지가 다르다. 투명도+확대 애니메이션 */
+.bx { position: absolute; left: 8px; right: 8px; top: 34px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(30,27,75,.3); padding: 7px; display: grid; gap: 5px; animation: pop 3.6s ease-in-out infinite; }
+.bx.c { top: auto; left: auto; bottom: 6px; right: 6px; width: 56px; }
+.bx .two { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+
+/* 02 드로어·사이드바: 옆에서 밀려 나왔다 들어가는 판 vs 늘 붙어 있는 열. translateX 로 슬라이드 */
+.drw { position: absolute; inset: 0 28% 0 0; background: #fff; padding: 10px 8px; display: grid; gap: 7px; align-content: start; animation: inl 3.6s ease-in-out infinite; }
+.sb { position: absolute; inset: 0 auto 0 0; width: 32%; background: var(--p-soft); padding: 10px 6px; display: grid; gap: 7px; align-content: start; }
+.sb b { height: 8px; border-radius: 99px; background: #aab4f0; }
+.sb b:first-child { background: var(--p); }
+.main { position: absolute; left: 36%; right: 6px; top: 10px; display: grid; gap: 6px; }
+
+/* 03 툴팁·토글팁: :hover 로만 뜨는 말풍선 vs 눌러서 켜고 끄는 말풍선(체크박스 상태 이용) */
+.tp { position: relative; display: inline-grid; justify-items: center; }
+.tt { position: absolute; bottom: calc(100% + 6px); white-space: nowrap; background: #1e1b4b; color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 11px; opacity: 0; pointer-events: none; transition: opacity .15s; }
+.tp.hv:hover .tt, .tp.hv:focus-within .tt { opacity: 1; }
+.tg input:checked ~ .tt { opacity: 1; }
+.tp .q { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--p-soft); color: var(--p); font-weight: 800; cursor: pointer; }
+
+/* 04 배지·태그·라벨: 작은 알약 모양 세 가지. 배지는 두근두근(scale 반복) */
+.bdg { position: relative; display: inline-block; }
+.bdg i { position: absolute; top: -5px; right: -7px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 99px; background: var(--danger); color: #fff; font: 700 10px/16px var(--font); font-style: normal; text-align: center; animation: pls 1.6s ease-in-out infinite; }
+.tgx { display: inline-flex; align-items: center; gap: 4px; padding: 3px 4px 3px 9px; border-radius: 99px; background: var(--p-soft); color: var(--p); font-size: 11px; font-weight: 700; }
+.tgx span { width: 14px; height: 14px; border-radius: 50%; display: grid; place-items: center; background: #fff; font-size: 10px; cursor: pointer; }
+.lbl { display: grid; gap: 3px; width: 70px; text-align: left; font-size: 10px; font-weight: 700; }
+.lbl em { height: 18px; border: 1.5px solid #c9cfe6; border-radius: 5px; background: #fff; }
+
+/* 05 카드·타일: 내용을 담는 상자 vs 눌러서 들어가는 정사각 버튼. :hover 로 살짝 뜬다 */
+.cd, .tl { transition: transform .2s ease-out, box-shadow .2s; cursor: pointer; }
+.cd:hover, .tl:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(30,27,75,.18); }
+.cd { width: 116px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(30,27,75,.12); overflow: hidden; display: grid; gap: 6px; padding-bottom: 8px; }
+.cd .im { height: 48px; background: linear-gradient(135deg, #a5b4fc, #6366f1); }
+.cd .t { display: grid; gap: 5px; padding: 0 8px; }
+.tl { width: 72px; height: 72px; border-radius: 16px; background: var(--p); color: #fff; display: grid; place-items: center; align-content: center; gap: 4px; font-size: 11px; font-weight: 700; }
+
+/* 06 콤보박스·자동완성: 입력창에 포커스가 오면 목록이 열린다. 왼쪽은 전체 선택지, 오른쪽은 친 글자로 걸러낸 제안 */
+.cb { position: relative; width: 116px; }
+.cb .d-input { padding-right: 24px; }
+.cb .car { position: absolute; right: 6px; top: 9px; width: 16px; height: 16px; color: var(--mute); pointer-events: none; }
+.cb .lst { display: none; position: absolute; top: 40px; left: 0; right: 0; z-index: 2; background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 16px rgba(30,27,75,.16); padding: 3px; text-align: left; }
+.cb:focus-within .lst { display: grid; }
+.cb .lst span { padding: 4px 6px; border-radius: 5px; font-size: 12px; }
+.cb .lst span:first-child { background: var(--p-soft); }
+.cb .lst b { color: var(--p); }
+
+/* 07 메뉴·리스트박스: 누르면 "실행"되는 목록 vs 누르면 "선택 표시"가 남는 목록 */
+.mn { position: relative; }
+.mn summary { list-style: none; cursor: pointer; }
+.mn summary::-webkit-details-marker { display: none; }
+.mn .pl { position: absolute; top: 38px; left: 0; width: 100px; z-index: 2; background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 16px rgba(30,27,75,.16); padding: 3px; display: grid; text-align: left; }
+.mn .pl span { padding: 5px 7px; border-radius: 5px; font-size: 12px; cursor: pointer; }
+.mn .pl span:hover { background: var(--p-soft); }
+.lb { display: grid; width: 100px; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 3px; text-align: left; }
+.lb label { cursor: pointer; }
+.lb span { display: block; padding: 5px 7px; border-radius: 5px; font-size: 12px; }
+.lb input:checked + span { background: var(--p-soft); color: var(--p); font-weight: 700; }
+.lb input:checked + span::after { content: "\2713"; float: right; }
+
+/* 08 비활성·읽기 전용: 진짜 input 의 disabled / readonly 속성. 오른쪽만 눌러서 글자를 고를 수 있다 */
+.fld { display: grid; gap: 3px; width: 118px; text-align: left; font-size: 11px; font-weight: 700; }
+.fld input { width: 100%; min-height: 32px; padding: 0 8px; border: 1.5px solid #c9cfe6; border-radius: 8px; font: 13px var(--font); color: var(--ink); background: #fff; }
+.fld input:disabled { background: #e9ebf3; color: #9aa1b8; border-color: #e1e4ef; cursor: not-allowed; }
+.fld input:read-only:not(:disabled):focus { outline: none; border-color: var(--p); box-shadow: 0 0 0 3px var(--p-soft); }
+
+/* 09 스켈레톤·플레이스홀더: 쉬머가 흐르는 뼈대 vs 가만히 있는 대신 그림 */
+.ph-img { height: 52px; border-radius: 8px; background: #e4e7f2; display: grid; place-items: center; color: #9aa1b8; }
+.ph-img svg { width: 26px; height: 26px; }
+
+/* 10 온보딩·튜토리얼: 처음 소개 슬라이드(translateX 로 넘김) vs 실제 화면 위에서 짚어 주는 코치마크(box-shadow 로 바깥을 어둡게) */
+.ob { display: flex; width: 300%; height: 84px; animation: slides 6s steps(1) infinite; }
+.ob div { flex: 1; display: grid; place-items: center; align-content: center; gap: 6px; }
+.ob .ci { width: 38px; height: 38px; border-radius: 12px; background: var(--p-soft); display: grid; place-items: center; color: var(--p); }
+@keyframes slides { 0% { transform: none; } 33.3% { transform: translateX(-33.333%); } 66.6% { transform: translateX(-66.666%); } }
+.dots { display: flex; gap: 4px; justify-content: center; margin-top: 6px; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: #c9cfe6; }
+.dots i:nth-child(1) { animation: d1 6s steps(1) infinite; }
+.dots i:nth-child(2) { animation: d2 6s steps(1) infinite; }
+.dots i:nth-child(3) { animation: d3 6s steps(1) infinite; }
+@keyframes d1 { 0% { background: var(--p); } 33.3%, 100% { background: #c9cfe6; } }
+@keyframes d2 { 0%, 100% { background: #c9cfe6; } 33.3% { background: var(--p); } 66.6% { background: #c9cfe6; } }
+@keyframes d3 { 0%, 66.5% { background: #c9cfe6; } 66.6% { background: var(--p); } }
+.coach { position: absolute; left: 10px; right: 10px; top: 60px; height: 26px; border-radius: 8px; box-shadow: 0 0 0 200px rgba(30,27,75,.55); animation: fd 3.6s ease-in-out infinite; }
+.coach::after { content: ""; position: absolute; inset: -3px; border: 2px solid #fff; border-radius: 10px; animation: pls 1.4s ease-in-out infinite; }
+.tip { position: absolute; left: 12px; right: 12px; top: 92px; padding: 5px 7px; border-radius: 7px; background: #fff; font-size: 10px; font-weight: 700; text-align: center; animation: fd 3.6s ease-in-out infinite; }
+
+/* 11 스플래시·로딩 화면: 앱을 열 때 잠깐 뜨는 로고 화면(크기·투명도 반복) vs 데이터를 기다리는 화면(진행 바) */
+.logo { width: 40px; height: 40px; border-radius: 12px; background: var(--p); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 20px; }
+.splash { position: absolute; inset: 0; display: grid; place-items: center; background: var(--p-soft); animation: lg 3.2s ease-in-out infinite; }
+@keyframes lg { 0%, 10% { opacity: 0; transform: scale(.8); } 30%, 80% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+.ldg { position: absolute; inset: 0; display: grid; place-content: center; gap: 10px; justify-items: center; }
+.pbar { width: 70px; height: 6px; border-radius: 99px; background: #d5daea; overflow: hidden; }
+.pbar i { display: block; height: 100%; background: var(--p); transform-origin: left; animation: fill 3s ease-out infinite; }
+@keyframes fill { from { transform: scaleX(.05); } 80%, to { transform: scaleX(1); } }
+
+/* 12 푸시 알림·인앱 알림: 앱 밖(잠금 화면)에 오는 알림 vs 앱을 쓰는 중에 안에서 뜨는 알림. translateY 로 내려왔다 사라짐 */
+.nt { position: absolute; left: 5px; right: 5px; top: 8px; padding: 6px; border-radius: 9px; background: rgba(255,255,255,.92); display: grid; gap: 4px; animation: ind 3.6s ease-in-out infinite; }
+.lock { background: linear-gradient(160deg, #312e81, #4f46e5); }
+.lock .clk { color: #fff; text-align: center; font-weight: 800; font-size: 20px; margin-top: 44px; }
+.nt .d-bar { height: 5px; }
+.bn { position: absolute; left: 6px; right: 6px; top: 36px; padding: 6px; border-radius: 8px; background: var(--p); display: grid; gap: 4px; animation: ind 3.6s ease-in-out infinite; }
+.bn .d-bar { background: rgba(255,255,255,.7); height: 5px; }
+
+/* 13 토글·세그먼트: 켜짐/꺼짐 한 가지 vs 이름 붙은 선택지 중 하나. 라디오·체크박스 상태로 움직임 */
+.sw { position: relative; display: inline-block; width: 46px; height: 26px; border-radius: 99px; background: #c9cfe6; transition: background .2s; cursor: pointer; }
+.sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .2s; }
+.sr:checked + .sw { background: var(--p); }
+.sr:checked + .sw::after { transform: translateX(20px); }
+.sg { display: inline-flex; padding: 2px; border-radius: 9px; background: #dfe3f0; }
+.sg label { cursor: pointer; }
+.sg span { display: block; padding: 5px 9px; border-radius: 7px; font-size: 12px; font-weight: 700; color: var(--mute); transition: background .15s; }
+.sg .sr:checked + span { background: #fff; color: var(--p); box-shadow: 0 1px 3px rgba(30,27,75,.2); }
+
+/* 14 캐러셀·슬라이더: 칸이 옆으로 넘어가는 영역 vs 막대를 끌어 값을 고르는 입력. translateX 반복 / 실제 range input */
+.cwin { width: 116px; height: 64px; border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 2px 8px rgba(30,27,75,.12); }
+.ctr { display: flex; width: 300%; height: 100%; animation: car 6s ease-in-out infinite; }
+.ctr i { flex: 1; }
+.ctr i:nth-child(1) { background: #a5b4fc; } .ctr i:nth-child(2) { background: #fcd34d; } .ctr i:nth-child(3) { background: #6ee7b7; }
+@keyframes car { 0%, 25% { transform: none; } 33%, 58% { transform: translateX(-33.333%); } 66%, 92% { transform: translateX(-66.666%); } 100% { transform: none; } }
+.rg { width: 116px; accent-color: var(--p); }
+
+/* 15 탭·내비게이션 바: 한 화면 안에서 내용을 바꾸는 탭 vs 서로 다른 목적지로 가는 바. 라디오 + 라벨(.tbs) */
+.tbs.top > label { border-radius: 6px 6px 0 0; border-bottom: 2px solid #e1e4ef; }
+.screen-t { font-weight: 800; color: var(--p); text-align: center; align-self: center; font-size: 13px; }
+
+/* 16 스크롤·페이지 넘김: 끊김 없이 흐르는 이동(linear) vs 한 장씩 딱 멈추는 이동(steps) */
+.vp { width: 100px; height: 100px; overflow: hidden; border-radius: 10px; background: #fff; border: 1px solid var(--line); position: relative; }
+.vp .col { display: grid; gap: 8px; padding: 8px; animation: smooth 4s linear infinite; }
+.vp .col.pg { animation: paged 4s ease-in-out infinite; }
+.vp .col b { height: 22px; border-radius: 5px; background: #e4e7f2; }
+.vp .col.pg b { height: 84px; margin-bottom: 8px; }
+.vp .col.pg b:nth-child(2) { background: #c7d2fe; }
+@keyframes smooth { from { transform: none; } to { transform: translateY(-96px); } }
+@keyframes paged { 0%, 30% { transform: none; } 40%, 70% { transform: translateY(-92px); } 80%, 100% { transform: none; } }
+
+/* 17 아코디언·탭: 여러 칸을 동시에 펼칠 수 있는 목록 vs 한 번에 한 칸만 보이는 탭. 진짜 <details> / 라디오 탭 */
+.ac { display: grid; gap: 4px; width: 116px; }
+.ac details { background: #fff; border: 1px solid var(--line); border-radius: 7px; padding: 5px 7px; font-size: 11px; font-weight: 700; }
+.ac summary { cursor: pointer; }
+.ac p { margin: 4px 0 0; color: var(--mute); font-weight: 500; }
+
+/* 18 팝오버·드롭다운: 선택지 목록 vs 자유로운 내용을 담는 작은 창. <details> 로 열고 닫기 */
+.pv { position: relative; }
+.pv summary { list-style: none; cursor: pointer; }
+.pv summary::-webkit-details-marker { display: none; }
+.pv .pl { position: absolute; top: 38px; left: 0; z-index: 2; background: #fff; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 16px rgba(30,27,75,.16); padding: 8px; display: grid; gap: 6px; width: 110px; text-align: left; font-size: 11px; }
+.pv .pl span.o { padding: 4px 6px; border-radius: 5px; font-size: 12px; }
+.pv .pl span.o:hover { background: var(--p-soft); }
+.col130 { height: 130px; align-content: start; }
+
+/* 19 알림 점·숫자 배지: 있다/없다만 알리는 점(커졌다 작아짐) vs 몇 개인지 알리는 숫자 */
+.nb { position: relative; display: inline-block; }
+.nb .dt { position: absolute; top: -1px; right: -1px; width: 10px; height: 10px; border-radius: 50%; background: var(--danger); border: 2px solid var(--stage); animation: pls 1.6s ease-in-out infinite; }
+.nb .cn { position: absolute; top: -6px; right: -9px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 99px; background: var(--danger); color: #fff; font: 700 11px/18px var(--font); text-align: center; animation: pls 1.6s ease-in-out infinite; }
+
+/* 20 구분선·여백: 선으로 나누기(선이 깜빡) vs 빈 공간으로 나누기(간격이 숨 쉬듯 변함) */
+.rows { display: grid; width: 112px; background: #fff; border-radius: 10px; padding: 8px; }
+.rows .r { display: flex; align-items: center; gap: 6px; padding: 6px 0; }
+.rows .r i { width: 16px; height: 16px; border-radius: 50%; background: #c7d2fe; flex: none; }
+.rows .r div { flex: 1; display: grid; gap: 4px; }
+.rows.ln .r + .r { border-top: 1px solid #aab4f0; animation: lnb 3s ease-in-out infinite; }
+@keyframes lnb { 0%, 100% { border-top-color: #aab4f0; } 50% { border-top-color: transparent; } }
+.rows.sp { animation: breathe 3s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { gap: 0; } 50% { gap: 12px; } }
+
+/* 21 인라인 메시지·토스트: 문제 바로 옆에 남는 글 vs 잠깐 떴다 사라지는 글 */
+.ph .inp { height: 22px; border: 1.5px solid var(--danger); border-radius: 6px; }
+.msg { font-size: 10px; font-weight: 700; color: var(--danger); animation: stay 3.6s ease-in-out infinite; }
+@keyframes stay { 0%, 10% { opacity: 0; } 25%, 90% { opacity: 1; } 100% { opacity: 0; } }
+.toast { position: absolute; left: 8px; right: 8px; bottom: 8px; padding: 6px 8px; border-radius: 8px; background: #1e1b4b; color: #fff; font-size: 10px; font-weight: 700; text-align: center; animation: inb 3.6s ease-in-out infinite; }
+
+/* 22 라이트박스·모달: 사진을 크게 보는 어두운 판(확대) vs 입력을 받는 창 */
+.fldm { height: 16px; border: 1.5px solid #c9cfe6; border-radius: 5px; }
+.thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.thumbs i { height: 34px; border-radius: 5px; background: #c7d2fe; }
+.thumbs i:nth-child(2) { background: #fcd34d; } .thumbs i:nth-child(3) { background: #6ee7b7; }
+.lbx { position: absolute; inset: 0; background: rgba(0,0,0,.88); display: grid; place-items: center; animation: fd 3.6s ease-in-out infinite; }
+.lbx .big { width: 84px; height: 70px; border-radius: 6px; background: #fcd34d; }
+.lbx .xx { position: absolute; top: 6px; right: 6px; color: #fff; }
+.lbx .ar { position: absolute; top: 60px; color: #fff; }
+
+/* 23 헤더·앱 바·내비게이션 바: 같은 줄무늬 영역도 위치와 쓰임이 다르다. 강조 테두리가 깜빡 */
+.hl { outline: 2px solid var(--p); outline-offset: 1px; border-radius: 4px; animation: hlb 1.6s ease-in-out infinite; }
+@keyframes hlb { 0%, 100% { outline-color: transparent; } 50% { outline-color: var(--p); } }
+.hd { display: flex; align-items: center; justify-content: space-between; padding: 4px; }
+.hd .lg { width: 14px; height: 14px; border-radius: 4px; background: var(--p); }
+.hd .lk { display: flex; gap: 3px; width: 34px; }
+.hd .lk i { flex: 1; height: 4px; border-radius: 99px; background: #aab4f0; }
+.ab { display: flex; align-items: center; justify-content: space-between; padding: 3px 2px; }
+.ab svg { width: 14px; height: 14px; }
+.nv { position: absolute; left: 4px; right: 4px; bottom: 5px; display: flex; justify-content: space-around; padding: 4px 0; }
+.nv svg { width: 14px; height: 14px; }
+
+/* 24 푸터·탭 바: 글 끝에서만 만나는 하단 정보 vs 스크롤해도 따라오는 하단 바. 내용을 translateY 로 올림 */
+.sc { display: grid; gap: 6px; animation: scr 5s ease-in-out infinite; }
+@keyframes scr { 0%, 15% { transform: none; } 45%, 70% { transform: translateY(-52px); } 100% { transform: none; } }
+.ft { height: 30px; border-radius: 6px; background: #3b3f5c; display: grid; place-items: center; color: #fff; font-size: 9px; }
+.tbar { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-around; padding: 6px 0; background: #fff; border-top: 1px solid var(--line); color: var(--p); }
+.tbar svg { width: 15px; height: 15px; }
+.ph.clip { padding-bottom: 0; }
+
+/* 25 폼·위저드: 한 화면에 모든 칸 vs 단계별로 쪼개 한 번에 조금씩. 라디오로 단계 이동 */
+.wzp { display: grid; gap: 6px; }
+.wzp .d-btn { min-height: 26px; font-size: 11px; padding: 0 10px; }
+.stp { font-size: 10px; font-weight: 800; color: var(--p); }
+
+/* 26 하이퍼링크·앵커: 다른 문서로 가는 링크(화면이 통째로 바뀜) vs 같은 문서 안 특정 자리로 가는 앵커(스크롤만 이동) */
+.pgf { position: absolute; inset: 0; padding: 10px 8px; display: grid; gap: 6px; align-content: start; background: #fff; }
+.pgf .lnk { font-size: 11px; font-weight: 700; color: var(--p); text-decoration: underline; }
+.pgf.b { background: #fff7e6; animation: swap 4s ease-in-out infinite; }
+.pgf.a { animation: swapa 4s ease-in-out infinite; }
+@keyframes swap { 0%, 40% { opacity: 0; } 50%, 90% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes swapa { 0%, 40% { opacity: 1; } 50%, 90% { opacity: 0; } 100% { opacity: 1; } }
+.an { padding-top: 24px; }
+.an .chips { position: absolute; top: 0; left: 0; right: 0; z-index: 1; display: flex; gap: 3px; padding: 5px; background: #fff; border-bottom: 1px solid var(--line); font-size: 9px; font-weight: 700; color: var(--mute); }
+.an .chips i { font-style: normal; padding: 2px 5px; border-radius: 99px; }
+.an .chips i:nth-child(3) { animation: chip 4s steps(1) infinite; }
+@keyframes chip { 0%, 40% { background: transparent; color: var(--mute); } 45%, 90% { background: var(--p-soft); color: var(--p); } 95%, 100% { background: transparent; } }
+.an .sec { display: grid; gap: 5px; margin-bottom: 14px; animation: jump 4s ease-in-out infinite; }
+@keyframes jump { 0%, 40% { transform: none; } 50%, 90% { transform: translateY(-62px); } 100% { transform: none; } }
+.an .sec b { height: 30px; border-radius: 6px; background: #e4e7f2; }
+.an .sec b:last-child { background: #c7d2fe; }
+
+/* 27 스티키·픽스드: 처음엔 제자리에 있다가 스크롤하면 위에 붙는 것(position: sticky) vs 처음부터 화면에 못 박힌 것. 직접 스크롤해 보세요 */
+.sc2 { width: 114px; height: 140px; overflow: auto; border: 2px solid #c9cfe6; border-radius: 14px; background: #fff; display: grid; align-content: start; }
+.sc2 .hero { height: 46px; margin: 8px; border-radius: 8px; background: #c7d2fe; flex: none; }
+.sc2 .bar { height: 20px; background: var(--p); color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; }
+.sc2 .bar.st { position: sticky; top: 0; }
+.sc2 .ln { padding: 6px 8px 0; display: grid; gap: 6px; padding-bottom: 8px; }
+.fxw { position: relative; }
+.fxw .bar { position: absolute; top: 2px; left: 2px; right: 2px; z-index: 1; border-radius: 12px 12px 0 0; }
+.fxw .sc2 .hero { margin-top: 28px; }
+
+/* 28 오버레이·스크림: 위에 겹쳐 뜨는 모든 것(상자) vs 그 뒤를 어둡게 덮는 반투명 막. 같은 크기도 막이 있으면 뒤가 못 눌려 보임 */
+.ovl { position: absolute; left: 8px; right: 8px; top: 40px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(30,27,75,.3); padding: 7px; display: grid; gap: 5px; animation: pop 3.6s ease-in-out infinite; }
+.scr { position: absolute; inset: 0; background: rgba(30,27,75,.55); animation: fd 3.6s ease-in-out infinite; }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">헷갈리는 짝</a><span class="sep">›</span>
+  <span>부품 짝 더보기</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>헷갈리는 부품 짝 28가지 더</h1>
+    <p class="lead">비슷해 보이는 부품은 기준 하나로 가를 수 있어요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term added" id="modal-dialog-popup">
+      <div class="demo"><div class="tri"><div class="side"><div class="ph s"><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:60%"></div><div class="dim"></div><div class="bx"><div class="mb g"></div><div class="mb" style="width:60%"></div></div></div><span class="d-cap">모달: 뒤를 막음</span></div><div class="side"><div class="ph s"><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:60%"></div><div class="bx"><div class="mb g" style="width:80%"></div><div class="two"><div class="mb g"></div><div class="mb"></div></div></div></div><span class="d-cap">다이얼로그: 묻는 창</span></div><div class="side"><div class="ph s"><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:60%"></div><div class="bx c"><div class="mb g"></div><div class="mb" style="width:50%"></div></div></div><span class="d-cap">팝업: 불쑥 뜸</span></div></div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">모달 <span class="vs">vs</span> 다이얼로그 <span class="vs">vs</span> 팝업 <span class="en">Modal · Dialog · Popup</span></h2>
+        <p class="desc">세 단어는 서로 다른 기준을 말합니다. <strong>모달</strong>은 뒤 화면을 못 누르게 막는 성질, <strong>다이얼로그</strong>는 사용자에게 묻거나 알리는 용도, <strong>팝업</strong>은 예고 없이 불쑥 뜬다는 모양새를 가리킵니다. 그래서 한 창이 셋 다일 수도 있습니다.</p>
+        <p class="when"><b>이렇게 구분</b>뒤를 막으면 모달, 확인·취소로 답을 받으면 다이얼로그, 내용을 읽으라고 갑자기 뜨면 팝업입니다. 개발 용어로는 보통 모달과 다이얼로그가 같은 컴포넌트를 가리킵니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>삭제 확인 다이얼로그를 모달로 띄우고, 홍보용 팝업은 닫기 버튼을 크게 달아줘</q></p>
+        <p class="senior"><b>20년차 메모</b>현장에서는 이 셋을 섞어 말해서 회의가 엇갈립니다. "팝업 넣어주세요"를 들으면 막는 창인지 아닌지부터 되물으세요. 모달은 Esc로 닫히고, 열릴 때 포커스가 안으로 들어가고, 닫으면 눌렀던 버튼으로 돌아와야 합니다. 이 세 가지가 빠진 모달이 가장 흔한 접근성 결함입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="drawer-sidebar">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="main"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div></div><div class="dim"></div><div class="drw"><div class="mb"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:70%"></div></div></div><span class="d-cap">드로어: 필요할 때만</span></div><div class="mid">vs</div><div class="side"><div class="ph"><div class="sb"><b></b><b></b><b></b><b></b></div><div class="main"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div></div></div><span class="d-cap">사이드바: 늘 있음</span></div></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">드로어 <span class="vs">vs</span> 사이드바 <span class="en">Drawer vs Sidebar</span></h2>
+        <p class="desc">옆에서 나오는 세로 판이라는 점은 같지만, <strong>필요할 때만 열리면 드로어</strong>이고 <strong>화면에 늘 붙어 있으면 사이드바</strong>입니다. 드로어는 열린 동안 뒤를 어둡게 덮는 경우가 많습니다.</p>
+        <p class="when"><b>이렇게 구분</b>햄버거 아이콘을 눌러야 나오면 드로어, 처음부터 왼쪽에 고정돼 있으면 사이드바입니다. 같은 메뉴 내용이라도 화면 폭에 따라 사이드바가 드로어로 바뀌기도 합니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>화면이 넓으면 왼쪽 사이드바로 보여주고, 모바일 폭에서는 햄버거로 여는 드로어로 바꿔줘</q></p>
+        <p class="senior"><b>20년차 메모</b>반응형에서는 한 메뉴가 사이드바였다가 드로어가 되는 일이 흔하니, 둘의 상태(열림·닫힘·현재 위치)를 따로 설계해 두세요. 드로어는 열렸을 때 포커스를 안에 가두고 뒤 스크롤을 막아야 하는데, 이걸 빠뜨리면 메뉴 뒤 화면이 같이 스크롤됩니다. 모바일에서 핵심 이동을 드로어에 숨기면 눈에 안 띄어 쓰이지 않습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="tooltip-toggletip">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="tp hv"><span class="q" tabindex="0" role="button" aria-label="도움말">?</span><span class="tt">저장됩니다</span></div><span class="d-cap">올려 보세요(호버)</span></div><div class="mid">vs</div><div class="side"><label class="tp tg"><input type="checkbox" class="sr" aria-label="도움말 켜기"><span class="q">?</span><span class="tt">저장됩니다</span></label><span class="d-cap">눌러 보세요(토글)</span></div></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">툴팁 <span class="vs">vs</span> 토글팁 <span class="en">Tooltip vs Toggletip</span></h2>
+        <p class="desc"><strong>툴팁은 마우스를 올리거나 포커스가 오면 뜨고</strong>, <strong>토글팁은 눌러서 켜고 끕니다</strong>. 툴팁은 이름표처럼 짧은 보충 글, 토글팁은 눌러서 읽는 도움말입니다.</p>
+        <p class="when"><b>이렇게 구분</b>마우스를 올렸다 떼면 사라져도 되는 한 줄 이름표면 툴팁, 터치 화면에서도 읽어야 하는 도움말이면 토글팁입니다. 터치에는 호버가 없어서 툴팁이 안 보입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>정보 아이콘을 누르면 토글팁이 열리고, 다시 누르거나 바깥을 누르면 닫히게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모바일이 주력이면 툴팁에 중요한 정보를 넣지 마세요. 손가락에는 호버가 없어 아예 못 봅니다. 툴팁은 마우스가 그 위에 머무는 동안 내용을 읽을 수 있어야 하고, 키보드 포커스로도 떠야 합니다. 토글팁은 눌렀을 때 스크린 리더가 내용을 읽어주도록 알림 영역으로 만드는 것이 개발자와 맞춰야 할 부분입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="badge-tag-label">
+      <div class="demo"><div class="tri"><div class="side"><span class="bdg"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:26px;height:26px"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg><i>3</i></span><span class="d-cap">배지: 수·상태</span></div><div class="side"><span class="tgx">여행<span>x</span></span><span class="d-cap">태그: 분류 이름</span></div><div class="side"><div class="lbl">이름<em></em></div><span class="d-cap">라벨: 칸의 이름</span></div></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">배지 <span class="vs">vs</span> 태그 <span class="vs">vs</span> 라벨 <span class="en">Badge · Tag · Label</span></h2>
+        <p class="desc">작은 글씨 덩어리지만 하는 일이 다릅니다. <strong>배지는 숫자나 상태를 알리는 표시</strong>, <strong>태그는 내용에 붙이는 분류 이름</strong>, <strong>라벨은 입력 칸이나 부품에 이름을 붙이는 글</strong>입니다.</p>
+        <p class="when"><b>이렇게 구분</b>읽지 않은 개수나 NEW처럼 알려 주는 표시면 배지, #여행처럼 글에 붙여 묶고 거르는 이름이면 태그, 칸 위에서 무엇을 적을지 말해 주면 라벨입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>받은 편지함 아이콘에 읽지 않은 수를 배지로 달고, 게시글에는 지울 수 있는 태그를 붙여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>셋을 모두 "라벨"이나 "뱃지"로 부르면 개발자가 서로 다른 부품을 만들어 둘 때가 있습니다. 배지는 숫자가 두 자리·세 자리가 돼도 동그라미가 깨지지 않게 99+ 규칙을 정해 두세요. 태그는 눌렀을 때 거르는지 지우는지를 분명히 해야 하고, 색만으로 의미를 나누면 색약 사용자에게 구분이 안 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="card-tile">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="cd"><div class="im"></div><div class="t"><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:50%"></div><div class="mb" style="width:50%"></div></div></div><span class="d-cap">카드: 내용을 담음</span></div><div class="mid">vs</div><div class="side"><div class="tl"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="color:#fff"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>홈</div><span class="d-cap">타일: 눌러 이동</span></div></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">카드 <span class="vs">vs</span> 타일 <span class="en">Card vs Tile</span></h2>
+        <p class="desc">둘 다 네모 상자지만, <strong>카드는 그림·글·버튼을 함께 담아 한 덩어리 정보를 보여주고</strong>, <strong>타일은 한 가지 대상을 크게 눌러서 들어가게 하는 칸</strong>입니다.</p>
+        <p class="when"><b>이렇게 구분</b>그 안에서 읽고 고를 거리가 여러 개면 카드, 상자 전체가 하나의 이동 버튼이면 타일입니다. 홈 화면 바로가기 격자가 타일의 전형입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상품 목록은 이미지와 가격이 들어간 카드로, 메뉴 바로가기는 아이콘만 있는 정사각 타일로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>카드 안에 눌리는 곳이 너무 많으면 어디를 눌러야 할지 헷갈립니다. 카드 전체가 링크일 때는 안쪽 버튼을 따로 두지 마세요. 타일은 글자가 길어지면 칸이 깨지기 쉬우니 두 줄 말줄임과 작은 화면에서의 칸 수를 먼저 정해 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="combobox-autocomplete">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="cb"><input class="d-input" value="서울" aria-label="도시 선택"><svg class="d-svg car" viewBox="0 0 24 24" aria-hidden="true" style=""><path d="M6 9l6 6 6-6"/></svg><div class="lst"><span>서울</span><span>부산</span><span>제주</span></div></div><span class="d-cap">눌러 보세요: 전체 목록</span></div><div class="mid">vs</div><div class="side"><div class="cb"><input class="d-input" value="서" aria-label="도시 검색"><div class="lst"><span><b>서</b>울</span><span><b>서</b>귀포</span><span><b>서</b>산</span></div></div><span class="d-cap">눌러 보세요: 걸러낸 제안</span></div></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">콤보박스 <span class="vs">vs</span> 자동완성 <span class="en">Combobox vs Autocomplete</span></h2>
+        <p class="desc">입력창과 목록이 합쳐진 부품이라는 점은 같습니다. <strong>콤보박스는 정해진 선택지 안에서 고르고(쓰기는 보조)</strong>, <strong>자동완성은 친 글자에 맞는 제안을 띄워 주되 아무 값이나 쓸 수 있습니다</strong>.</p>
+        <p class="when"><b>이렇게 구분</b>답이 정해진 목록 중 하나여야 하면 콤보박스, 자유롭게 쓰되 도와주는 것이면 자동완성입니다. 선택지가 수십 개를 넘으면 셀렉트보다 콤보박스가 낫습니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>국가 선택은 글자를 치면 걸러지는 콤보박스로, 주소 입력은 자동완성 제안으로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>콤보박스에서 목록에 없는 글자를 치고 나갔을 때의 동작(지우기·오류 표시)을 정해 두지 않으면 잘못된 값이 저장됩니다. 방향키로 제안을 고르고 Enter로 확정하는 키보드 조작은 기본 요구입니다. 자동완성은 결과가 없을 때 빈 상자 대신 "결과 없음"을 보여주세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="menu-listbox">
+      <div class="demo"><div class="d-pair"><div class="side"><details class="mn"><summary class="d-btn soft" style="width:100px">더보기</summary><div class="pl"><span>복사</span><span>이동</span><span>삭제</span></div></details><span class="d-cap">눌러 보세요: 실행</span></div><div class="mid">vs</div><div class="side"><div class="lb"><label><input type="radio" name="lbx" class="sr" checked><span>한국어</span></label><label><input type="radio" name="lbx" class="sr"><span>영어</span></label><label><input type="radio" name="lbx" class="sr"><span>일본어</span></label></div><span class="d-cap">눌러 보세요: 선택</span></div></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">메뉴 <span class="vs">vs</span> 리스트박스 <span class="en">Menu vs Listbox</span></h2>
+        <p class="desc">둘 다 세로 목록이지만 <strong>메뉴는 항목을 누르면 무언가가 바로 실행되고 닫히며</strong>, <strong>리스트박스는 항목을 누르면 선택 표시가 남습니다</strong>. 메뉴는 동작, 리스트박스는 값입니다.</p>
+        <p class="when"><b>이렇게 구분</b>복사·삭제처럼 일을 시키면 메뉴, 언어·정렬 기준처럼 값을 고르면 리스트박스입니다. 값을 고르는데 열었다 닫히는 모양이면 셀렉트(드롭다운)가 됩니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>더보기 버튼은 복사, 이동, 삭제를 실행하는 메뉴로, 언어 설정은 현재 선택에 체크가 남는 리스트박스로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>메뉴 안에 선택 표시를 넣고 값 고르기까지 시키면 사용자가 누르는 즉시 일이 벌어지는지 값만 바뀌는지 알 수 없습니다. 파괴적인 항목(삭제)은 맨 아래에 구분선과 빨간색으로 떼어 두세요. 키보드에서는 메뉴가 방향키 이동 후 Enter, 리스트박스가 방향키로 선택이 따라가는 식이라 동작이 서로 다릅니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="disabled-readonly">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="fld">이름<input value="김디자인" disabled aria-label="비활성 입력"></div><span class="d-cap">비활성: 못 건드림</span></div><div class="mid">vs</div><div class="side"><div class="fld">이름<input value="김디자인" readonly aria-label="읽기 전용 입력"></div><span class="d-cap">읽기 전용: 읽고 복사</span></div></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">비활성 <span class="vs">vs</span> 읽기 전용 <span class="en">Disabled vs Read-only</span></h2>
+        <p class="desc">둘 다 값을 못 고친다는 점은 같지만, <strong>비활성은 칸 자체가 꺼져서 포커스도 안 가고 서버에 값이 안 넘어가며</strong>, <strong>읽기 전용은 눌러서 선택·복사할 수 있고 값도 그대로 제출됩니다</strong>.</p>
+        <p class="when"><b>이렇게 구분</b>지금은 쓸 수 없는 칸(조건을 못 채움)이면 비활성, 보여주기만 하고 가져가서 쓰게 하는 값(아이디, 주문번호)이면 읽기 전용입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>주문번호 칸은 읽기 전용으로 두고 복사할 수 있게, 약관 동의 전 결제 버튼은 비활성으로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>비활성은 회색이라 왜 못 쓰는지 알려주지 않는 것이 문제입니다. 옆에 이유를 한 줄 적어 주세요. 또 흐린 비활성 글자는 명도 대비 기준에서 면제되지만, 사용자가 읽어야 하는 값이라면 읽기 전용이 맞습니다. 비활성 칸은 키보드로 도달할 수 없어서 스크린 리더 사용자는 그 칸이 있는지조차 모를 수 있습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="skeleton-placeholder">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="sk" style="height:52px"></div><div class="sk" style="height:9px;width:80%"></div><div class="sk" style="height:9px;width:55%"></div></div><span class="d-cap">스켈레톤: 불러오는 중</span></div><div class="mid">vs</div><div class="side"><div class="ph"><div class="ph-img"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 8"/></svg></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:55%"></div></div><span class="d-cap">플레이스홀더: 자리 채움</span></div></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">스켈레톤 <span class="vs">vs</span> 플레이스홀더 <span class="en">Skeleton vs Placeholder</span></h2>
+        <p class="desc">빈자리를 채운다는 점은 같지만 <strong>스켈레톤은 곧 올 내용의 모양으로 반짝이며 기다림을 알리고</strong>, <strong>플레이스홀더는 가만히 있는 대체물(기본 그림, 샘플 글)로 자리를 지킵니다</strong>.</p>
+        <p class="when"><b>이렇게 구분</b>서버에서 가져오는 중이라는 신호가 필요하면 스켈레톤, 내용이 아예 없거나 비어 있어서 대신 보여주는 그림이면 플레이스홀더입니다. 입력창 안의 회색 안내 글도 플레이스홀더라고 부르는 점에 주의하세요.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>프로필 사진이 없으면 사람 모양 플레이스홀더를 보여주고, 목록을 불러오는 동안은 스켈레톤을 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>개발 문서에서 placeholder 는 입력창 안내 글을 가리키는 일이 많아, 그림 자리를 말할 때는 "기본 이미지"라고 풀어 쓰는 편이 안전합니다. 스켈레톤은 반짝임이 계속 돌면 전정기관이 예민한 사용자에게 부담이니 모션 줄이기 설정에서는 멈추게 하세요. 둘을 섞어 불러오는 중에도 기본 이미지를 보여주면 아직 로딩 중인지 원래 없는 건지 구분이 안 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="onboarding-tutorial">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div style="overflow:hidden;height:84px"><div class="ob"><div><span class="ci"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></span><div class="d-bar " style="width:60%"></div></div><div><span class="ci"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg></span><div class="d-bar " style="width:60%"></div></div><div><span class="ci"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><path d="M5 12l5 5 9-10"/></svg></span><div class="d-bar " style="width:60%"></div></div></div></div><div class="dots"><i></i><i></i><i></i></div><div class="mb" style="height:16px"></div></div><span class="d-cap">온보딩: 처음 맞이</span></div><div class="mid">vs</div><div class="side"><div class="ph"><div class="d-bar " style="width:60%"></div><div class="mb" style="height:26px;margin-top:8px"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="coach"></div><div class="tip">여기를 눌러 시작</div></div><span class="d-cap">튜토리얼: 짚어 가르침</span></div></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">온보딩 <span class="vs">vs</span> 튜토리얼 <span class="en">Onboarding vs Tutorial</span></h2>
+        <p class="desc"><strong>온보딩은 처음 오는 사용자를 맞아 가치와 준비를 알려 주는 전체 과정</strong>이고, <strong>튜토리얼은 그중 실제 화면 위에서 사용법을 짚어 가르치는 부분</strong>입니다. 온보딩이 더 넓은 말입니다.</p>
+        <p class="when"><b>이렇게 구분</b>가입 직후 환영·권한 요청·관심사 고르기까지 흐름이면 온보딩, 버튼을 하나씩 가리키며 쓰는 법을 알려 주면 튜토리얼(코치마크)입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>첫 실행 시 3장짜리 환영 슬라이드를 보여주고, 홈 화면에서는 주요 버튼을 하나씩 짚는 튜토리얼을 건너뛸 수 있게 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>온보딩은 길수록 이탈이 늘어서, 모든 설명을 첫 화면에 몰지 말고 그 기능을 처음 쓸 때 보여주는 편이 낫습니다. 건너뛰기 버튼이 없거나 다시 볼 방법이 없는 튜토리얼이 가장 흔한 실수입니다. 실제 서비스 화면에 가려 읽을 시간이 없다면 자동으로 넘어가지 않게 하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="splash-loading">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="splash"><div class="logo">A</div></div></div><span class="d-cap">스플래시: 로고만</span></div><div class="mid">vs</div><div class="side"><div class="ph"><div class="ldg"><div class="logo" style="width:28px;height:28px;font-size:14px;border-radius:9px">A</div><div class="pbar"><i></i></div><span class="d-cap">불러오는 중</span></div></div><span class="d-cap">로딩 화면: 기다림</span></div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">스플래시 <span class="vs">vs</span> 로딩 화면 <span class="en">Splash vs Loading screen</span></h2>
+        <p class="desc">앱을 열 때 보이는 첫 화면이라는 점은 같습니다. <strong>스플래시는 앱이 켜지는 짧은 순간 브랜드 로고를 보여주는 화면</strong>이고, <strong>로딩 화면은 데이터를 기다리는 동안 진행 상태를 알려 주는 화면</strong>입니다.</p>
+        <p class="when"><b>이렇게 구분</b>앱을 켜는 첫 1~2초에 로고만 있으면 스플래시, 켜진 뒤 목록·결제 정보를 가져오며 진행을 보여 주면 로딩 화면입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>앱 실행 때 로고만 보이는 스플래시를 짧게 보여주고, 데이터를 가져오는 동안은 진행 바가 있는 로딩 화면으로 이어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>스플래시를 일부러 길게 늘리면 앱이 느리다는 인상만 남습니다. 앱이 준비되는 즉시 넘어가는 것이 원칙입니다. 안드로이드 12부터는 시스템이 스플래시를 먼저 보여주기 때문에 별도로 만든 스플래시가 두 번 뜨는 사고가 많으니 개발자와 확인하세요. 로딩 화면에는 실패했을 때 다시 시도할 길을 꼭 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="push-inapp">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph lock"><div class="clk">9:41</div><div class="nt"><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div></div></div><span class="d-cap">푸시: 앱 밖에서 옴</span></div><div class="mid">vs</div><div class="side"><div class="ph"><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="bn"><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:90%"></div></div></div><span class="d-cap">인앱: 앱 안에서 뜸</span></div></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">푸시 알림 <span class="vs">vs</span> 인앱 알림 <span class="en">Push notification vs In-app notification</span></h2>
+        <p class="desc"><strong>푸시 알림은 앱을 열지 않은 사용자에게 기기가 보여 주는 알림</strong>이고, <strong>인앱 알림은 앱을 쓰는 중에 앱 화면 안에서 보여 주는 알림</strong>입니다. 앞은 운영체제가 보여주고, 뒤는 앱이 직접 그립니다.</p>
+        <p class="when"><b>이렇게 구분</b>잠금 화면이나 상단 알림창에 뜨면 푸시, 앱 안의 배너·알림 센터·벨 아이콘이면 인앱 알림입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>새 메시지는 푸시 알림으로 보내고, 앱을 쓰는 중에는 상단에 인앱 알림 배너로 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>푸시는 사용자의 허락이 있어야 보낼 수 있고, 한 번 거절하면 다시 묻기 어렵습니다. 권한을 묻기 전에 왜 필요한지 먼저 보여주세요. 같은 소식을 푸시와 인앱 둘 다로 보내면 앱을 쓰는 중에 중복으로 울립니다. 푸시를 눌렀을 때 관련 화면으로 곧바로 연결되는지(딥링크)도 설계에 넣어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="toggle-segment">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="d-col" style="align-items:center;gap:8px"><b style="font-size:12px">알림</b><label><input type="checkbox" class="sr" aria-label="알림 켜기"><span class="sw"></span></label></div><span class="d-cap">눌러 보세요: 켜기/끄기</span></div><div class="mid">vs</div><div class="side"><div class="d-col" style="align-items:center;gap:8px"><b style="font-size:12px">청구 주기</b><div class="sg"><label><input type="radio" name="sgx" class="sr" checked><span>월간</span></label><label><input type="radio" name="sgx" class="sr"><span>연간</span></label></div></div><span class="d-cap">눌러 보세요: 둘 중 선택</span></div></div></div>
+      <div class="body">
+        <p class="num">13</p>
+        <h2 class="term-name">토글 <span class="vs">vs</span> 세그먼트 <span class="en">Toggle vs Segmented control</span></h2>
+        <p class="desc"><strong>토글은 하나의 설정을 켜거나 끄는 부품</strong>이고, <strong>세그먼트는 이름이 붙은 선택지 중 하나를 고르는 부품</strong>입니다. 켜짐/꺼짐이 곧 답이면 토글입니다.</p>
+        <p class="when"><b>이렇게 구분</b>"알림을 받는다/안 받는다"처럼 한 가지를 켜고 끄면 토글, "월간/연간"처럼 서로 다른 이름의 선택지를 고르면 세그먼트입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>알림 설정은 토글로, 요금 주기는 월간·연간 세그먼트 컨트롤로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>"켜기/끄기"를 세그먼트로 만드는 실수가 흔한데, 어느 쪽이 지금 상태인지 헷갈려 오히려 느려집니다. 토글은 누르는 즉시 적용돼야 하고, 저장 버튼이 따로 필요하다면 체크박스가 맞습니다. 세그먼트는 선택지가 두세 개를 넘어가면 글자가 잘려서 탭이나 드롭다운으로 바꿔야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="carousel-slider">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="cwin"><div class="ctr"><i></i><i></i><i></i></div></div><span class="d-cap">캐러셀: 칸이 넘어감</span></div><div class="mid">vs</div><div class="side"><div class="d-col" style="align-items:center;gap:6px"><input type="range" class="rg" min="0" max="100" value="40" aria-label="음량"><span class="d-cap">음량</span></div><span class="d-cap">눌러 보세요: 값을 고름</span></div></div></div>
+      <div class="body">
+        <p class="num">14</p>
+        <h2 class="term-name">캐러셀 <span class="vs">vs</span> 슬라이더 <span class="en">Carousel vs Slider</span></h2>
+        <p class="desc">한국어로 둘 다 "슬라이드"라 불려 헷갈립니다. <strong>캐러셀은 여러 장을 옆으로 넘겨 보는 영역</strong>이고, <strong>슬라이더는 막대 위 손잡이를 끌어 숫자 값을 고르는 입력</strong>입니다.</p>
+        <p class="when"><b>이렇게 구분</b>배너나 사진을 넘겨 보게 하면 캐러셀, 음량·밝기·가격 범위를 고르게 하면 슬라이더(range)입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>메인 배너는 점 표시가 있는 캐러셀로 만들고, 가격 필터는 값을 끌어서 정하는 슬라이더로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>"슬라이더 만들어줘"라고만 하면 AI가 둘 중 아무 쪽이나 만듭니다. 장면을 설명에 꼭 붙이세요. 캐러셀이 저절로 넘어가면 읽을 시간이 없으니 일시정지 수단이 필요하고, 슬라이더는 손가락이 가려 정확히 맞추기 어려우므로 현재 값을 숫자로도 보여주세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="tab-navbar">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="tbs"><input type="radio" name="tnx" id="tnx0" class="sr" checked><input type="radio" name="tnx" id="tnx1" class="sr"><input type="radio" name="tnx" id="tnx2" class="sr"><label for="tnx0">소개</label><label for="tnx1">후기</label><label for="tnx2">문의</label><div class="pn"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:80%"></div></div><div class="pn"><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:50%"></div></div><div class="pn"><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div></div></div></div><span class="d-cap">탭: 같은 화면의 내용</span></div><div class="mid">vs</div><div class="side"><div class="ph" style="padding:0 6px 0"><div class="tbs bt"><input type="radio" name="nbx" id="nbx0" class="sr" checked><input type="radio" name="nbx" id="nbx1" class="sr"><input type="radio" name="nbx" id="nbx2" class="sr"><label for="nbx0"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></label><label for="nbx1"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></label><label for="nbx2"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></label><div class="pn"><span class="screen-t">홈</span></div><div class="pn"><span class="screen-t">검색</span></div><div class="pn"><span class="screen-t">내 정보</span></div></div></div><span class="d-cap">내비게이션 바: 다른 화면으로</span></div></div></div>
+      <div class="body">
+        <p class="num">15</p>
+        <h2 class="term-name">탭 <span class="vs">vs</span> 내비게이션 바 <span class="en">Tab vs Navigation bar</span></h2>
+        <p class="desc"><strong>탭은 지금 보는 화면 안에서 내용을 바꾸고</strong>, <strong>내비게이션 바는 앱의 큰 목적지(화면)로 이동</strong>합니다. 탭은 한 주제 안의 층, 내비게이션 바는 앱의 큰 방입니다.</p>
+        <p class="when"><b>이렇게 구분</b>상품 상세 안의 소개·후기·문의 전환이면 탭, 홈·검색·내 정보처럼 앱의 주요 영역으로 이동하면 내비게이션 바입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>하단에 홈·검색·내 정보 내비게이션 바를 두고, 상세 화면 안에서는 소개·후기 탭으로 내용을 바꿔줘</q></p>
+        <p class="senior"><b>20년차 메모</b>내비게이션 바를 탭이라 부르는 사람이 많고, iOS의 "Navigation Bar"는 오히려 위쪽 제목 줄이라 용어가 어긋납니다. 하단 것은 iOS에서 탭 바, 머티리얼에서 내비게이션 바입니다. 하단 바는 항목을 3~5개로 제한하고, 현재 위치를 색만이 아니라 아이콘 채움이나 글자로도 알려 주세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="scroll-paging">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="vp"><div class="col"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div></div><span class="d-cap">스크롤: 쭉 흐름</span></div><div class="mid">vs</div><div class="side"><div class="vp"><div class="col pg"><b></b><b></b><b></b></div></div><span class="d-cap">페이지 넘김: 한 장씩</span></div></div></div>
+      <div class="body">
+        <p class="num">16</p>
+        <h2 class="term-name">스크롤 <span class="vs">vs</span> 페이지 넘김 <span class="en">Scroll vs Page flip</span></h2>
+        <p class="desc"><strong>스크롤은 손가락만큼 내용이 연속으로 움직이고</strong>, <strong>페이지 넘김은 한 장 단위로 딱 멈춰 넘어갑니다</strong>. 전자는 끝이 없는 긴 면, 후자는 쪽으로 나뉜 면입니다.</p>
+        <p class="when"><b>이렇게 구분</b>피드·기사처럼 끊김 없이 읽으면 스크롤, 전자책·온보딩·스토리처럼 한 번에 한 장이면 페이지 넘김(스냅)입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>전자책 뷰어는 한 페이지씩 넘어가는 페이지 넘김으로, 게시판 목록은 자유 스크롤로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>한 장씩 넘기는 구성에서는 지금이 몇 장째인지 알려 주는 표시가 없으면 길을 잃습니다. 스크롤 안에 페이지 넘김을 섞으면 위아래 방향이 서로 부딪쳐 제스처가 꼬입니다. 접근성 측면에서 스크린 리더와 키보드로 다음 장으로 가는 버튼도 따로 있어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="accordion-tabs">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ac"><details open><summary>배송</summary><p>2~3일 걸려요</p></details><details><summary>교환</summary><p>7일 이내</p></details><details><summary>환불</summary><p>영업일 기준</p></details></div><span class="d-cap">눌러 보세요: 여러 칸 열림</span></div><div class="mid">vs</div><div class="side"><div class="ph" style="width:116px"><div class="tbs"><input type="radio" name="acx" id="acx0" class="sr" checked><input type="radio" name="acx" id="acx1" class="sr"><input type="radio" name="acx" id="acx2" class="sr"><label for="acx0">배송</label><label for="acx1">교환</label><label for="acx2">환불</label><div class="pn"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:60%"></div></div><div class="pn"><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div></div><div class="pn"><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:50%"></div></div></div></div><span class="d-cap">눌러 보세요: 한 칸만</span></div></div></div>
+      <div class="body">
+        <p class="num">17</p>
+        <h2 class="term-name">아코디언 <span class="vs">vs</span> 탭 <span class="en">Accordion vs Tabs</span></h2>
+        <p class="desc"><strong>아코디언은 칸이 세로로 쌓여 여러 개를 동시에 펼칠 수 있고</strong>, <strong>탭은 한 번에 한 칸의 내용만 같은 자리에 보입니다</strong>. 아코디언은 위아래로 늘어나고, 탭은 제자리에서 바뀝니다.</p>
+        <p class="when"><b>이렇게 구분</b>여러 항목을 훑고 비교해야 하거나 모바일이면 아코디언, 항목이 몇 개 안 되고 한 번에 하나만 봐도 되면 탭입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>FAQ는 질문을 누르면 펼쳐지는 아코디언으로, 상품 상세의 정보는 상단 탭으로 나눠줘</q></p>
+        <p class="senior"><b>20년차 메모</b>탭 이름이 5개를 넘거나 내용이 길어 비교가 필요하면 탭이 오히려 불편합니다. 아코디언은 하나를 열면 나머지가 닫히는 방식과 모두 열 수 있는 방식 중 어느 쪽인지 정해야 합니다. 검색으로 들어온 방문자가 숨겨진 칸 안의 글을 찾을 수 없는 문제도 있으니, 중요한 정보를 접어 두지 마세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="popover-dropdown">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="d-col col130"><details class="pv"><summary class="d-btn soft" style="width:100px">정렬</summary><div class="pl"><span class="o">최신순</span><span class="o">인기순</span><span class="o">가격순</span></div></details></div><span class="d-cap">눌러 보세요: 선택지 목록</span></div><div class="mid">vs</div><div class="side"><div class="d-col col130"><details class="pv"><summary class="d-btn soft" style="width:100px">필터</summary><div class="pl"><b>가격 범위</b><input type="range" class="rg" style="width:94px" aria-label="가격"><span class="d-btn" style="min-height:24px;font-size:11px">적용</span></div></details></div><span class="d-cap">눌러 보세요: 자유로운 내용</span></div></div></div>
+      <div class="body">
+        <p class="num">18</p>
+        <h2 class="term-name">팝오버 <span class="vs">vs</span> 드롭다운 <span class="en">Popover vs Dropdown</span></h2>
+        <p class="desc"><strong>드롭다운은 눌렀을 때 선택지 목록이 펼쳐지는 것</strong>이고, <strong>팝오버는 버튼 옆에 뜨는 작은 창에 글·입력·버튼 같은 자유로운 내용이 들어갑니다</strong>.</p>
+        <p class="when"><b>이렇게 구분</b>항목만 나열해 하나를 고르게 하면 드롭다운, 안에 슬라이더나 설명·버튼을 넣어야 하면 팝오버입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>정렬은 항목만 보이는 드롭다운으로, 필터는 슬라이더와 적용 버튼이 들어가는 팝오버로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>팝오버 안에 입력창이 있으면 바깥을 눌렀을 때 입력 중인 값이 날아가지 않는지 확인하세요. 둘 다 화면 끝에서는 잘리니 아래 공간이 모자라면 위로 열리게 해야 합니다. 모바일에서 팝오버는 작은 화면을 가려서 보통 바텀시트로 바꿉니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="dot-count-badge">
+      <div class="demo"><div class="d-pair"><div class="side"><span class="nb"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:30px;height:30px"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg><i class="dt"></i></span><span class="d-cap">점: 새 것이 있음</span></div><div class="mid">vs</div><div class="side"><span class="nb"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:30px;height:30px"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg><i class="cn">3</i></span><span class="d-cap">숫자: 몇 개인지</span></div></div></div>
+      <div class="body">
+        <p class="num">19</p>
+        <h2 class="term-name">알림 점 <span class="vs">vs</span> 숫자 배지 <span class="en">Notification dot vs Count badge</span></h2>
+        <p class="desc"><strong>알림 점은 "새로운 것이 있다"는 사실만</strong>, <strong>숫자 배지는 "몇 개 있다"까지 알려 줍니다</strong>. 점은 더 조용하고 숫자는 더 구체적입니다.</p>
+        <p class="when"><b>이렇게 구분</b>개수가 중요하지 않거나 전부 읽을 부담을 주고 싶지 않으면 점, 처리할 일이 몇 건인지가 의미 있으면 숫자 배지입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>새 글이 있는 탭에는 빨간 점을, 읽지 않은 메시지 수는 숫자 배지로 아이콘 모서리에 달아줘</q></p>
+        <p class="senior"><b>20년차 메모</b>숫자 배지는 숫자가 계속 쌓이면 사용자가 포기하고 무시하게 되니, 읽는 즉시 줄어드는지부터 확인하세요. 점은 색에만 의존하므로 접근성 이름("새 알림 있음")을 따로 붙여야 합니다. 앱 아이콘 배지는 운영체제 권한이 필요하고 서비스 안의 배지와 숫자가 어긋나기 쉽습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="divider-whitespace">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="rows ln"><div class="r"><i></i><div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:50%"></div></div></div><div class="r"><i></i><div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:50%"></div></div></div><div class="r"><i></i><div><div class="d-bar " style="width:85%"></div><div class="d-bar " style="width:40%"></div></div></div></div><span class="d-cap">구분선: 선으로 나눔</span></div><div class="mid">vs</div><div class="side"><div class="rows sp"><div class="r"><i></i><div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:50%"></div></div></div><div class="r"><i></i><div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:50%"></div></div></div><div class="r"><i></i><div><div class="d-bar " style="width:85%"></div><div class="d-bar " style="width:40%"></div></div></div></div><span class="d-cap">여백: 빈 곳으로 나눔</span></div></div></div>
+      <div class="body">
+        <p class="num">20</p>
+        <h2 class="term-name">구분선 <span class="vs">vs</span> 여백 <span class="en">Divider vs Whitespace</span></h2>
+        <p class="desc">덩어리를 나누는 두 가지 방법입니다. <strong>구분선은 가는 선을 그어 나누고</strong>, <strong>여백은 아무것도 안 그린 빈 공간의 넓이로 나눕니다</strong>. 선은 또렷하고 여백은 가볍습니다.</p>
+        <p class="when"><b>이렇게 구분</b>항목이 빽빽하고 틀림없이 나눠야 하면 구분선, 그룹 사이만 느슨하게 갈라도 되면 여백입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>목록 항목 사이에는 얇은 구분선을, 섹션 사이에는 선 없이 여백으로만 구분해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>선을 너무 많이 쓰면 화면이 표처럼 갑갑해집니다. 먼저 여백으로 나눠 보고, 부족할 때 선을 더하는 순서가 안전합니다. 연한 회색 선은 어떤 모니터에서는 아예 보이지 않으니 배경과의 대비를 확인하세요. 구분선은 개발에서 접근성 트리에도 올라가므로 장식이면 숨김 처리가 필요합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="inline-toast">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="d-bar " style="width:40%"></div><div class="inp"></div><div class="msg">이메일 형식이 아니에요</div></div><span class="d-cap">인라인: 그 자리에 남음</span></div><div class="mid">vs</div><div class="side"><div class="ph"><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="toast">저장했어요</div></div><span class="d-cap">토스트: 잠깐 뜸</span></div></div></div>
+      <div class="body">
+        <p class="num">21</p>
+        <h2 class="term-name">인라인 메시지 <span class="vs">vs</span> 토스트 <span class="en">Inline message vs Toast</span></h2>
+        <p class="desc"><strong>인라인 메시지는 문제가 생긴 자리 바로 옆에 붙어 고칠 때까지 남고</strong>, <strong>토스트는 화면 가장자리에 잠깐 떠서 알리고 스스로 사라집니다</strong>.</p>
+        <p class="when"><b>이렇게 구분</b>사용자가 읽고 고쳐야 하면 인라인 메시지, 이미 끝난 일을 가볍게 알리면 토스트입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>입력 오류는 칸 아래 인라인 메시지로, 저장 완료는 하단 토스트로 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>중요한 오류를 토스트로만 알리면 몇 초 만에 사라져 놓친 사용자는 영영 원인을 모릅니다. 인라인 메시지는 스크린 리더가 즉시 읽도록 알림 역할을 붙이고, 색뿐 아니라 글자와 아이콘으로도 오류임을 표시해야 합니다. 토스트에 "실행 취소" 같은 버튼을 넣을 때는 시간을 충분히 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="lightbox-modal">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="thumbs"><i></i><i></i><i></i><i></i></div><div class="lbx"><div class="big"></div><span class="xx"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:14px;height:14px"><path d="M6 6l12 12M18 6L6 18"/></svg></span></div></div><span class="d-cap">라이트박스: 크게 보기</span></div><div class="mid">vs</div><div class="side"><div class="ph"><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:60%"></div><div class="dim"></div><div class="bx"><div class="fldm"></div><div class="mb g"></div><div class="mb" style="width:60%"></div></div></div><span class="d-cap">모달: 입력·확인</span></div></div></div>
+      <div class="body">
+        <p class="num">22</p>
+        <h2 class="term-name">라이트박스 <span class="vs">vs</span> 모달 <span class="en">Lightbox vs Modal</span></h2>
+        <p class="desc">둘 다 뒤를 막고 위에 뜨지만 <strong>라이트박스는 사진·영상을 크게 감상하는 용도로 어두운 배경에 콘텐츠만 두고</strong>, <strong>모달은 폼이나 확인처럼 사용자에게 무언가를 하게 합니다</strong>.</p>
+        <p class="when"><b>이렇게 구분</b>썸네일을 눌러 큰 그림을 보면 라이트박스, 확인·입력을 받는 창이면 모달입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>갤러리 사진을 누르면 어두운 배경 위에 크게 보이고 좌우 화살표와 닫기가 있는 라이트박스로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>라이트박스는 모바일에서 핀치 줌과 스와이프로 넘기기가 기대되는 동작입니다. 뒤로가기 버튼이 닫기로 동작해야 하는 것도 자주 놓칩니다. 그림에는 대체 텍스트가 필요하고, 닫기 버튼을 작은 X 하나로만 두면 손가락으로 누르기 어렵습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="header-appbar-navbar">
+      <div class="demo"><div class="tri"><div class="side"><div class="ph s"><div class="hd hl"><span class="lg"></span><span class="lk"><i></i><i></i><i></i></span></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div></div><span class="d-cap">헤더: 웹 맨 위</span></div><div class="side"><div class="ph s"><div class="ab hl"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><path d="M15 5l-7 7 7 7"/></svg><span class="d-bar dark" style="width:30px"></span><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div></div><span class="d-cap">앱 바: 앱 맨 위</span></div><div class="side"><div class="ph s"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="nv hl"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div></div><span class="d-cap">내비 바: 이동 줄</span></div></div></div>
+      <div class="body">
+        <p class="num">23</p>
+        <h2 class="term-name">헤더 <span class="vs">vs</span> 앱 바 <span class="vs">vs</span> 내비게이션 바 <span class="en">Header · App bar · Navigation bar</span></h2>
+        <p class="desc">화면 가장자리의 줄이라는 점은 같지만 쓰이는 곳이 다릅니다. <strong>헤더는 웹페이지 맨 위의 로고·메뉴 영역</strong>, <strong>앱 바는 앱 화면 맨 위의 제목·뒤로가기·액션 줄</strong>, <strong>내비게이션 바는 주요 목적지로 이동하는 막대</strong>입니다.</p>
+        <p class="when"><b>이렇게 구분</b>웹에서 로고와 링크가 가로로 놓이면 헤더, 앱 화면 위에서 제목과 뒤로가기가 있으면 앱 바, 홈·검색처럼 이동 항목들이 줄지어 있으면 내비게이션 바입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>웹은 로고와 메뉴가 있는 헤더로, 앱 화면은 뒤로가기와 제목이 있는 앱 바로, 하단에는 내비게이션 바를 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>같은 줄을 개발자는 header, 디자이너는 앱 바, 기획자는 내비라고 불러 회의가 엇갈립니다. 특히 iOS에서 Navigation Bar는 위쪽 제목 줄을 뜻해서, 아래 이동 막대를 말하는 안드로이드 쪽 용어와 반대입니다. 용어는 "위쪽 줄/아래쪽 줄"로 풀어서 한 번 더 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="footer-tabbar">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph clip"><div class="sc"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="ft">회사 정보</div></div></div><span class="d-cap">푸터: 글 끝에 있음</span></div><div class="mid">vs</div><div class="side"><div class="ph clip"><div class="sc"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div></div><div class="tbar"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div></div><span class="d-cap">탭 바: 늘 따라옴</span></div></div></div>
+      <div class="body">
+        <p class="num">24</p>
+        <h2 class="term-name">푸터 <span class="vs">vs</span> 탭 바 <span class="en">Footer vs Tab bar</span></h2>
+        <p class="desc"><strong>푸터는 페이지 내용 맨 끝에 놓인 정보 영역</strong>이라 끝까지 내려야 보이고, <strong>탭 바는 화면 아래에 붙어서 스크롤해도 늘 보입니다</strong>.</p>
+        <p class="when"><b>이렇게 구분</b>회사 정보·약관·저작권처럼 끝에서 찾는 글이면 푸터, 언제든 눌러 이동해야 하는 주요 메뉴면 탭 바입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>웹 페이지 맨 아래에는 회사 정보와 약관 링크가 있는 푸터를, 앱에는 항상 보이는 하단 탭 바를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>무한 스크롤 목록 아래의 푸터는 영영 닿지 않아서 약관 링크가 사실상 사라집니다. 푸터를 고정하든가 링크를 다른 곳에 두세요. 탭 바는 iPhone 하단 홈 인디케이터와 겹치지 않도록 안전 영역을 비워 둬야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="form-wizard">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="fldm"></div><div class="fldm"></div><div class="fldm"></div><div class="fldm"></div><div class="mb" style="height:16px"></div></div><span class="d-cap">폼: 한 번에 다 보임</span></div><div class="mid">vs</div><div class="side"><div class="ph"><div class="tbs"><input type="radio" name="wzx" id="wzx0" class="sr" checked><input type="radio" name="wzx" id="wzx1" class="sr"><input type="radio" name="wzx" id="wzx2" class="sr"><div class="pn"><div class="wzp"><span class="stp">1/3 이름</span><div class="fldm"></div><label for="wzx1" class="d-btn">다음</label></div></div><div class="pn"><div class="wzp"><span class="stp">2/3 연락처</span><div class="fldm"></div><label for="wzx2" class="d-btn">다음</label></div></div><div class="pn"><div class="wzp"><span class="stp">3/3 확인</span><div class="fldm"></div><label for="wzx0" class="d-btn soft">처음으로</label></div></div></div></div><span class="d-cap">위저드: 단계별로</span></div></div></div>
+      <div class="body">
+        <p class="num">25</p>
+        <h2 class="term-name">폼 <span class="vs">vs</span> 위저드 <span class="en">Form vs Wizard</span></h2>
+        <p class="desc"><strong>폼은 입력 칸을 한 화면에 모두 펼치고</strong>, <strong>위저드는 입력을 여러 단계로 쪼개 한 번에 한 단계씩 보여 줍니다</strong>.</p>
+        <p class="when"><b>이렇게 구분</b>칸이 대여섯 개 이하면 폼, 칸이 많거나 단계마다 설명이 필요하거나 앞 답에 따라 다음 질문이 달라지면 위저드입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>배송지 입력은 한 화면 폼으로 만들고, 회원가입은 이름→연락처→확인의 3단계 위저드로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>위저드는 이전 단계로 돌아가 고쳐도 입력한 값이 남아 있어야 합니다. 이걸 놓치면 가장 화가 나는 화면이 됩니다. 단계가 많으면 현재 위치와 남은 단계를 위쪽에 보여 주세요. 칸이 몇 개 안 되는데 위저드로 쪼개면 오히려 클릭 수만 늘립니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="hyperlink-anchor">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="pgf a"><div class="d-bar " style="width:50%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><span class="lnk">자세히 보기</span></div><div class="pgf b"><div class="d-bar dark" style="width:70%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:60%"></div></div></div><span class="d-cap">하이퍼링크: 다른 문서로</span></div><div class="mid">vs</div><div class="side"><div class="ph an"><div class="chips"><i>소개</i><i>가격</i><i>문의</i></div><div class="sec"><div class="d-bar " style="width:60%"></div><b></b></div><div class="sec"><div class="d-bar " style="width:60%"></div><b></b></div><div class="sec"><div class="d-bar " style="width:60%"></div><b></b></div></div><span class="d-cap">앵커: 같은 문서 속 자리로</span></div></div></div>
+      <div class="body">
+        <p class="num">26</p>
+        <h2 class="term-name">하이퍼링크 <span class="vs">vs</span> 앵커 <span class="en">Hyperlink vs Anchor</span></h2>
+        <p class="desc"><strong>하이퍼링크는 눌러서 다른 문서·페이지·파일로 가는 연결 전체</strong>를 가리키고, <strong>앵커는 한 페이지 안의 특정 위치로 곧장 이동하는 연결</strong>을 가리킵니다. HTML에서는 이 둘 모두 a(anchor) 태그로 만듭니다.</p>
+        <p class="when"><b>이렇게 구분</b>누르면 주소가 바뀌고 다른 화면이 열리면 하이퍼링크, 같은 페이지에서 소개·가격 같은 구간으로 스크롤만 되면 앵커 링크입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>긴 페이지 위쪽에 소개·가격·문의 앵커 링크를 두고, 누르면 해당 구간으로 부드럽게 이동하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>앵커로 이동한 자리가 고정 헤더에 가려 제목이 안 보이는 사고가 가장 흔합니다. 스크롤 여백(scroll-margin)을 헤더 높이만큼 주세요. 링크 글자가 "여기"나 "더보기"뿐이면 스크린 리더로 링크 목록만 훑는 사용자는 어디로 가는지 알 수 없으니 행선지를 글자로 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="sticky-fixed">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="sc2"><div class="hero"></div><div class="bar st">메뉴</div><div class="ln"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div></div></div><span class="d-cap">스티키: 가다가 붙음</span></div><div class="mid">vs</div><div class="side"><div class="fxw"><div class="bar" style="background:var(--p);height:20px;color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center">메뉴</div><div class="sc2"><div class="hero"></div><div class="ln"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div></div></div></div><span class="d-cap">픽스드: 처음부터 고정</span></div></div></div>
+      <div class="body">
+        <p class="num">27</p>
+        <h2 class="term-name">스티키 <span class="vs">vs</span> 픽스드 <span class="en">Sticky vs Fixed</span></h2>
+        <p class="desc"><strong>스티키는 처음엔 제자리에 있다가 스크롤로 위에 닿으면 거기에 붙고</strong>, <strong>픽스드는 처음부터 화면의 정해진 자리에 못 박혀 스크롤과 상관없이 늘 같은 곳에 있습니다</strong>. 둘 다 스크롤해 보면 차이가 보입니다.</p>
+        <p class="when"><b>이렇게 구분</b>원래 위치가 의미 있고 지나가면 따라붙게 하고 싶으면 스티키, 어디에 있든 항상 그 자리여야 하면 픽스드입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>표 머리글은 스크롤하면 위에 붙는 스티키로, 채팅 입력창은 화면 아래에 고정된 픽스드로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>고정 요소가 늘어나면 모바일에서 화면 대부분을 가려 정작 내용이 보이는 영역이 좁아집니다. 가로로 누운 화면에서는 특히 심합니다. 픽스드 요소는 키보드가 올라올 때 입력창을 가리거나 밀려 올라가는 문제가 있으니 실제 기기에서 확인하세요. 스티키는 부모 영역이 끝나면 함께 사라지는 점을 알아 두어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="overlay-scrim">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="ovl"><div class="mb g"></div><div class="mb g" style="width:70%"></div><div class="mb" style="width:50%"></div></div></div><span class="d-cap">오버레이: 위에 겹친 것</span></div><div class="mid">vs</div><div class="side"><div class="ph"><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="scr"></div></div><span class="d-cap">스크림: 뒤를 덮는 막</span></div></div></div>
+      <div class="body">
+        <p class="num">28</p>
+        <h2 class="term-name">오버레이 <span class="vs">vs</span> 스크림 <span class="en">Overlay vs Scrim</span></h2>
+        <p class="desc"><strong>오버레이는 화면 위에 겹쳐 뜨는 모든 층을 부르는 넓은 말</strong>(메뉴·툴팁·모달 등)이고, <strong>스크림은 그 뒤쪽 내용을 어둡게 덮어 주의를 모으는 반투명 막</strong>입니다. 스크림도 오버레이의 일종입니다.</p>
+        <p class="when"><b>이렇게 구분</b>화면 위에 뭐가 겹쳐 뜨는지 이야기하면 오버레이, 그 뒤를 어둡게 눌러 놓는 막만 가리키면 스크림입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>시트가 열릴 때 뒤를 덮는 스크림을 반투명 검정으로 깔고, 스크림을 누르면 닫히게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>스크림을 누르면 닫혀야 하는지(바깥 누르기)를 정해 두지 않으면 작업 중이던 입력이 날아가는 사고가 납니다. 중요한 확인 창은 바깥을 눌러도 안 닫히게 하세요. 막 뒤 화면은 키보드로도 이동하지 못하게 막아야 합니다. 스크림 투명도는 40~60% 정도에서 뒤 내용이 어렴풋이 보이도록 잡는 것이 흔합니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

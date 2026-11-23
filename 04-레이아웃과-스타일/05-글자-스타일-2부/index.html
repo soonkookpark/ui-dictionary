@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="글자 스타일 9가지 2부 — 움직이는 예시로 보는 UI 용어 사전">
+<title>글자 스타일 9가지 2부 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 글자 견본 무대. 확대(zoom) 전 기준 280x170 안에 "TYPE" 한 단어를 그린다 */
+.tp { position: relative; width: 280px; height: 170px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; font-size: 64px; line-height: 1; text-align: center; }
+.tp > * { position: relative; }
+.sans { font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; }
+.serif { font-family: Georgia, "Times New Roman", serif; }
+.mono { font-family: Consolas, "Courier New", monospace; }
+.imp { font-family: Impact, "Arial Narrow Bold", "Arial Black", sans-serif; }
+
+
+/* 01 브루탈리즘 핵심: 매우 큰 굵은 글꼴(font-size 크게 + Impact) + 음수 자간·좁은 줄간격으로 화면을 가득 채우고, 장식은 없이 기본 색(흰 종이·검정)만 */
+.brut { background: #e9e5d9; }
+.brut b { font: 400 132px/.78 Impact, "Arial Black", sans-serif; letter-spacing: -.01em; color: #000; }
+.brut small { position: absolute; left: 8px; top: 6px; font: 10px/1 Consolas, "Courier New", monospace; color: #000; }
+.brut small + small { left: auto; right: 8px; }
+
+/* 02 네오 브루탈리즘 핵심: 두꺼운 검정 테두리(border) + 번지지 않는 단단한 그림자(box-shadow blur 0) + 원색 면, 올려 보면 눌린다(hover) */
+.nbru { background: #fff; border: 4px solid #000; border-radius: 12px; font-size: 60px; }
+.nbru small { position: absolute; left: 10px; top: 8px; font: 700 10px/1 Consolas, "Courier New", monospace; }
+.nbru b { display: block; padding: 8px 18px; background: #ffd400; border: 4px solid #000; box-shadow: 6px 6px 0 #000; font: 900 56px/1 "Arial Black", Impact, Arial, sans-serif; transform: rotate(-2deg); transition: transform .12s, box-shadow .12s; cursor: pointer; }
+.nbru b:hover { transform: rotate(-2deg) translate(4px, 4px); box-shadow: 2px 2px 0 #000; }
+
+/* 03 스위스 스타일 핵심: 왼쪽 맞춤(text-align: left) + 격자 선 + 헬베티카 계열 산세리프 + 빨강 한 가지 포인트 */
+.swiss { background: #f2eee3; place-items: center start; padding-left: 52px; text-align: left; }
+.swiss::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 26px; background: #e4261b; }
+.swiss::after { content: ""; position: absolute; left: 26px; right: 0; top: 0; bottom: 0; background: repeating-linear-gradient(0deg, transparent 0 33px, rgba(0, 0, 0, .12) 33px 34px); }
+.swiss div { z-index: 1; }
+.swiss b { display: block; font: 700 64px/1 Helvetica, "Helvetica Neue", Arial, sans-serif; letter-spacing: -.03em; color: #111; }
+.swiss span { display: block; margin-top: 6px; font: 600 10px/1.5 Helvetica, Arial, sans-serif; color: #111; }
+
+/* 04 에디토리얼 핵심: 대비가 큰 세리프 큰 제목 + 일부 글자만 색·이탤릭 + 가는 선과 작은 호수 표기 */
+.edit { background: #efe6d6; }
+.edit::before { content: ""; position: absolute; left: 24px; right: 24px; top: 22px; height: 1px; background: #1c1410; }
+.edit b { font: 400 76px/1 Georgia, "Times New Roman", serif; letter-spacing: -.03em; color: #1c1410; }
+.edit b i { color: #b4311f; }
+.edit small { position: absolute; bottom: 22px; left: 0; right: 0; font: italic 11px/1 Georgia, serif; color: #b4311f; }
+
+/* 05 청키 핵심: 굵은 둥근 글꼴 + 굵은 외곽선(-webkit-text-stroke + paint-order) 으로 더 두껍게 + 단단한 아래 그림자 */
+.chunky { background: #ffdcb8; }
+.chunky b { font: 900 76px/1 "Arial Rounded MT Bold", "Arial Black", Arial, sans-serif; letter-spacing: -.02em; color: #ff6a1a; -webkit-text-stroke: 8px #ff6a1a; paint-order: stroke fill; text-shadow: 0 6px 0 #c2410c; }
+
+/* 06 레트로 그루비 핵심: 동심원 줄무늬(repeating-radial-gradient) 배경 + 굵은 세리프 이탤릭 + 겹겹이 밀린 색 그림자 */
+.groovy { background: repeating-radial-gradient(circle at 50% 135%, #f5a623 0 14px, #e8742a 14px 28px, #b9461a 28px 42px, #f6e2b0 42px 56px); }
+.groovy b { font: italic 900 76px/1 "Cooper Black", "Bookman Old Style", Georgia, serif; color: #5a2a0c; letter-spacing: -.02em; text-shadow: 2px 2px 0 #f6e2b0, 4px 4px 0 #e8742a, 6px 6px 0 #b9461a; animation: sway 4s ease-in-out infinite; }
+@keyframes sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(2deg); } }
+
+/* 07 Y2K 크롬 핵심: 위아래로 번갈아 밝고 어두운 띠 그라데이션(background-clip: text)으로 금속 반사를 만들고 + 푸른 빛 번짐(drop-shadow) + 반짝이 */
+.y2k { background: radial-gradient(circle at 50% 40%, #20357c, #0a1030 75%); }
+.y2k b { font: italic 900 70px/1 "Arial Black", Arial, sans-serif; letter-spacing: .01em; padding-right: 6px; background: linear-gradient(180deg, #fff 0 32%, #a9bff0 44%, #26418f 50%, #cfe0ff 58%, #fff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 7px #6ea0ff); }
+.y2k i { position: absolute; left: 30px; top: 22px; width: 18px; height: 18px; background: #fff; clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%); animation: spark 2.6s ease-in-out infinite; }
+@keyframes spark { 0%, 50%, 100% { transform: scale(.3); opacity: .4; } 75% { transform: scale(1.1) rotate(45deg); opacity: 1; } }
+
+/* 08 픽셀 핵심: 5x7 점 도트를 box-shadow 로 하나씩 찍어 만든 글자(폰트 없음) + 어두운 줄무늬(scanline) 배경 + 어긋난 그림자 */
+.pix { background: repeating-linear-gradient(0deg, #1b1236 0 3px, #241748 3px 6px); }
+.pxw { width: 184px; height: 56px; position: relative; }
+.pxw i { position: absolute; left: 0; top: 0; width: 8px; height: 8px; box-shadow: 0px 0px 0 #fff27a,8px 0px 0 #fff27a,16px 0px 0 #fff27a,24px 0px 0 #fff27a,32px 0px 0 #fff27a,16px 8px 0 #ffe14d,16px 16px 0 #ffcf3a,16px 24px 0 #ffb52e,16px 32px 0 #ff9a26,16px 40px 0 #ff7f22,16px 48px 0 #ff6420,48px 0px 0 #fff27a,80px 0px 0 #fff27a,48px 8px 0 #ffe14d,80px 8px 0 #ffe14d,56px 16px 0 #ffcf3a,72px 16px 0 #ffcf3a,64px 24px 0 #ffb52e,64px 32px 0 #ff9a26,64px 40px 0 #ff7f22,64px 48px 0 #ff6420,96px 0px 0 #fff27a,104px 0px 0 #fff27a,112px 0px 0 #fff27a,120px 0px 0 #fff27a,96px 8px 0 #ffe14d,128px 8px 0 #ffe14d,96px 16px 0 #ffcf3a,128px 16px 0 #ffcf3a,96px 24px 0 #ffb52e,104px 24px 0 #ffb52e,112px 24px 0 #ffb52e,120px 24px 0 #ffb52e,96px 32px 0 #ff9a26,96px 40px 0 #ff7f22,96px 48px 0 #ff6420,144px 0px 0 #fff27a,152px 0px 0 #fff27a,160px 0px 0 #fff27a,168px 0px 0 #fff27a,176px 0px 0 #fff27a,144px 8px 0 #ffe14d,144px 16px 0 #ffcf3a,144px 24px 0 #ffb52e,152px 24px 0 #ffb52e,160px 24px 0 #ffb52e,168px 24px 0 #ffb52e,144px 32px 0 #ff9a26,144px 40px 0 #ff7f22,144px 48px 0 #ff6420,152px 48px 0 #ff6420,160px 48px 0 #ff6420,168px 48px 0 #ff6420,176px 48px 0 #ff6420,4px 4px 0 #5a1f6e,12px 4px 0 #5a1f6e,20px 4px 0 #5a1f6e,28px 4px 0 #5a1f6e,36px 4px 0 #5a1f6e,20px 12px 0 #5a1f6e,20px 20px 0 #5a1f6e,20px 28px 0 #5a1f6e,20px 36px 0 #5a1f6e,20px 44px 0 #5a1f6e,20px 52px 0 #5a1f6e,52px 4px 0 #5a1f6e,84px 4px 0 #5a1f6e,52px 12px 0 #5a1f6e,84px 12px 0 #5a1f6e,60px 20px 0 #5a1f6e,76px 20px 0 #5a1f6e,68px 28px 0 #5a1f6e,68px 36px 0 #5a1f6e,68px 44px 0 #5a1f6e,68px 52px 0 #5a1f6e,100px 4px 0 #5a1f6e,108px 4px 0 #5a1f6e,116px 4px 0 #5a1f6e,124px 4px 0 #5a1f6e,100px 12px 0 #5a1f6e,132px 12px 0 #5a1f6e,100px 20px 0 #5a1f6e,132px 20px 0 #5a1f6e,100px 28px 0 #5a1f6e,108px 28px 0 #5a1f6e,116px 28px 0 #5a1f6e,124px 28px 0 #5a1f6e,100px 36px 0 #5a1f6e,100px 44px 0 #5a1f6e,100px 52px 0 #5a1f6e,148px 4px 0 #5a1f6e,156px 4px 0 #5a1f6e,164px 4px 0 #5a1f6e,172px 4px 0 #5a1f6e,180px 4px 0 #5a1f6e,148px 12px 0 #5a1f6e,148px 20px 0 #5a1f6e,148px 28px 0 #5a1f6e,156px 28px 0 #5a1f6e,164px 28px 0 #5a1f6e,172px 28px 0 #5a1f6e,148px 36px 0 #5a1f6e,148px 44px 0 #5a1f6e,148px 52px 0 #5a1f6e,156px 52px 0 #5a1f6e,164px 52px 0 #5a1f6e,172px 52px 0 #5a1f6e,180px 52px 0 #5a1f6e; }
+
+/* 09 키네틱 핵심: 글자마다 span 으로 쪼개 animation-delay 를 조금씩 엇갈려 튀게 하고(transform), 가는 글자와 굵은 글자를 섞는다 */
+.kin { background: #2f7bff; }
+.kin b { display: flex; font: 300 72px/1 Pretendard, Arial, sans-serif; color: #fff; }
+.kin b span { display: inline-block; animation: hop 2.8s ease-in-out infinite; }
+.kin b span:nth-child(2) { animation-delay: .12s; } .kin b span:nth-child(3) { animation-delay: .24s; }
+.kin b span:nth-child(4) { animation-delay: .36s; font-weight: 900; }
+@keyframes hop { 0%, 40%, 100% { transform: none; } 15% { transform: translateY(-16px) scaleY(1.12); } 28% { transform: translateY(2px) scaleY(.9); } }
+
+/* 추가: 가독성 vs 판독성 — 글자 하나를 알아보는 것과 글을 편하게 읽는 것 */
+.rd2 { font-size: 30px; font-weight: 700; letter-spacing: .08em; color: var(--ink); }
+.rd2 span { font-family: Arial, sans-serif; }
+.para { width: 120px; font-size: 11px; text-align: left; color: var(--ink); }
+.para.tight { line-height: 1.05; } .para.loose { line-height: 1.7; }
+/* 추가: 커닝과 자간 — font-kerning 은 글자 쌍마다, letter-spacing 은 전체 간격 */
+.kn { font: 700 34px/1 Arial, Helvetica, sans-serif; color: var(--ink); }
+.kn.k0 { font-kerning: none; } .kn.k1 { font-kerning: normal; } .kn.k2 { letter-spacing: .22em; }
+.krow { display: grid; grid-template-columns: 76px auto; gap: 10px; align-items: center; }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">레이아웃과 스타일</a><span class="sep">›</span>
+  <span>글자 스타일 9가지 2부</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>글자 스타일 9가지 2부</h1>
+    <p class="lead">굵게, 크게, 움직이게 — 글자 스타일 두 번째 묶음</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="brutalism">
+      <div class="demo"><div class="tp brut" role="img" aria-label="화면을 가득 채운 굵고 큰 검정 TYPE 글자"><small>NO DECORATION</small><small>2025</small><b>TYPE</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 굵은 글꼴로 보입니다</span></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">브루탈리즘 <span class="en">Brutalism</span></h2>
+        <p class="desc">굵고 큰 글자를 화면 가득 채우고 장식은 걷어낸 투박한 스타일입니다. 원래는 콘크리트를 그대로 드러낸 건축 양식에서 따온 이름입니다. 웹에서는 <strong>브루탈리스트 웹 디자인</strong>이라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>디자인 스튜디오·잡지·전시의 소개 화면, 개성을 강하게 드러내야 하는 포트폴리오.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>브루탈리즘 스타일로 연한 종이색 배경에 검정 굵은 TYPE 글자를 화면 가득 채우고, 모서리에 작은 고정폭 글씨 두 줄만 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>정보가 많은 서비스에서는 위계가 사라져 어디를 눌러야 하는지 모르게 됩니다. 글자는 투박하게 써도 버튼 크기, 눌림 상태, 오류 문구 같은 기본기는 그대로 지켜야 합니다. 큰 글자가 휴대폰 폭을 넘쳐 잘리는 일이 흔하니 좁은 화면에서 줄 바꿈이 되는지 먼저 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="neo-brutalism">
+      <div class="demo"><div class="tp nbru" role="img" aria-label="굵은 검정 테두리와 단단한 그림자가 있는 노란 TYPE 상자"><small>NEO / 002</small><b>TYPE</b></div><span class="d-cap" style="position:absolute;bottom:4px">올려 보세요. 그림자가 눌립니다</span></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">네오 브루탈리즘 <span class="en">Neo-brutalism</span></h2>
+        <p class="desc">브루탈리즘의 투박함을 가져오되 선명한 원색, 굵은 검정 테두리, 번지지 않는 단단한 그림자를 더해 친근하게 만든 스타일입니다. 요즘 스타트업 사이트와 노션형 도구 템플릿에서 흔히 봅니다.</p>
+        <p class="when"><b>언제 쓰나</b>개발자 도구, 스타트업 랜딩 페이지, 개성을 보여줘야 하는 가벼운 서비스의 카드와 버튼.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>네오 브루탈리즘 스타일로 두꺼운 검정 테두리와 번지지 않는 6px 그림자가 있는 노란 TYPE 상자를 만들고, 올리면 그림자가 줄며 눌리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>테두리와 그림자가 늘 선명해서 요소가 많아지면 화면이 시끄러워집니다. 그림자 있는 카드를 줄줄이 늘어놓지 말고 강조할 곳 하나에만 쓰세요. 노랑 배경에 흰 글씨를 쓰면 대비가 전혀 안 나오니 글자는 검정으로 고정하고, 눌림 상태는 키보드 포커스에서도 똑같이 보여줘야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="swiss-style">
+      <div class="demo"><div class="tp swiss" role="img" aria-label="격자와 왼쪽 맞춤 글자가 있는 스위스 스타일 Type"><div><b>Type</b><span>Grid system<br>Left aligned</span></div></div><span class="d-cap" style="position:absolute;bottom:2px">없는 글꼴은 비슷한 산세리프로 보입니다</span></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">스위스 스타일 <span class="en">Swiss style</span></h2>
+        <p class="desc">격자(그리드)에 맞춰 글자를 왼쪽 정렬하고, 헬베티카 같은 깔끔한 산세리프와 여백으로 질서를 만드는 스타일입니다. 1950~60년대 스위스에서 시작해 <strong>인터내셔널 타이포그래픽 스타일</strong>이라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>정보가 많은 문서·리포트, 대시보드, 기업 사이트의 제목과 표처럼 질서가 중요한 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>스위스 스타일로 12열 격자에 맞춰 왼쪽 정렬한 Helvetica 계열 산세리프 제목과 작은 설명 두 줄을 넣고, 빨간색은 세로 띠 하나에만 써줘</q></p>
+        <p class="senior"><b>20년차 메모</b>격자 규칙을 정하지 않고 모양만 따라 하면 그냥 심심한 화면이 됩니다. 열 개수, 여백, 글자 크기 단계를 먼저 숫자로 정하고 개발자와 공유하세요. 모든 글자를 왼쪽 맞춤하면 한 줄이 짧은 버튼·배지에서는 어색하니 가운데 맞춤이 필요한 곳은 예외로 둡니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="editorial">
+      <div class="demo"><div class="tp edit" role="img" aria-label="큰 세리프 제목과 빨간 y 글자, 호수 표기가 있는 잡지 표지 스타일"><b>T<i>y</i>pe</b><small>Issue No. 09</small></div><span class="d-cap" style="position:absolute;bottom:2px">없는 글꼴은 비슷한 세리프로 보입니다</span></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">에디토리얼 <span class="en">Editorial</span></h2>
+        <p class="desc">잡지나 신문처럼 대비가 큰 세리프 제목, 가는 구분선, 작은 호수·날짜 표기로 글을 "읽을거리"로 보이게 하는 스타일입니다. 제목 속 한두 글자만 색이나 이탤릭으로 바꾸는 장식도 자주 씁니다.</p>
+        <p class="when"><b>언제 쓰나</b>매거진·뉴스레터·블로그·브랜드 스토리 페이지, 인터뷰나 칼럼 같은 긴 글의 첫 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>에디토리얼 스타일로 베이지 배경에 큰 세리프 제목 Type, 가운데 y 만 빨간 이탤릭으로 바꾸고 위에 가는 선, 아래에 작은 호수 표기를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>세리프 제목이 모바일에서 한 줄에 서너 글자씩 쪼개지면 잡지 느낌이 아니라 깨진 화면이 됩니다. 제목 길이가 달라져도 줄 바꿈 기준을 정해 두세요. 이 스타일은 글이 있어야 어울리니 기능 중심 화면(설정, 폼)에 얹으면 겉만 화려해집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="chunky">
+      <div class="demo"><div class="tp chunky" role="img" aria-label="굵고 통통한 주황색 Type 글자"><b>Type</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 굵은 글꼴로 보입니다</span></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">청키 <span class="en">Chunky</span></h2>
+        <p class="desc">글자 획을 두껍고 뭉툭하게, 모서리는 둥글게 만든 스타일입니다. 글자 사이도 거의 붙을 만큼 좁혀서 한 덩어리처럼 보이는 것이 핵심입니다. <strong>청키 타입</strong>이라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>식품·음료 패키지, 어린이·반려동물 브랜드, 이벤트 배너, 쇼핑몰의 할인 문구.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>청키 스타일로 연한 살구색 배경에 아주 굵고 둥근 주황색 Type 글자를 자간을 좁게, 아래에 진한 주황 그림자를 붙여서 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>획이 너무 굵으면 한글의 안쪽 공간이 막혀서 "과"와 "파" 같은 글자가 뭉개집니다. 한글 제목은 반드시 실제 문장으로 확인하세요. 몇 글자짜리 제목에는 훌륭하지만 두 줄이 넘어가는 설명에 쓰면 읽기 힘들고, 주황 글자는 흰 배경에서 대비 3:1 정도라 큰 글자에만 안전합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="retro-groovy">
+      <div class="demo"><div class="tp groovy" role="img" aria-label="동심원 줄무늬 위의 갈색 굵은 이탤릭 Type 글자"><b>Type</b></div><span class="d-cap" style="position:absolute;bottom:2px;background:#f6e2b0;padding:0 4px;border-radius:4px">없는 글꼴은 비슷한 굵은 세리프로 보입니다</span></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">레트로 그루비 <span class="en">Retro groovy</span></h2>
+        <p class="desc">1970년대 히피 문화에서 온 스타일로, 물결치는 굵은 글자와 주황·갈색·겨자색 동심원 무늬가 특징입니다. 따뜻하고 낙천적인 인상을 줍니다. 쿠퍼 블랙 같은 굵은 세리프 글꼴이 대표적입니다.</p>
+        <p class="when"><b>언제 쓰나</b>카페·빵집·굿즈 브랜드, 복고 콘셉트의 이벤트, 계절 한정 상품 페이지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>레트로 그루비 스타일로 주황·갈색 동심원 줄무늬 배경에 굵은 갈색 세리프 이탤릭 Type 글자를 겹친 색 그림자와 함께 살짝 흔들리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>줄무늬 배경 위에 글자를 얹으면 줄 색과 글자색이 섞이는 지점이 생겨 읽기가 어려워집니다. 글자 뒤에 단색 띠를 깔거나 배경 줄무늬를 연하게 하세요. 따뜻한 색만 쓰니 화면 전체가 갈색으로 탁해지기 쉬워서, 크림색 같은 밝은 색을 꼭 한 가지 섞어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="y2k-chrome">
+      <div class="demo"><div class="tp y2k" role="img" aria-label="푸른 빛이 번지는 은빛 금속 TYPE 글자"><i></i><b>TYPE</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 굵은 글꼴로 보입니다</span></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">Y2K 크롬 <span class="en">Y2K chrome</span></h2>
+        <p class="desc">2000년 전후의 미래적 감성을 가져온 스타일로, 거울처럼 반짝이는 금속(크롬) 글자와 푸른 빛, 별 모양 반짝임을 씁니다. 위아래로 밝고 어두운 띠가 번갈아 나오는 것이 금속처럼 보이게 하는 핵심입니다.</p>
+        <p class="when"><b>언제 쓰나</b>패션·음악·게임 쪽 브랜드의 캠페인 배너, 젊은 층 대상의 한정 이벤트 제목.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>Y2K 크롬 스타일로 짙은 남색 배경에 은빛 금속 그라데이션 TYPE 이탤릭 글자, 푸른 빛 번짐과 반짝이는 별 하나를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>그라데이션 글자는 복사·검색·화면 읽기는 그대로 되지만, 지원하지 않는 환경에서는 글자색이 투명으로 남아 글자가 사라질 수 있습니다. 대체 글자색을 먼저 지정하세요. 유행의 수명이 짧아 상시 서비스의 핵심 화면에 쓰기보다 기간 한정 이벤트에 쓰는 것이 안전합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="pixel">
+      <div class="demo"><div class="tp pix" role="img" aria-label="도트로 찍은 노란색 TYPE 글자"><div class="pxw"><i></i></div></div><span class="d-cap" style="position:absolute;bottom:4px">단순화한 예시: 5x7 도트를 하나씩 찍었습니다</span></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">픽셀 <span class="en">Pixel</span></h2>
+        <p class="desc">글자를 네모난 도트(픽셀) 하나하나로 찍은 스타일입니다. 옛날 게임기와 화면의 글자를 떠올리게 하고, 선이 계단처럼 각져 있습니다. 이런 글꼴을 <strong>비트맵 폰트</strong>라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>게임·레트로 감성 앱, 개발자 대상 이벤트, 8비트 느낌을 살린 시작 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>픽셀 스타일로 어두운 보라 배경에 도트로 찍은 노란색 TYPE 글자를 만들고, 한 칸 어긋난 어두운 그림자와 가로 줄무늬를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>픽셀 글꼴은 정해진 크기의 정수배에서만 또렷합니다. 1.5배 같은 크기로 늘리면 도트가 뭉개져 오히려 흐려 보입니다. 한글 픽셀 글꼴은 글자 수가 많아 완성도 차이가 크니, 영문만 쓰는 제목에 한정하는 편이 안전합니다. 긴 본문에 쓰면 읽는 속도가 크게 떨어집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="kinetic">
+      <div class="demo"><div class="tp kin" role="img" aria-label="글자가 차례로 튀어 오르는 TYPE 글자"><b><span>T</span><span>Y</span><span>P</span><span>E</span></b></div><span class="d-cap" style="position:absolute;bottom:4px">움직임이 본질입니다. 얇은 글자와 굵은 글자를 섞었습니다</span></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">키네틱 <span class="en">Kinetic</span></h2>
+        <p class="desc">글자가 움직이며 의미를 전하는 스타일입니다. 크기·굵기·위치가 바뀌는 것으로 리듬과 강조를 만들며, <strong>키네틱 타이포그래피</strong>라고 부릅니다. 모션 그래픽 영상에서 먼저 발전했습니다.</p>
+        <p class="when"><b>언제 쓰나</b>앱 시작 화면, 영상 인트로, 제품 소개 페이지의 첫 문구, 노래 가사 영상.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>키네틱 타이포그래피로 파란 배경에 TYPE 글자가 왼쪽부터 차례로 튀어 오르고 마지막 E 만 굵게 보이게 해줘. 모션 줄이기 설정이면 멈추게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>읽는 글에 쓰면 사용자가 글을 읽기도 전에 움직임에 시선을 뺏깁니다. 반복은 한두 번으로 끝내고 문구는 짧게 하세요. 전정기관이 예민한 사람에게는 불편하거나 어지러울 수 있어 prefers-reduced-motion 설정이 켜져 있으면 정지한 화면으로 바꿔 주는 것까지 설계에 포함해야 합니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">글자 스타일을 이야기할 때 실무에서 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="legibility">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="rd2"><span>Il1 O0</span></div><span class="d-cap">판독성: 글자 하나가 구분되나</span></div><span class="mid">vs</span><div class="side"><div class="para tight">빽빽하고 좁은 줄 간격은 한 줄씩 따라 읽기 힘듭니다.</div><div class="para loose">줄 간격이 넉넉하면 눈이 편합니다.</div><span class="d-cap">가독성: 글이 읽기 편한가</span></div></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">가독성 <span class="vs">vs</span> 판독성 <span class="en">Readability vs Legibility</span></h2>
+        <p class="desc">판독성(legibility)은 글자 하나하나가 서로 구분되는 정도이고, 가독성(readability)은 글을 문단째로 편안하게 읽을 수 있는 정도입니다. 앞의 것은 글꼴 모양이, 뒤의 것은 줄 간격·줄 길이·크기가 좌우합니다.</p>
+        <p class="when"><b>이렇게 구분</b>I, l, 1 이나 O, 0 이 헷갈리면 판독성 문제이고, 글자는 또렷한데 읽는 데 피로하면 가독성 문제입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>본문 줄 간격은 1.6, 한 줄 길이는 40자 안팎으로 제한해서 가독성을 높여줘. 숫자 0 과 영문 O 가 구분되는 글꼴로 바꿔줘</q></p>
+        <p class="senior"><b>20년차 메모</b>장식이 강한 스타일은 대부분 판독성에서 먼저 문제가 납니다. 반대로 판독성이 좋은 고딕도 줄 길이가 100자를 넘으면 가독성이 무너집니다. 인증번호·쿠폰 코드처럼 사용자가 글자 그대로 옮겨 적는 값에는 판독성이 좋은 글꼴을 꼭 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="kerning">
+      <div class="demo"><div class="d-col" style="gap:10px"><div class="krow"><span class="d-cap">커닝 끔</span><span class="kn k0">AVATAR</span></div><div class="krow"><span class="d-cap">커닝 켬</span><span class="kn k1">AVATAR</span></div><div class="krow"><span class="d-cap">자간 넓힘</span><span class="kn k2">AVATAR</span></div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">커닝과 자간 <span class="en">Kerning · Tracking</span></h2>
+        <p class="desc"><strong>커닝(kerning)</strong>은 A와 V처럼 모양 때문에 벌어져 보이는 글자 쌍의 간격을 하나씩 조정하는 것이고, <strong>자간(tracking)</strong>은 글자 전체의 간격을 한꺼번에 넓히거나 좁히는 것입니다. CSS 에서는 각각 font-kerning 과 letter-spacing 입니다.</p>
+        <p class="when"><b>언제 쓰나</b>큰 제목에서 특정 글자 사이만 이상하게 벌어졌으면 커닝, 문장 전체가 답답하거나 헐거우면 자간을 만집니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>제목은 font-kerning: normal 로 두고, 큰 제목은 letter-spacing 을 -0.02em, 작은 영문 대문자 라벨은 +0.08em 으로 지정해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>영문 제목은 커닝이 중요하지만 한글은 글자 폭이 일정해 커닝보다 자간이 주로 문제가 됩니다. 한글에 영문 기준의 큰 음수 자간을 그대로 쓰면 받침이 글자와 겹칩니다. 소문자 본문에 넓은 자간을 주면 읽기 속도가 떨어지니 대문자 라벨 같은 짧은 글에만 쓰세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

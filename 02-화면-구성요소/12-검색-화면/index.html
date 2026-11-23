@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="검색 화면 이름 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>검색 화면 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+
+.res { background: #fff; border-radius: 10px; border: 1px solid var(--line); padding: 9px 12px; width: 250px; }
+/* 01 검색창: 둥근 입력칸 안에 돋보기 아이콘, 포커스되면 테두리 강조 */
+.sbar { display: flex; align-items: center; gap: 8px; width: 250px; height: 40px; padding: 0 12px; border-radius: 99px; background: #fff; border: 1.5px solid #c9cfe6; color: var(--mute); }
+.sbar:focus-within { border-color: var(--p); box-shadow: 0 0 0 3px var(--p-soft); }
+.sbar input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: 14px var(--font); color: var(--ink); }
+.sbar .x { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #d5daea; color: #fff; }
+.sbar .x svg { width: 12px; height: 12px; stroke-width: 3; }
+/* 02 자동완성: 입력칸 바로 아래에 후보 목록을 붙이고 일치한 글자만 굵게 */
+.ac { width: 250px; } .ac .sbar { border-color: var(--p); border-radius: 12px 12px 0 0; border-bottom-color: var(--line); }
+.ac ul { margin: 0; padding: 4px 0; list-style: none; background: #fff; border: 1.5px solid var(--p); border-top: 0; border-radius: 0 0 12px 12px; }
+.ac li { padding: 7px 14px; cursor: pointer; } .ac li:hover { background: var(--p-soft); } .ac li b { color: var(--p); }
+.caret { display: inline-block; width: 1px; height: 14px; background: var(--ink); vertical-align: middle; animation: caret .9s step-end infinite; } @keyframes caret { 50% { opacity: 0; } }
+/* 03 최근 검색어: 체크박스를 켜면 해당 칩이 사라지는 삭제 버튼 */
+.rc { position: relative; display: inline-flex; align-items: center; gap: 4px; padding: 5px 8px 5px 12px; border-radius: 99px; background: #fff; border: 1px solid var(--line); font-weight: 600; }
+.rc input { position: absolute; opacity: 0; width: 20px; height: 20px; right: 4px; cursor: pointer; }
+.rc svg { width: 14px; height: 14px; color: var(--mute); }
+.rc:has(input:checked) { display: none; } .rc:has(:focus-visible) { outline: 3px solid var(--p); }
+/* 04 인기 검색어: 순위 숫자 + 이름, 1~3위만 색으로 강조 */
+.tr { width: 220px; display: grid; gap: 2px; } .tr li { display: flex; gap: 10px; align-items: center; padding: 4px 0; font-weight: 600; list-style: none; }
+.tr { padding: 0; margin: 0; } .tr i { width: 18px; font-style: normal; font-weight: 800; color: var(--mute); text-align: center; } .tr li:nth-child(-n+3) i { color: var(--p); }
+.tr em { margin-left: auto; font-style: normal; font-size: 11px; font-weight: 700; } .tr .u { color: #15803d; } .tr .d { color: var(--danger); } .tr .n { color: var(--mute); }
+.tr li:first-child { animation: hot 3s ease-in-out infinite; } @keyframes hot { 0%, 70%, 100% { background: transparent; } 80% { background: #fff3c4; } }
+/* 05 필터 / 06 정렬 / 09 범위 탭: 숨긴 input 의 :checked 로 옆 글자를 칠한다 */
+.fc, .sg, .sc2 { position: relative; cursor: pointer; } .fc input, .sg input, .sc2 input { position: absolute; opacity: 0; }
+.fc span { display: block; padding: 6px 14px; border-radius: 99px; border: 1px solid var(--line); background: #fff; font-weight: 600; }
+.fc input:checked + span { background: var(--p); color: #fff; border-color: var(--p); }
+.sg { flex: 1; } .sg span { display: block; text-align: center; padding: 7px 4px; font-weight: 600; color: var(--mute); border-radius: 8px; }
+.sg input:checked + span { background: #fff; color: var(--p); box-shadow: 0 1px 4px rgba(30,27,75,.15); }
+.segw { display: flex; width: 250px; padding: 3px; border-radius: 11px; background: #e3e7f5; }
+.sc2 span { display: block; padding: 8px 12px; font-weight: 700; color: var(--mute); border-bottom: 3px solid transparent; }
+.sc2 input:checked + span { color: var(--p); border-color: var(--p); }
+.fc:has(:focus-visible), .sg:has(:focus-visible), .sc2:has(:focus-visible) { outline: 3px solid var(--p); border-radius: 8px; }
+.tabw { display: flex; width: 250px; border-bottom: 1px solid var(--line); }
+/* 07 검색어 강조: mark 태그가 일치한 글자에 형광펜을 칠한다 */
+mark { background: #fde68a; color: var(--ink); padding: 0 2px; border-radius: 3px; }
+/* 08 결과 없음: 흐린 아이콘 + 안내 문구 + 다음 행동 */
+.nr { display: grid; justify-items: center; gap: 6px; text-align: center; } .nr .big { width: 54px; height: 54px; border-radius: 50%; background: #e3e7f5; display: grid; place-items: center; color: #8b93b8; } .nr .big svg { width: 28px; height: 28px; }
+/* 추가: 음성 검색 마이크가 숨 쉬듯 번진다 / 결과 수 */
+.mc { position: relative; width: 56px; height: 56px; border-radius: 50%; background: var(--p); color: #fff; display: grid; place-items: center; } .mc::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--p); animation: pulse 2s ease-out infinite; }
+@keyframes pulse { 0% { transform: scale(1); opacity: .7; } 70%, 100% { transform: scale(1.7); opacity: 0; } }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">화면 구성요소</a><span class="sep">›</span>
+  <span>검색 화면</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>검색 화면 이름 9가지</h1>
+    <p class="lead">검색 화면의 이름을 알면 말하기가 쉬워요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="search-bar">
+      <div class="demo"><div class="d-col" style="align-items:center"><label class="sbar"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" placeholder="상품명을 검색하세요" aria-label="검색"><span class="x" aria-hidden="true"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></span></label><span class="d-cap">눌러서 글자를 써 보세요</span></div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">검색창 <span class="en">Search bar</span></h2>
+        <p class="desc">검색어를 직접 입력하는 칸. 돋보기 아이콘이 있으면 검색이라고 알아봅니다. 입력이 시작되면 지우기 버튼(X)이 나타나는 것이 보통입니다.</p>
+        <p class="when"><b>언제 쓰나</b>상품, 글, 사람처럼 항목이 너무 많아 목록을 훑을 수 없을 때. 홈 상단이나 헤더.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상단에 둥근 검색창을 만들고 안에 돋보기 아이콘, 입력하면 지우기 버튼을 보이게 하고 엔터로 검색되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>돋보기 아이콘만 있는 버튼으로 줄이면 사용자가 검색인 줄 모를 때가 많으니 중요한 서비스는 입력칸을 열어두세요. placeholder를 라벨 대신 쓰면 입력하는 순간 설명이 사라집니다. 아이콘 버튼에는 "검색"이라는 이름이 필요하고 모바일에서는 키보드의 엔터키 모양을 "검색"으로 바꿔야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="autocomplete">
+      <div class="demo"><div class="ac"><div class="sbar"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span>아이폰<i class="caret"></i></span></div><ul><li><b>아이폰</b> 15 케이스</li><li><b>아이폰</b> 충전기</li><li><b>아이폰</b> 보호필름</li></ul></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">자동완성 <span class="en">Autocomplete</span></h2>
+        <p class="desc">글자를 치는 동안 입력창 아래에 후보를 띄워 주는 기능. 끝까지 치지 않고 골라서 시간을 줄입니다. 영어로 <strong>typeahead, suggestions</strong>라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색어가 길거나 철자가 헷갈릴 때, 상품명처럼 후보가 많은 검색.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색창에 글자를 입력하면 아래에 최대 5개의 자동완성 후보를 보여주고 일치한 글자는 굵게 표시해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>한글은 조합 중인 글자(ㅇ, 아, 아이)가 입력 이벤트를 여러 번 일으켜 후보가 깜빡거리는 문제가 자주 생깁니다. 개발자와 조합이 끝난 뒤 보여줄지 정하세요. 후보를 키보드 위아래 화살표로 고를 수 있어야 하고, 후보가 없을 때 빈 상자가 남지 않게 해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="recent-searches">
+      <div class="demo"><div class="d-col" style="align-items:center;width:250px"><div class="d-row" style="justify-content:space-between;width:100%"><b>최근 검색어</b><span class="d-cap">전체 삭제</span></div><div class="d-row" style="flex-wrap:wrap"><label class="rc">운동화<input type="checkbox" aria-label="운동화 삭제"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></label><label class="rc">백팩<input type="checkbox" aria-label="백팩 삭제"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></label><label class="rc">텀블러<input type="checkbox" aria-label="텀블러 삭제"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></label><label class="rc">에어팟<input type="checkbox" aria-label="에어팟 삭제"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></label></div><span class="d-cap">X를 눌러 지워 보세요</span></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">최근 검색어 <span class="en">Recent searches</span></h2>
+        <p class="desc">내가 전에 찾았던 말을 다시 보여주는 목록. 검색창을 누른 순간에 나타나 다시 입력하는 수고를 덜어줍니다. 검색 기록(search history)이라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색창을 눌렀지만 아직 아무 글자도 안 쳤을 때의 빈 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색창을 누르면 최근 검색어를 칩으로 보여주고 개별 삭제 버튼과 전체 삭제를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>공용 기기에서는 개인 정보라 끌 수 있어야 합니다. 삭제 버튼이 칩에 붙어 있으면 터치할 때 검색어 대신 삭제가 눌리니 각각 44pt/48dp 영역을 확보하세요. 최대 개수(보통 10개 안팎)를 정해 오래된 것은 밀어내야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="trending">
+      <div class="demo"><ol class="tr"><li><i>1</i>겨울 패딩<em class="u">&#9650; 2</em></li><li><i>2</i>핫팩<em class="u">&#9650; 1</em></li><li><i>3</i>기모 바지<em class="d">&#9660; 1</em></li><li><i>4</i>전기장판<em class="n">-</em></li><li><i>5</i>가습기<em class="u">&#9650; 3</em></li></ol></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">인기 검색어 <span class="en">Trending</span></h2>
+        <p class="desc">많은 사람이 최근에 찾은 검색어를 순위로 보여주는 목록. 지금 무엇이 인기인지 알려줘 검색의 시작점을 줘서, 내가 찾는 것을 모르는 사용자도 둘러볼 수 있습니다. <strong>실시간 검색어, 급상승 검색어</strong>라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색창을 눌렀을 때 아래, 홈의 검색 영역.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색창 아래에 인기 검색어 5개를 1위부터 순위와 함께 보여주고 순위 변동 화살표를 붙여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>집계 기준(최근 1시간인지 하루인지)을 안 정하면 화면이 계속 바뀌어 산만하고, 부적절한 단어가 순위에 오를 수 있어 걸러내는 기준이 필요합니다. 순위 변동을 색으로만 표시하지 말고 화살표 모양도 쓰세요. 숫자와 이름 사이가 좁으면 두 자리 순위에서 줄이 흐트러집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="filter">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="d-row" style="flex-wrap:wrap;justify-content:center;max-width:260px"><label class="fc"><input type="checkbox" checked><span>무료 배송</span></label><label class="fc"><input type="checkbox"><span>5만원 이하</span></label><label class="fc"><input type="checkbox"><span>신상품</span></label><label class="fc"><input type="checkbox"><span>리뷰 4점 이상</span></label></div><span class="d-cap">여러 개를 눌러 보세요</span></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">필터 <span class="en">Filter</span></h2>
+        <p class="desc">결과 중에서 조건에 맞지 않는 것을 빼서 줄이는 기능. 정렬이 순서를 바꾼다면 필터는 <strong>목록에 남는 것 자체</strong>를 바꿉니다. 쓰는 만큼 결과가 줄어듭니다.</p>
+        <p class="when"><b>언제 쓰나</b>상품 검색, 숙소 목록, 채용 공고처럼 조건이 많은 검색 결과.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색 결과 위에 가로 스크롤 필터 칩을 만들고 선택한 필터는 색을 채우고 결과 수가 바로 바뀌게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>필터를 많이 걸다 보면 결과가 0개가 되는 일이 흔한데 어떤 필터를 풀어야 할지 알려주지 않으면 사용자는 막힙니다. 선택된 필터를 한곳에 모아 보여주고 한 번에 해제하는 버튼을 두세요. 모바일에서는 필터가 많으면 전체 화면 시트로 따로 빼는 것이 맞습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="sort">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="segw" role="radiogroup" aria-label="정렬"><label class="sg"><input type="radio" name="s1" checked><span>인기순</span></label><label class="sg"><input type="radio" name="s1"><span>최신순</span></label><label class="sg"><input type="radio" name="s1"><span>낮은 가격순</span></label></div><span class="d-cap">눌러 보세요</span></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">정렬 <span class="en">Sort</span></h2>
+        <p class="desc">결과 목록을 어떤 기준의 순서로 놓을지 정하는 기능. 필터와 달리 결과 개수는 그대로이고 순서만 바뀝니다. <strong>sort order</strong>라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색 결과, 상품 목록, 후기 목록. 보통 목록 위 오른쪽에 둡니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>결과 목록 위에 인기순, 최신순, 낮은 가격순을 고르는 정렬 버튼을 만들고 현재 선택한 기준을 강조해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>기본 정렬이 무엇인지 안 정해 두면 같은 검색어도 사람마다 다른 순서가 나옵니다. 정렬 항목이 4개를 넘으면 한 줄에 못 들어가니 드롭다운이나 바텀 시트로 바꿔야 합니다. "인기순" 같은 기준이 실제로 무엇을 기준으로 하는지 개발자와 정의해 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="highlight">
+      <div class="demo"><div class="res"><b>에어팟 프로 케이스</b><div class="d-cap" style="margin-top:4px">신형 <mark>에어팟</mark> 호환 실리콘 <mark>케이스</mark>. 가볍고 얇습니다.</div></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">검색어 강조 <span class="en">Highlight</span></h2>
+        <p class="desc">검색 결과 글 속에서 내가 친 말과 일치하는 부분을 형광펜처럼 칠해 주는 것. HTML에는 <code>&lt;mark&gt;</code> 태그가 이 용도로 준비되어 있습니다. 결과가 왜 나왔는지 바로 알게 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색 결과의 제목과 요약 글, 문서 안 찾기.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색 결과의 제목과 요약에서 검색어와 일치하는 부분을 mark 태그로 노란색으로 강조해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>일치한 글자를 정규식으로 바꿔치기할 때 "에어팟"이 "에어팟 프로" 중 어디까지 칠해질지, 특수문자가 들어간 검색어가 화면을 깨뜨리는지 개발자와 확인하세요. 형광색 위 글자의 대비는 4.5:1이 되도록 글자를 어둡게 쓰고, 너무 많이 칠하면 오히려 읽기 힘듭니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="no-results">
+      <div class="demo"><div class="nr"><div class="big"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></div><b>'에어팥' 결과가 없어요</b><span class="d-cap">철자를 확인하거나 다른 검색어로 찾아보세요</span><button class="d-btn soft" type="button">인기 검색어 보기</button></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">결과 없음 <span class="en">No results</span></h2>
+        <p class="desc">검색했지만 맞는 결과가 하나도 없을 때의 화면. 막다른 길이 되기 쉬워서 다음에 할 수 있는 행동을 제안해야 하는 화면입니다. 빈 상태(empty state)의 한 종류입니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색 결과가 0건이거나, 필터를 걸어 결과가 모두 사라졌을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색 결과가 없으면 검색어를 보여주고 철자 확인 안내와 인기 검색어, 필터 초기화 버튼을 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>그냥 "결과가 없습니다"만 쓰고 끝내는 경우가 가장 흔한 실수입니다. 오타 교정 제안, 검색어를 줄이는 방법, 인기 항목처럼 이동할 곳을 같이 주세요. 사용자가 입력한 단어를 화면에 다시 보여줘야 오타를 알아봅니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="scope-tabs">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="tabw" role="radiogroup" aria-label="검색 범위"><label class="sc2"><input type="radio" name="sc" checked><span>전체</span></label><label class="sc2"><input type="radio" name="sc"><span>상품</span></label><label class="sc2"><input type="radio" name="sc"><span>후기</span></label><label class="sc2"><input type="radio" name="sc"><span>브랜드</span></label></div><span class="d-cap">눌러 보세요</span></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">검색 범위 탭 <span class="en">Scope tabs</span></h2>
+        <p class="desc">검색 결과를 종류별로 나눠 보게 하는 탭. 전체 검색 결과 위에 "전체·상품·후기"처럼 놓입니다. 범위를 좁히는 점은 필터와 비슷하지만 서로 다른 종류의 데이터를 가르는 점이 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>상품과 후기, 사람과 게시글처럼 결과 종류가 섞이는 서비스.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색 결과 위에 전체, 상품, 후기, 브랜드 탭을 만들고 탭마다 결과 개수를 괄호로 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>탭을 누를 때마다 검색어가 유지되는지 확인하세요. 탭을 바꾸면 입력창이 비워지는 버그가 흔합니다. 탭이 5개를 넘으면 가로 스크롤이 필요하고, 현재 탭을 색으로만 표시하지 말고 밑줄 같은 모양도 더하세요.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">실무에서 검색 화면을 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="did-you-mean">
+      <div class="demo"><div class="res"><span class="d-cap">'에어팥' 검색 결과가 적어요</span><div style="margin-top:4px">혹시 <a href="#did-you-mean" style="font-weight:800">에어팟</a>을 찾으셨나요?</div></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">오타 교정 <span class="en">Did you mean</span></h2>
+        <p class="desc">입력한 검색어가 오타 같을 때 "혹시 ~를 찾으셨나요?"라고 바른 후보를 제안하는 기능. 결과가 없어지는 것을 막아 줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>결과 수가 적거나 0건인 검색, 외래어·상품명처럼 철자가 어려운 검색.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색 결과가 적을 때 맨 위에 "혹시 ~를 찾으셨나요?"를 보여주고 누르면 그 검색어로 다시 검색해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>자동으로 고쳐서 결과를 보여 주면 사용자가 원한 단어가 아니었을 때 혼란스러우니, 어떤 말로 검색했는지 반드시 알려주세요. 원래 검색어 그대로 찾을 수 있는 선택지도 남겨야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="result-count">
+      <div class="demo"><div class="res"><div class="d-row" style="justify-content:space-between"><span><b>'운동화'</b> 검색 결과 <b style="color:var(--p)">1,284</b>건</span></div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">결과 개수 <span class="en">Result count</span></h2>
+        <p class="desc">검색 결과가 몇 개인지 알려주는 숫자. 내가 지금 좁혀진 범위인지 넓은 범위인지 감을 잡게 해줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색 결과 목록의 맨 위, 필터를 켜고 끄는 사이에 바뀌는 숫자.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색 결과 맨 위에 검색어와 전체 결과 개수를 보여주고 필터를 바꿀 때마다 실시간으로 갱신해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>숫자가 매우 크면 "1만건 이상"처럼 어림해도 됩니다. 정확한 수를 계산하느라 느려지는 경우가 있어서 개발자와 상의하세요. 숫자가 바뀔 때 스크린리더에도 바뀐 값을 알려야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="voice-search">
+      <div class="demo"><div class="d-col" style="align-items:center;gap:14px"><div class="mc" role="img" aria-label="듣는 중인 마이크"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div><span class="d-cap">듣고 있어요</span></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">음성 검색 <span class="en">Voice search</span></h2>
+        <p class="desc">키보드 대신 말로 검색어를 입력하는 기능. 검색창 오른쪽 마이크 버튼으로 시작하며, 말하는 동안 듣고 있다는 움직임을 보여줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>운전 중이나 긴 말을 치기 힘든 모바일, 입력하기 어려운 이름이 필요한 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색창 오른쪽에 마이크 버튼을 넣고 누르면 듣는 중 표시를 보여주고 인식된 말을 검색창에 채워줘</q></p>
+        <p class="senior"><b>20년차 메모</b>마이크 권한을 처음 누를 때 묻는 화면과 거절했을 때의 안내를 같이 설계해야 합니다. 인식이 틀릴 때 수정할 수 있게 글로 먼저 보여준 뒤 검색하세요. 주변이 시끄러울 때의 실패 화면도 필요합니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

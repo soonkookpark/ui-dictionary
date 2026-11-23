@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="화면 전환 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>화면 전환 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 폰 안에 화면 A(.sa)와 B(.sb)를 겹쳐 두고, 둘 다 같은 3.6초 animation 을 쓴다.
+   0~10% 는 A만 보이는 쉬는 구간, 70~90% 는 되돌아가는 구간이다. 움직임은 transform/opacity 위주. */
+.ph { width: 150px; height: 176px; }
+.sc { position: absolute; inset: 0; padding: 12px; display: grid; align-content: start; gap: 8px; }
+.sc .tt { font-size: 12px; font-weight: 800; color: var(--ink); }
+.sc .hd { height: 28px; border-radius: 8px; background: var(--p); }
+.sa { background: #fff; }
+.sb { background: #e8ecff; }
+
+/* 01 푸시: B가 오른쪽에서 밀고 들어오고 A는 30%만 왼쪽으로 밀려난다 (translateX) */
+.push .sa { animation: pa 3.6s cubic-bezier(.3, .8, .2, 1) infinite; }
+.push .sb { box-shadow: -6px 0 12px rgba(30,27,75,.15); animation: pb 3.6s cubic-bezier(.3, .8, .2, 1) infinite; }
+@keyframes pa { 0%, 10% { transform: none; } 30%, 70% { transform: translateX(-30%); } 90%, 100% { transform: none; } }
+@keyframes pb { 0%, 10% { transform: translateX(100%); } 30%, 70% { transform: none; } 90%, 100% { transform: translateX(100%); } }
+
+/* 02 모달 등장: 아래에서 올라오는 B 뒤로 A가 어두워진다(.dim 의 opacity) */
+.dim { position: absolute; inset: 0; background: #1e1b4b; opacity: 0; animation: dimm 3.6s ease-out infinite; }
+.mod .sb { top: 28px; border-radius: 16px 16px 0 0; animation: modup 3.6s cubic-bezier(.2, .8, .2, 1) infinite; }
+@keyframes dimm { 0%, 10% { opacity: 0; } 30%, 70% { opacity: .45; } 90%, 100% { opacity: 0; } }
+@keyframes modup { 0%, 10% { transform: translateY(105%); } 30%, 70% { transform: none; } 90%, 100% { transform: translateY(105%); } }
+
+/* 03 페이드 스루: A가 먼저 완전히 사라진 뒤 B가 살짝 커지며 나타난다 (opacity + scale, 두 화면이 동시에 보이지 않음) */
+.ft .sa { animation: fta 3.6s ease-in-out infinite; }
+.ft .sb { animation: ftb 3.6s ease-in-out infinite; }
+@keyframes fta { 0%, 10% { opacity: 1; } 24%, 76% { opacity: 0; } 90%, 100% { opacity: 1; } }
+@keyframes ftb { 0%, 24% { opacity: 0; transform: scale(.92); } 40%, 62% { opacity: 1; transform: none; } 76%, 100% { opacity: 0; transform: scale(.92); } }
+
+/* 04 공유 요소: 같은 .pic 하나가 목록의 작은 썸네일에서 상세의 큰 사진으로 이동 (left/top/width/height 를 함께 보간) */
+.se .pic { position: absolute; z-index: 2; background: linear-gradient(160deg, #9ec5ff, #2f6fe0); animation: sep 3.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+.se .sa { animation: sea 3.6s ease-in-out infinite; }
+.se .sb { padding-top: 90px; animation: seb 3.6s ease-in-out infinite; }
+@keyframes sep { 0%, 10% { left: 12px; top: 12px; width: 34px; height: 34px; border-radius: 8px; } 35%, 70% { left: 0; top: 0; width: 150px; height: 78px; border-radius: 0; } 92%, 100% { left: 12px; top: 12px; width: 34px; height: 34px; border-radius: 8px; } }
+@keyframes sea { 0%, 10% { opacity: 1; } 35%, 70% { opacity: 0; } 92%, 100% { opacity: 1; } }
+@keyframes seb { 0%, 25% { opacity: 0; } 45%, 70% { opacity: 1; } 85%, 100% { opacity: 0; } }
+
+/* 05 카드 확장: 목록 속 카드의 inset 값(사방 여백)이 0이 되도록 늘려 화면 전체를 덮는다 */
+.ce .card { position: absolute; background: var(--p); border-radius: 12px; inset: 62px 12px 62px 12px; animation: cex 3.6s cubic-bezier(.3, .8, .2, 1) infinite; }
+.ce .card i { position: absolute; left: 12px; right: 12px; top: 14px; height: 8px; border-radius: 99px; background: rgba(255,255,255,.85); }
+.ce .card u { position: absolute; left: 12px; right: 30px; top: 34px; height: 6px; border-radius: 99px; background: rgba(255,255,255,.4); opacity: 0; animation: ceu 3.6s ease-in-out infinite; }
+@keyframes cex { 0%, 10% { inset: 62px 12px 62px 12px; border-radius: 12px; } 32%, 70% { inset: 0; border-radius: 0; } 90%, 100% { inset: 62px 12px 62px 12px; border-radius: 12px; } }
+@keyframes ceu { 0%, 25% { opacity: 0; } 42%, 66% { opacity: 1; } 78%, 100% { opacity: 0; } }
+
+/* 06 줌: A는 커지며 사라지고(scale 1→1.6, opacity 1→0), B는 작은 데서 커지며 나타난다 (scale .6→1) */
+.zm .sa { animation: za 3.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+.zm .sb { animation: zb 3.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+.zm .g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.zm .g i { aspect-ratio: 1; border-radius: 10px; background: #9ec5ff; }
+.zm .g i:nth-child(2n) { background: #c4b5fd; }
+@keyframes za { 0%, 10% { opacity: 1; transform: none; } 32%, 68% { opacity: 0; transform: scale(1.6); } 90%, 100% { opacity: 1; transform: none; } }
+@keyframes zb { 0%, 10% { opacity: 0; transform: scale(.6); } 32%, 68% { opacity: 1; transform: none; } 90%, 100% { opacity: 0; transform: scale(.6); } }
+
+/* 07 순차 등장: 화면이 바뀐 뒤 안의 줄들이 animation-delay: calc(var(--i) * .12s) 로 하나씩 올라온다 */
+.si .sa { animation: sia 3.6s ease-in-out infinite; }
+.si .sb { background: #fff; animation: sib 3.6s ease-in-out infinite; }
+.si .ln { height: 26px; border-radius: 8px; background: var(--p-soft); animation: sil 3.6s ease-out infinite backwards; animation-delay: calc(var(--i) * .12s); }
+@keyframes sia { 0%, 10% { opacity: 1; } 22%, 78% { opacity: 0; } 92%, 100% { opacity: 1; } }
+@keyframes sib { 0%, 10% { opacity: 0; } 22%, 78% { opacity: 1; } 92%, 100% { opacity: 0; } }
+@keyframes sil { 0%, 22% { opacity: 0; transform: translateY(16px); } 36%, 76% { opacity: 1; transform: none; } 88%, 100% { opacity: 0; } }
+
+/* 08 탭 전환: 두 내용이 가로로 이어진 띠(.trk2)를 translateX(-50%) 로 옮기고, 밑줄도 같이 옮긴다 */
+.tb .tabs { position: absolute; left: 0; right: 0; top: 0; height: 30px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; text-align: center; font-size: 12px; font-weight: 800; border-bottom: 1px solid var(--line); background: #fff; z-index: 2; }
+.tb .tabs::after { content: ""; position: absolute; left: 0; bottom: -1px; width: 50%; height: 3px; background: var(--p); animation: tbl 3.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+.tb .trk2 { position: absolute; left: 0; top: 30px; bottom: 0; width: 300px; display: flex; animation: tbt 3.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+.tb .trk2 > div { width: 150px; padding: 12px; display: grid; gap: 8px; align-content: start; }
+@keyframes tbl { 0%, 10% { transform: none; } 30%, 68% { transform: translateX(100%); } 88%, 100% { transform: none; } }
+@keyframes tbt { 0%, 10% { transform: none; } 30%, 68% { transform: translateX(-50%); } 88%, 100% { transform: none; } }
+
+/* 09 시트 확장: 시트의 translateY 를 단계별로 줄인다 (숨김 → 절반 → 전체) */
+.sx .sheet { position: absolute; left: 0; right: 0; top: 12px; bottom: 0; background: #fff; border-radius: 16px 16px 0 0; box-shadow: 0 -6px 16px rgba(30,27,75,.18); padding: 8px 12px; display: grid; gap: 8px; align-content: start; animation: sxu 3.6s cubic-bezier(.3, .8, .2, 1) infinite; }
+.sx .sheet::before { content: ""; justify-self: center; width: 30px; height: 4px; border-radius: 99px; background: #c9cfe6; }
+.sx .dim { animation-name: sxd; }
+@keyframes sxu { 0%, 6% { transform: translateY(170px); } 22%, 40% { transform: translateY(84px); } 58%, 76% { transform: none; } 92%, 100% { transform: translateY(170px); } }
+@keyframes sxd { 0%, 6% { opacity: 0; } 22%, 40% { opacity: .25; } 58%, 76% { opacity: .45; } 92%, 100% { opacity: 0; } }
+
+/* 추가 10 팝: 푸시를 거꾸로 — B가 오른쪽으로 빠지고 A가 제자리로 돌아온다 (keyframes 방향만 반대) */
+.pop .sa { animation: popa 3.6s cubic-bezier(.3, .8, .2, 1) infinite; }
+.pop .sb { box-shadow: -6px 0 12px rgba(30,27,75,.15); animation: popb 3.6s cubic-bezier(.3, .8, .2, 1) infinite; }
+@keyframes popa { 0%, 10% { transform: translateX(-30%); } 30%, 100% { transform: none; } }
+@keyframes popb { 0%, 10% { transform: none; } 30%, 100% { transform: translateX(100%); } }
+
+/* 추가 11 스크림: 뒤 화면을 덮는 반투명 검정막. opacity 만 바꾼다 */
+.scr .ov { position: absolute; inset: 0; background: #000; opacity: 0; animation: scr 3.6s ease-in-out infinite; }
+.scr .dlg { position: absolute; left: 20px; right: 20px; top: 56px; padding: 12px; background: #fff; border-radius: 12px; display: grid; gap: 6px; opacity: 0; animation: dlg 3.6s ease-out infinite; }
+@keyframes scr { 0%, 10% { opacity: 0; } 25%, 70% { opacity: .5; } 85%, 100% { opacity: 0; } }
+@keyframes dlg { 0%, 15% { opacity: 0; transform: scale(.9); } 30%, 66% { opacity: 1; transform: none; } 80%, 100% { opacity: 0; transform: scale(.9); } }
+
+/* 추가 12 뷰 전환 API: 이전 모습과 새 모습을 이미지처럼 겹쳐 크기·색을 이어 붙이고 글자는 교차 페이드 */
+.vt { position: relative; width: 90px; height: 90px; border-radius: 14px; background: #2f6fe0; animation: vtb 3.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+.vt span { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-weight: 800; }
+.vt .n { opacity: 0; animation: vtn 3.6s ease-in-out infinite; }
+.vt .o { animation: vto 3.6s ease-in-out infinite; }
+@keyframes vtb { 0%, 12% { width: 90px; height: 90px; background: #2f6fe0; } 38%, 72% { width: 230px; height: 120px; background: #4f46e5; } 95%, 100% { width: 90px; height: 90px; background: #2f6fe0; } }
+@keyframes vtn { 0%, 20% { opacity: 0; } 38%, 72% { opacity: 1; } 85%, 100% { opacity: 0; } }
+@keyframes vto { 0%, 12% { opacity: 1; } 28%, 78% { opacity: 0; } 95%, 100% { opacity: 1; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">모션과 제스처</a><span class="sep">›</span>
+  <span>화면 전환</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>화면 전환 9가지</h1>
+    <p class="lead">화면이 바뀌는 방식에도 이름이 있어요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="push">
+      <div class="demo"><div class="d-phone ph push" role="img" aria-label="새 화면이 오른쪽에서 밀고 들어옴"><div class="sc sa"><span class="tt">A 목록</span><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div><div class="d-bar"></div></div><div class="sc sb"><span class="tt">B 상세</span><div class="hd"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div></div></div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">푸시 <span class="en">Push</span></h2>
+        <p class="desc">새 화면이 오른쪽에서 밀고 들어오고, 이전 화면은 살짝 왼쪽으로 밀려납니다. 화면이 <strong>한 칸 깊이 들어가는</strong> 이동이라 돌아올 땐 반대로 밀려 나갑니다. 내비게이션 스택(쌓기)이라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>목록에서 상세로, 설정에서 하위 설정으로 들어가는 계층 이동.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>목록 항목을 누르면 상세 화면이 오른쪽에서 푸시로 들어오게 하고 왼쪽 위에 뒤로 가기를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>iOS는 왼쪽 가장자리를 밀어 뒤로 가는 동작이 기본이라 푸시와 한 세트입니다. 안드로이드와 웹은 시스템 뒤로 가기 버튼·브라우저 뒤로 가기가 있으니 전환 방향이 그것과 맞는지 확인하세요. 같은 위계의 탭 이동에 푸시를 쓰면 길을 잃습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="modal-present">
+      <div class="demo"><div class="d-phone ph mod" role="img" aria-label="아래에서 시트가 올라오고 뒤 화면이 어두워짐"><div class="sc sa"><span class="tt">A 목록</span><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div><div class="d-bar"></div></div><div class="dim"></div><div class="sc sb"><span class="tt">B 새 글 쓰기</span><div class="d-bar"></div><div class="d-bar" style="width:80%"></div><div class="d-bar" style="width:55%"></div></div></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">모달 등장 <span class="en">Modal present</span></h2>
+        <p class="desc">새 화면이 아래에서 위로 올라와 이전 화면 위에 얹힙니다. 뒤 화면은 어두워지고 그대로 남아 있어서 <strong>"잠깐 다른 일을 하고 돌아온다"</strong>는 느낌을 줍니다. 푸시와 달리 깊이 들어가는 게 아닙니다.</p>
+        <p class="when"><b>언제 쓰나</b>새 글 쓰기, 필터 선택, 공유하기처럼 하나의 독립된 작업을 끝내고 닫는 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>글쓰기 버튼을 누르면 아래에서 올라오는 모달로 작성 화면을 열고 위에 닫기 버튼을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모달에서 또 모달을 여는 중첩이 가장 흔한 사고입니다. 닫는 방법(닫기 버튼, 아래로 내리기, 바깥 탭, Esc 키)이 서로 일치하는지, 작성 중인 내용을 닫을 때 "버릴까요?" 확인이 있는지 챙기세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="fade-through">
+      <div class="demo"><div class="d-phone ph ft" role="img" aria-label="이전 화면이 사라진 뒤 새 화면이 나타남"><div class="sc sa"><span class="tt">A 홈</span><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div></div><div class="sc sb"><span class="tt">B 검색</span><div class="hd"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div></div></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">페이드 스루 <span class="en">Fade through</span></h2>
+        <p class="desc">이전 화면이 먼저 투명해져 사라지고, 새 화면이 살짝 커지며 나타납니다. 두 화면이 겹쳐 보이지 않는 것이 단순 크로스페이드와 다른 점이며, 머티리얼 디자인이 <strong>서로 관계없는 화면 사이</strong>에 권하는 방식입니다.</p>
+        <p class="when"><b>언제 쓰나</b>하단 탭 사이 이동처럼 같은 레벨이면서 서로 상관없는 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>하단 탭을 누르면 이전 화면이 페이드 아웃된 뒤 새 화면이 살짝 커지며 페이드 인되는 페이드 스루로 전환해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>두 화면의 배경색이 다르면 중간에 번쩍이는 빈 화면이 보입니다. 배경은 고정하고 내용만 바꾸세요. 시간도 합쳐서 0.3초를 넘기면 탭 하나 누르는 데 답답해집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="shared-element">
+      <div class="demo"><div class="d-phone ph se" role="img" aria-label="작은 썸네일이 상세 화면의 큰 사진으로 이어짐"><div class="sc sa"><span class="tt" style="padding-left:42px;margin-top:6px">A 목록</span><div class="d-bar" style="margin-top:20px"></div><div class="d-bar" style="width:70%"></div></div><div class="sc sb"><span class="tt">B 상세 정보</span><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div></div><div class="pic"></div></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">공유 요소 <span class="en">Shared element</span></h2>
+        <p class="desc">두 화면에 공통으로 있는 요소 하나가 새 자리로 날아가 이어지는 전환입니다. 나머지 내용은 바뀌어도 <strong>이 요소만은 같은 물건</strong>이라는 연결을 만들어 줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>목록의 썸네일이 상세 대표 사진이 될 때, 미니 플레이어의 앨범 사진이 전체 재생 화면으로 이어질 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상품 목록의 썸네일이 상세 화면의 대표 이미지로 이어지는 공유 요소 전환을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>요소의 시작과 끝 모양(비율·모서리)이 다르면 중간에 일그러집니다. 화면 위에 임시 복제본을 띄워 이동시키는 구조라 개발 난이도가 높은 편이니 "정말 이 전환이 가치 있는 한두 곳"에만 쓰자고 합의하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="card-expand">
+      <div class="demo"><div class="d-phone ph ce" role="img" aria-label="목록의 카드가 화면 전체로 넓어짐"><div class="sc sa"><span class="tt">A 목록</span></div><div class="card"><i></i><u></u></div></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">카드 확장 <span class="en">Card expand</span></h2>
+        <p class="desc">눌린 카드가 그 자리에서 사방으로 넓어져 화면 전체를 덮고 상세가 됩니다. 카드와 상세가 <strong>하나의 면으로 이어지는</strong> 것이 특징이고, 머티리얼 디자인에서는 컨테이너 변환(container transform)이라고 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>기사·레시피·일정 카드를 눌러 전체 내용을 열 때. 카드 하나가 화면 하나로 이어지는 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드를 누르면 카드가 화면 전체로 넓어지며 상세 내용이 나타나는 카드 확장 전환을 적용해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>카드 안 글이 상세에서 위치가 바뀌면 글자가 떠다니며 어색합니다. 제목 위치를 맞추거나 카드 속 글은 먼저 사라지게 하세요. 닫을 때 카드가 목록의 같은 자리로 돌아가는지, 목록이 스크롤된 경우에도 맞는지 테스트해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="zoom">
+      <div class="demo"><div class="d-phone ph zm" role="img" aria-label="화면이 커지며 사라지고 새 화면이 작은 데서 커짐"><div class="sc sa"><span class="tt">A 앨범</span><div class="g"><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div class="sc sb"><span class="tt">B 사진</span><div class="hd" style="height:70px;background:linear-gradient(160deg,#9ec5ff,#2f6fe0)"></div><div class="d-bar"></div></div></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">줌 <span class="en">Zoom</span></h2>
+        <p class="desc">이전 화면이 확대되며 사라지고 새 화면이 작은 크기에서 제 크기로 커지는 전환입니다. 카메라가 안으로 <strong>쑥 들어가는</strong> 느낌이며, 화면 전체가 대상입니다. 요소 하나만 이어지는 공유 요소와 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>폴더·앨범·앱을 열어 그 안으로 들어가는 느낌이 필요할 때. 닫을 땐 반대로 줌 아웃.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>앨범을 누르면 이전 화면이 확대되며 사라지고 사진 목록이 줌 인으로 나타나게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>화면 전체가 커지는 움직임은 멀미를 일으키기 쉽습니다. 확대 폭은 작게(1.1~1.3배 안팎), 시간은 짧게 잡으세요. 시스템의 "동작 줄이기"가 켜져 있으면 단순 페이드로 대체해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="stagger-in">
+      <div class="demo"><div class="d-phone ph si" role="img" aria-label="새 화면의 줄들이 하나씩 올라옴"><div class="sc sa"><span class="tt">A 홈</span><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div></div><div class="sc sb"><span class="tt">B 오늘의 할 일</span><div class="ln" style="--i:0"></div><div class="ln" style="--i:1"></div><div class="ln" style="--i:2"></div><div class="ln" style="--i:3"></div></div></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">순차 등장 <span class="en">Stagger in</span></h2>
+        <p class="desc">화면이 바뀐 뒤, 새 화면 안의 항목들이 한꺼번에가 아니라 위에서부터 시간차로 하나씩 나타납니다. 화면 전환 자체가 아니라 <strong>도착한 뒤의 연출</strong>이라서 다른 전환 방식과 함께 씁니다.</p>
+        <p class="when"><b>언제 쓰나</b>온보딩 첫 화면, 대시보드 처음 진입, 검색 결과가 처음 뜰 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>화면이 열린 뒤 목록 항목이 0.12초 간격으로 위에서 아래로 순차 등장하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>매번 보는 화면에 쓰면 두 번째부터는 "빨리 보여줘"가 됩니다. 처음 진입할 때만 쓰거나 전체 시간을 0.5초 안으로 묶으세요. 데이터가 늦게 오는 항목까지 시간차를 두면 빈 칸이 먼저 보입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="tab-switch">
+      <div class="demo"><div class="d-phone ph tb" role="img" aria-label="탭을 바꾸면 내용이 옆으로 밀리고 밑줄이 이동함"><div class="tabs"><span>추천</span><span>팔로잉</span></div><div class="trk2"><div><div class="hd" style="background:#9ec5ff"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div></div><div><div class="hd" style="background:#c4b5fd"></div><div class="d-bar"></div><div class="d-bar" style="width:60%"></div></div></div></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">탭 전환 <span class="en">Tab switch</span></h2>
+        <p class="desc">같은 위계의 탭 사이를 오갈 때, 내용이 옆으로 밀리고 선택 표시(밑줄)가 따라 움직입니다. 탭 순서대로 <strong>좌우 방향</strong>이 정해지는 것이 특징입니다.</p>
+        <p class="when"><b>언제 쓰나</b>상단 탭(추천/팔로잉), 세그먼트 컨트롤, 가로로 스와이프해서 넘기는 탭 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상단 탭을 누르면 내용이 탭 순서에 맞는 방향으로 밀리고 밑줄 표시가 함께 이동하는 탭 전환을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>탭마다 스크롤 위치를 기억할지, 매번 맨 위로 보낼지를 정하지 않으면 개발자가 임의로 정합니다. 그리고 내용이 가로 스와이프로 넘어가는 화면에 가로로 스크롤되는 캐러셀을 넣으면 두 동작이 서로 싸웁니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="sheet-expand">
+      <div class="demo"><div class="d-phone ph sx" role="img" aria-label="하단 시트가 절반까지 올라온 뒤 전체로 확장됨"><div class="sc sa"><span class="tt">A 지도</span><div class="hd" style="height:70px;background:#c8e6c9"></div></div><div class="dim"></div><div class="sheet"><b class="tt">근처 맛집</b><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:75%"></div><div class="d-bar"></div></div></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">시트 확장 <span class="en">Sheet expand</span></h2>
+        <p class="desc">아래에서 올라온 시트가 처음엔 절반쯤만 보이다가 위로 끌어올리면 화면 전체로 커집니다. <strong>바텀 시트(Bottom sheet)</strong>의 높이 단계를 중간(half)과 전체(full)로 나눈 것이며, 뒤 화면과 함께 볼 수 있다는 점이 모달과 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>지도 앱의 장소 목록, 음악 플레이어, 댓글 창처럼 뒤 화면을 보면서도 상세로 펼칠 수 있는 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>장소 목록을 바텀 시트로 만들고 위로 끌면 절반에서 전체 화면으로 확장되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>시트 안 목록 스크롤과 시트 끌어올리기 제스처가 충돌하는 게 가장 큰 문제입니다. 시트가 전체까지 올라간 뒤에야 안쪽이 스크롤되게 정해 두세요. 웹에서는 드래그 손잡이만 믿지 말고 "펼치기" 버튼도 같이 두는 게 안전합니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">화면 전환을 이야기할 때 같이 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="pop">
+      <div class="demo"><div class="d-phone ph pop" role="img" aria-label="상세 화면이 오른쪽으로 빠지고 이전 화면이 돌아옴"><div class="sc sa"><span class="tt">A 목록</span><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div><div class="d-bar"></div></div><div class="sc sb"><span class="tt">B 상세</span><div class="hd"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div></div></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">팝 <span class="en">Pop · Back transition</span></h2>
+        <p class="desc">푸시로 들어온 화면을 닫을 때 쓰는 반대 전환입니다. 현재 화면이 오른쪽으로 밀려 나가고 이전 화면이 제자리로 돌아옵니다. <strong>들어온 길 그대로 되돌아간다</strong>는 규칙이 핵심입니다.</p>
+        <p class="when"><b>언제 쓰나</b>뒤로 가기 버튼, 왼쪽 가장자리 스와이프, 안드로이드 시스템 뒤로 가기를 눌렀을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>뒤로 가기를 누르면 현재 화면이 오른쪽으로 빠지는 팝 전환으로 이전 화면에 돌아가게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>들어올 땐 푸시인데 나갈 땐 그냥 사라지는 화면이 의외로 많습니다. 시안에서 "열기"만 그리고 "닫기" 전환을 빠뜨린 탓입니다. 전환은 항상 열기와 닫기 한 쌍으로 정의하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="scrim">
+      <div class="demo"><div class="d-phone ph scr" role="img" aria-label="뒤 화면이 어두워지고 대화상자가 나타남"><div class="sc sa"><span class="tt">A 목록</span><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div><div class="d-bar"></div></div><div class="ov"></div><div class="dlg"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div></div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">스크림 <span class="en">Scrim</span></h2>
+        <p class="desc">모달·메뉴·시트가 열릴 때 뒤 화면을 덮는 반투명한 어두운 막입니다. 딤(dim), 오버레이(overlay), 백드롭(backdrop)이라고도 부릅니다. 눈길을 앞쪽으로 모으고 뒤 화면은 지금 못 누른다는 걸 알려줍니다.</p>
+        <p class="when"><b>언제 쓰나</b>모달, 바텀 시트, 사이드 메뉴, 확인 대화상자 뒤. 보통 검정 40~60% 투명도.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>모달 뒤에 검정 50% 스크림을 깔고, 스크림을 누르면 모달이 닫히게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>스크림이 있는데 뒤 화면이 스크롤되거나 키보드로 눌러지는 사고가 잦습니다. 스크롤 잠금과 포커스 가두기(focus trap)까지 해야 진짜로 막힌 것입니다. 삭제 확인처럼 실수하면 안 되는 대화상자는 스크림 탭으로 닫히지 않게 하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="view-transitions">
+      <div class="demo"><div class="vt" role="img" aria-label="작은 카드가 큰 카드로 크기와 색이 이어서 바뀜"><span class="o">목록</span><span class="n">상세 화면</span></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">뷰 트랜지션 <span class="en">View Transitions API</span></h2>
+        <p class="desc">웹 브라우저가 직접 제공하는 화면 전환 기능입니다. 바뀌기 전과 후의 모습을 브라우저가 사진처럼 찍어 두고 둘 사이를 자동으로 이어 줍니다. 같은 <strong>view-transition-name</strong>을 붙인 요소는 공유 요소 전환처럼 움직입니다.</p>
+        <p class="when"><b>언제 쓰나</b>웹에서 목록→상세, 테마 전환, 정렬 바꾸기처럼 화면이 크게 바뀔 때 라이브러리 없이 전환을 넣고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>목록에서 상세로 이동할 때 View Transitions API 로 썸네일이 이어지는 전환을 넣고, 지원하지 않는 브라우저에서는 그냥 이동하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>브라우저마다 지원 시점이 달라서 "안 되면 그냥 바뀌어도 아무 문제 없게" 설계해야 합니다. 전환을 기능의 필수 조건으로 삼지 마세요. 전환 중 사진이 한 장의 이미지로 굳어 있어서 그 사이에 영상이나 입력창은 눌러지지 않습니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

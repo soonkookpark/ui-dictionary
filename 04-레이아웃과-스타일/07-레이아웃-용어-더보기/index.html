@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="레이아웃 용어 25가지 더 — 움직이는 예시로 보는 UI 용어 사전">
+<title>레이아웃 용어 더보기 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 와이어프레임 조각(.w), 칩 라디오(.rc), 순서대로 깜빡이는 강조(.hl) */
+.w { display: grid; place-items: center; min-width: 0; background: #c7d2fe; color: #3730a3; border-radius: 5px; font-size: 10px; font-weight: 700; }
+.w.d { background: var(--p); color: #fff; }
+.w.l { background: #e4e8f6; color: var(--mute); }
+.rc { display: flex; gap: 6px; }
+.rc label { position: relative; cursor: pointer; }
+.rc input { position: absolute; opacity: 0; }
+.rc label:has(:checked) { background: var(--p); border-color: var(--p); color: #fff; }
+.rc label:has(:focus-visible) { outline: 3px solid var(--p); outline-offset: 2px; }
+@keyframes hl { 0%, 28% { background: var(--p); color: #fff; } 34%, 100% { background: #c7d2fe; color: #3730a3; } }
+.hl { animation: hl 3s infinite; }
+.hl:nth-child(2) { animation-delay: 1s; }
+.hl:nth-child(3) { animation-delay: 2s; }
+
+/* 01 시각적 무게: 체크하면 가운데 상자가 진하고 커져 눈이 쏠린다 */
+.vwb { display: grid; gap: 10px; justify-items: center; }
+.vw { display: flex; gap: 14px; align-items: center; height: 96px; }
+.vw i { width: 48px; height: 48px; border-radius: 8px; background: #c7d2fe; transition: transform .3s, background .3s; }
+.vwb:has(input:checked) .vw i:nth-child(2) { background: var(--p); transform: scale(1.5); }
+.vwb label { cursor: pointer; }
+
+/* 02 초점: 회색 점들 사이에서 색 점 하나만 숨 쉬듯 커졌다 작아진다 */
+.fp { display: grid; grid-template-columns: repeat(6, 26px); gap: 12px; }
+.fp i { width: 26px; height: 26px; border-radius: 50%; background: #d5daea; }
+.fp i.hot { background: var(--accent); animation: beat 1.6s ease-in-out infinite; }
+@keyframes beat { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.35); } }
+
+/* 03 대칭·비대칭: 같은 요소를 grid 칸 비율만 다르게 */
+.mf { width: 106px; height: 110px; padding: 6px; display: grid; gap: 4px; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.mf.sym { grid-template-columns: 1fr 1fr; grid-template-rows: 16px 1fr 16px; }
+.mf.sym .tp, .mf.sym .bt { grid-column: 1 / -1; }
+.mf.asym { grid-template-columns: 2fr 1fr; grid-template-rows: 16px 1fr 16px; }
+.mf.asym .tp { grid-column: 1 / -1; }
+.mf.asym .tall { grid-row: 2 / 4; }
+
+/* 04 황금비·3분할: flex 비율 1.618:1 / 점 네 개를 3등분 선 교차점에 */
+.gold { display: flex; gap: 2px; background: #fff; }
+.gold .w { border-radius: 0; }
+.third { position: relative; background: #fff; background-image: linear-gradient(90deg, transparent calc(33.3% - .5px), #a5b4fc 0 calc(33.3% + .5px), transparent 0 calc(66.6% - .5px), #a5b4fc 0 calc(66.6% + .5px), transparent 0), linear-gradient(transparent calc(33.3% - .5px), #a5b4fc 0 calc(33.3% + .5px), transparent 0 calc(66.6% - .5px), #a5b4fc 0 calc(66.6% + .5px), transparent 0); }
+.third i { position: absolute; left: calc(66.6% - 6px); top: calc(33.3% - 6px); width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+
+/* 05 F 패턴: 막대가 F 모양 순서로 차례차례 눈에 띈다 */
+.fpat { width: 200px; display: grid; gap: 9px; }
+.fpat i { display: block; height: 9px; border-radius: 99px; background: #d5daea; animation: eye 5s infinite; }
+@keyframes eye { 0%, 8% { background: #d5daea; } 12%, 70% { background: var(--accent); } 85%, 100% { background: #d5daea; } }
+.fpat i:nth-child(1) { width: 100%; }
+.fpat i:nth-child(2) { width: 68%; animation-delay: .4s; }
+.fpat i:nth-child(3) { width: 38%; animation-delay: .8s; }
+.fpat i:nth-child(4) { width: 34%; animation-delay: 1.1s; }
+.fpat i:nth-child(5) { width: 40%; animation-delay: 1.4s; }
+.fpat i:nth-child(6) { width: 30%; animation-delay: 1.7s; }
+
+/* 06 스크롤 전 영역: 점선 아래를 흐리게 덮고, 체크하면 버튼을 점선 아래로 내린다 */
+.abv { display: grid; gap: 8px; justify-items: center; }
+.fold { position: relative; width: 170px; height: 150px; padding: 10px; display: flex; flex-direction: column; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.fold::before { content: ""; position: absolute; left: 0; right: 0; top: 96px; bottom: 0; z-index: 2; background: rgba(241,243,250,.82); border-top: 2px dashed var(--danger); }
+.fold::after { content: "fold"; position: absolute; right: 6px; top: 98px; z-index: 3; font-size: 10px; font-weight: 700; color: var(--danger); }
+.abv:has(input:checked) .cta { order: 9; }
+.abv label { cursor: pointer; }
+
+/* 08 섹션: 영역마다 윤곽선이 차례로 켜진다 */
+.secs { width: 230px; display: grid; gap: 12px; }
+.sec { padding: 8px; display: grid; gap: 5px; background: #fff; border-radius: 8px; outline: 2px solid transparent; animation: so 3s infinite; }
+@keyframes so { 0%, 28% { outline-color: var(--p); } 34%, 100% { outline-color: transparent; } }
+.sec:nth-child(2) { animation-delay: 1s; }
+.sec:nth-child(3) { animation-delay: 2s; }
+
+/* 09 단 수: 라디오로 grid-template-columns 의 열 개수를 바꾼다 */
+.cc { display: grid; gap: 10px; width: 250px; }
+.cols { display: grid; grid-template-columns: 1fr; gap: 5px; }
+.cols i { height: 16px; border-radius: 5px; background: #c7d2fe; }
+.cc:has(#cc2:checked) .cols { grid-template-columns: repeat(2, 1fr); }
+.cc:has(#cc3:checked) .cols { grid-template-columns: repeat(3, 1fr); }
+
+/* 10 싱글 컬럼: 한 줄로 쌓인 카드가 위로 스크롤된다 */
+.sgl { padding: 10px; display: grid; gap: 8px; animation: sgl 5s ease-in-out infinite; }
+.sgl .w { height: 48px; }
+@keyframes sgl { 0%, 15% { transform: none; } 50%, 65% { transform: translateY(-84px); } 100% { transform: none; } }
+
+/* 11 홀리 그레일: grid-template-areas 로 5칸을 이름 붙여 배치, 체크하면 한 줄로 쌓인다 */
+.hgw { display: grid; gap: 8px; justify-items: center; }
+.hg { width: 250px; height: 140px; display: grid; gap: 5px; grid-template-columns: 42px 1fr 42px; grid-template-rows: 24px 1fr 20px; grid-template-areas: "h h h" "n m a" "f f f"; }
+.hg > :nth-child(1) { grid-area: h; } .hg > :nth-child(2) { grid-area: n; } .hg > :nth-child(3) { grid-area: m; } .hg > :nth-child(4) { grid-area: a; } .hg > :nth-child(5) { grid-area: f; }
+.hgw:has(input:checked) .hg { grid-template-columns: 1fr; grid-template-rows: 20px 18px 1fr 18px 20px; grid-template-areas: "h" "n" "m" "a" "f"; }
+.hgw label { cursor: pointer; }
+
+/* 12 스티키 푸터: 내용이 늘었다 줄어도 푸터는 margin-top:auto 로 바닥에 */
+.sfp { display: flex; flex-direction: column; gap: 6px; padding: 8px; }
+.sfp .c { height: 16px; animation: grow 4s ease-in-out infinite; }
+.sfp .f { margin-top: auto; height: 22px; }
+@keyframes grow { 0%, 15% { height: 16px; } 50%, 70% { height: 92px; } 100% { height: 16px; } }
+
+/* 13 풀 스크린 섹션: 칸 하나가 화면 높이만큼, 한 번에 한 장씩 넘어간다 */
+.fs { position: relative; width: 150px; height: 170px; overflow: hidden; background: #fff; border: 2px solid #c9cfe6; border-radius: 16px; }
+.fs .pgs { animation: fss 5s ease-in-out infinite; }
+.fs .pgs div { height: 166px; display: grid; place-items: center; font-weight: 800; color: #fff; }
+@keyframes fss { 0%, 35% { transform: none; } 45%, 85% { transform: translateY(-166px); } 95%, 100% { transform: none; } }
+
+/* 14 스티키 사이드바: 본문이 스크롤돼도 position:sticky 인 왼쪽은 그대로 */
+.ssb { width: 240px; height: 150px; overflow: auto; display: grid; grid-template-columns: 62px 1fr; gap: 8px; padding: 8px; align-items: start; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
+.ssb aside { position: sticky; top: 0; height: 70px; }
+.ssb main { display: grid; gap: 6px; padding: 0; margin: 0; max-width: none; }
+.ssb main .w { height: 56px; }
+
+/* 15 타일: 같은 크기의 정사각형을 규칙적으로 깐다 */
+.tl { display: grid; grid-template-columns: repeat(3, 70px); gap: 6px; }
+.tl > div { height: 70px; border-radius: 10px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 12px; transition: transform .2s; }
+.tl > div:hover { transform: scale(1.07); }
+
+/* 16 모듈식: 한 칸(모듈) 단위로 크기만 달리하고 grid-auto-flow:dense 로 빈틈을 메운다 */
+.modw { display: grid; gap: 8px; justify-items: center; }
+.mod { display: grid; grid-template-columns: repeat(4, 50px); grid-auto-rows: 42px; gap: 6px; grid-auto-flow: dense; }
+.mod .a { grid-column: span 2; grid-row: span 2; } .mod .b { grid-column: span 2; } .mod .c { grid-row: span 2; }
+.modw:has(input:checked) .mod .a { grid-column: span 1; grid-row: span 1; }
+.modw:has(input:checked) .mod .b { grid-column: span 1; }
+.modw label { cursor: pointer; }
+
+/* 17 밀도: 같은 목록, 행 안쪽 여백(padding)만 다르다 */
+.dn { background: #fff; border: 1px solid var(--line); border-radius: 8px; width: 118px; overflow: hidden; }
+.dn div { display: flex; align-items: center; gap: 5px; border-bottom: 1px solid var(--line); }
+.dn div:last-child { border: 0; }
+.dn.cp div { padding: 3px 7px; } .dn.cf div { padding: 11px 7px; }
+.dn i { width: 8px; height: 8px; border-radius: 50%; background: #c7d2fe; flex: none; }
+.dn .d-bar { flex: 1; }
+
+/* 18 종횡비: aspect-ratio 한 줄로 가로세로 비율을 고정 */
+.ar { display: grid; gap: 10px; justify-items: center; }
+.ar .bx { width: 130px; aspect-ratio: 16 / 9; display: grid; place-items: center; background: linear-gradient(160deg, #9ec5ff, #2f6fe0); border-radius: 10px; color: #fff; font-weight: 800; transition: aspect-ratio .3s; }
+.ar:has(#ar2:checked) .bx { aspect-ratio: 1 / 1; }
+.ar:has(#ar3:checked) .bx { aspect-ratio: 4 / 3; }
+
+/* 19 오브젝트 핏: 같은 그림을 정사각 틀에 cover(꽉 채워 자름) / contain(전부 보이게) */
+.of19 { width: 100px; height: 100px; display: block; border-radius: 8px; background: #d5daea; }
+.of19.cv { object-fit: cover; animation: pan 4s ease-in-out infinite; }
+.of19.ct { object-fit: contain; }
+@keyframes pan { 0%, 15% { object-position: 0% 50%; } 50%, 65% { object-position: 100% 50%; } 100% { object-position: 0% 50%; } }
+
+/* 20 플렉스 줄바꿈: flex-wrap 은 상자가 좁아지면 아래 줄로 내린다 */
+.wrw { width: 270px; }
+.wr { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border: 1.5px dashed #a5b4fc; border-radius: 10px; animation: shr 4.5s ease-in-out infinite; }
+@keyframes shr { 0%, 20% { width: 100%; } 55%, 80% { width: 48%; } 100% { width: 100%; } }
+
+/* 21 간격: gap 값이 변하면 칸 사이 틈(파란 바탕)만 달라진다 */
+.gp { display: grid; grid-template-columns: repeat(3, 52px); padding: 4px; background: #a5b4fc; border-radius: 8px; animation: gp 3.4s ease-in-out infinite; }
+.gp i { height: 40px; background: #fff; border-radius: 4px; }
+@keyframes gp { 0%, 15% { gap: 2px; } 50%, 70% { gap: 16px; } 100% { gap: 2px; } }
+
+/* 22 인셋: 분홍 줄무늬가 안쪽 여백(padding). 늘었다 줄어도 바깥 크기 기준은 같다 */
+.ins { padding: 4px; background: repeating-linear-gradient(45deg, #fbcfe8 0 4px, #fff 4px 8px); border: 1px dashed #f472b6; border-radius: 12px; animation: ins 3.2s ease-in-out infinite; }
+.ins .w { width: 140px; height: 54px; background: #fff; border: 1px solid var(--line); }
+@keyframes ins { 0%, 15% { padding: 4px; } 50%, 70% { padding: 20px; } 100% { padding: 4px; } }
+
+/* 23 오버플로: 라디오로 overflow 값을 바꿔 넘친 글의 처리를 비교 */
+.ovf { display: grid; gap: 10px; justify-items: center; width: 220px; }
+.ovf .bx { width: 130px; height: 52px; margin-bottom: 44px; padding: 4px 6px; border: 2px solid var(--p); border-radius: 8px; background: #fff; overflow: visible; font-size: 11px; line-height: 1.35; }
+.ovf:has(#of2:checked) .bx { overflow: hidden; }
+.ovf:has(#of3:checked) .bx { overflow: auto; }
+
+/* 24 오버랩: 음수 margin 으로 겹치고, 마우스를 올리면 펼쳐진다 */
+.ovl { display: flex; }
+.ovl div { width: 78px; height: 100px; margin-left: -36px; border-radius: 10px; box-shadow: -4px 0 10px rgba(30,27,75,.18); transition: margin .3s; display: grid; place-items: center; color: #fff; font-weight: 800; }
+.ovl div:first-child { margin-left: 0; }
+.ovl:hover div + div { margin-left: 8px; }
+
+/* 25 z축: 라디오 선택에 따라 z-index 가 바뀌어 앞에 오는 상자가 달라진다 */
+.zi { display: grid; gap: 10px; justify-items: center; }
+.zs { position: relative; width: 150px; height: 104px; }
+.zs div { position: absolute; width: 74px; height: 74px; border-radius: 10px; display: grid; place-items: center; color: #fff; font-weight: 800; box-shadow: 0 3px 10px rgba(30,27,75,.25); }
+.zs .a { left: 0; top: 0; background: #4f46e5; z-index: 1; } .zs .b { left: 38px; top: 16px; background: #ea580c; z-index: 2; } .zs .c { left: 76px; top: 30px; background: #16a34a; z-index: 3; }
+.zi:has(#za:checked) .a { z-index: 9; } .zi:has(#zb:checked) .b { z-index: 9; } .zi:has(#zc:checked) .c { z-index: 9; }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">레이아웃과 스타일</a><span class="sep">›</span>
+  <span>레이아웃 용어 더보기</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>레이아웃 용어 25가지 더</h1>
+    <p class="lead">화면을 짜는 말도 이름이 있어요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term added" id="visual-weight">
+      <div class="demo">
+        <div class="vwb">
+          <div class="vw"><i></i><i></i><i></i></div>
+          <label class="d-cap"><input type="checkbox"> 가운데를 무겁게 눌러 보세요</label>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">시각적 무게 <span class="en">Visual weight</span></h2>
+        <p class="desc">같은 크기라도 더 진하고, 크고, 채도가 높고, 복잡한 것이 더 "무겁게" 보여 눈을 먼저 끕니다. 레이아웃은 이 무게를 좌우와 위아래에 나눠 균형을 잡는 일입니다.</p>
+        <p class="when"><b>언제 쓰나</b>한 화면에서 가장 먼저 보여야 할 것을 정할 때. 주 버튼, 가격, 대표 이미지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>화면 오른쪽이 시각적 무게로 너무 쏠려 있어. 왼쪽에 이미지를 넣어 좌우 무게를 맞춰줘</q></p>
+        <p class="senior"><b>20년차 메모</b>무거운 요소가 세 개 이상이면 아무것도 먼저 보이지 않습니다. 배너, 큰 버튼, 진한 아이콘을 모두 강조하는 화면이 대표적입니다. 눈을 가늘게 뜨고 흐릿하게 봤을 때 처음 보이는 것이 의도한 것인지 확인하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="focal-point">
+      <div class="demo"><div class="fp" role="img" aria-label="회색 점들 사이에서 색 점 하나가 커졌다 작아진다"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="hot"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">초점 <span class="en">Focal point</span></h2>
+        <p class="desc">화면에서 시선이 가장 먼저 닿도록 만든 단 하나의 자리. 주변과 색, 크기, 여백 중 하나라도 확실히 달라야 생깁니다. 시각적 무게가 원리라면 초점은 그 결과입니다.</p>
+        <p class="when"><b>언제 쓰나</b>랜딩 페이지 첫 화면, 결제 화면의 최종 금액, 앱 홈의 핵심 행동 한 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이 화면의 초점은 "무료로 시작하기" 버튼 하나여야 해. 다른 버튼은 모두 약하게 낮춰줘</q></p>
+        <p class="senior"><b>20년차 메모</b>초점이 둘이면 사용자는 고르다가 둘 다 놓칩니다. 이벤트 배너와 주 버튼이 한 화면에서 싸우는 경우를 가장 자주 봅니다. 색으로만 튀게 하지 말고 주변 여백을 넉넉히 비워야 색을 못 보는 사용자에게도 초점이 보입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="symmetry">
+      <div class="demo">
+        <div class="d-pair" style="width:280px">
+          <div class="side"><div class="mf sym"><div class="w d tp">헤더</div><div class="w"></div><div class="w"></div><div class="w l bt"></div></div><span class="d-cap">대칭</span></div>
+          <span class="mid">vs</span>
+          <div class="side"><div class="mf asym"><div class="w d tp">헤더</div><div class="w tall"></div><div class="w l"></div><div class="w l"></div></div><span class="d-cap">비대칭</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">대칭 <span class="vs">vs</span> 비대칭 <span class="en">Symmetry vs Asymmetry</span></h2>
+        <p class="desc">가운데 선을 기준으로 양쪽이 거울처럼 같으면 대칭, 크기와 위치가 다른데도 무게가 맞으면 비대칭입니다. 대칭은 안정적이고 격식 있게, 비대칭은 움직임과 개성 있게 보입니다.</p>
+        <p class="when"><b>이렇게 구분</b>양쪽이 같은 모양이면 대칭, 한쪽이 크고 한쪽이 작아도 균형이 맞으면 비대칭.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>히어로 영역은 텍스트 2: 이미지 1 비율의 비대칭 레이아웃으로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>대칭은 쉬운 대신 밋밋해지기 쉽고, 비대칭은 무게 계산을 틀리면 그냥 어수선합니다. 반응형으로 줄일 때 비대칭은 위아래로 쌓이며 순서가 뒤섞이기 쉬우니, 모바일에서 읽는 순서를 따로 정해 두세요. 은행·공공 서비스처럼 신뢰가 먼저인 곳은 대칭이 안전합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="golden-ratio">
+      <div class="demo">
+        <div class="d-pair" style="width:290px">
+          <div class="side"><div class="gold" style="width:112px;height:80px"><div class="w d" style="flex:1.618">1.618</div><div class="w" style="flex:1">1</div></div><span class="d-cap">황금비</span></div>
+          <span class="mid">vs</span>
+          <div class="side"><div class="third" style="width:112px;height:80px;border:1px solid var(--line)"><i></i></div><span class="d-cap">3분할</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">황금비 <span class="vs">vs</span> 3분할 <span class="en">Golden ratio vs Rule of thirds</span></h2>
+        <p class="desc">화면을 나누는 비율의 기준입니다. 약 1.618 대 1로 나누는 것이 황금비, 가로세로를 3등분해 선이 만나는 점에 주인공을 두는 것이 3분할(삼등분 법칙)입니다.</p>
+        <p class="when"><b>이렇게 구분</b>콘텐츠 영역과 사이드 영역을 나누는 폭이면 황금비, 사진·배너의 주인공 위치를 잡는 일이면 3분할.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>본문과 사이드바 폭을 황금비로 나누고, 배너 인물은 3분할 교차점에 오도록 배치해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>황금비는 마법의 숫자가 아니라 "대충 이쯤"이라는 출발점입니다. 글 줄 길이나 터치 영역 같은 실제 제약이 먼저이고, 그다음에 비율을 다듬으세요. 3분할은 사진이 바뀌면 주인공 위치도 변하므로, 사용자가 올리는 이미지에는 초점 위치를 따로 받아 잘리지 않게 해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="f-pattern">
+      <div class="demo"><div class="fpat" role="img" aria-label="F자 순서로 차례로 강조되는 글줄"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">F 패턴 <span class="en">F-pattern</span></h2>
+        <p class="desc">글이 많은 화면을 사람들이 훑는 습관입니다. 맨 윗줄을 끝까지 읽고, 조금 아래에서 한 번 더 가로로 읽은 뒤, 왼쪽 가장자리를 따라 내려가는 모양이 F를 닮았습니다. 이미 있는 <strong>Z 패턴</strong>은 글이 적은 화면에 쓰는 순서입니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색 결과, 기사, 문서, 설정 목록처럼 글줄이 길게 이어지는 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>F 패턴 시선 흐름을 고려해서 각 항목의 핵심 단어를 줄 맨 앞에 두도록 목록 문구를 바꿔줘</q></p>
+        <p class="senior"><b>20년차 메모</b>F 패턴은 "사람이 이렇게 읽는다"가 아니라 "집중해서 읽지 않을 때 이렇게 훑는다"입니다. 그래서 줄 첫 두세 단어에 핵심이 없으면 정보가 사라집니다. 오른쪽 정렬이 필요한 언어나 가운데 정렬로 쓴 긴 글에서는 이 흐름이 깨집니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="above-the-fold">
+      <div class="demo">
+        <div class="abv">
+          <div class="fold"><div class="d-bar dark" style="width:80%;height:12px"></div><div class="d-bar" style="width:100%"></div><div class="d-bar" style="width:60%"></div><div class="d-btn cta" style="min-height:26px;align-self:flex-start;font-size:11px">시작하기</div><div class="d-bar" style="width:90%"></div><div class="d-bar" style="width:70%"></div><div class="d-bar" style="width:85%"></div></div>
+          <label class="d-cap"><input type="checkbox"> 버튼을 아래로 내려 보세요</label>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">스크롤 전 영역 <span class="en">Above the fold</span></h2>
+        <p class="desc">스크롤하지 않고 처음 열자마자 보이는 영역. 접힌 신문의 윗부분(fold)에서 온 말입니다. 이 영역에 있는 것만 모두가 반드시 봅니다.</p>
+        <p class="when"><b>언제 쓰나</b>랜딩 페이지 첫 화면, 앱 홈 상단. 핵심 메시지와 주 행동을 어디에 둘지 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>스크롤 전 영역 안에 제목, 한 줄 설명, 시작하기 버튼이 모두 들어오게 첫 화면 높이를 맞춰줘</q></p>
+        <p class="senior"><b>20년차 메모</b>기기마다 접히는 선이 달라서 "한 화면"의 높이는 정해져 있지 않습니다. 노트북, 작은 폰, 주소창이 줄어드는 모바일 브라우저를 모두 열어 주 버튼이 선 위에 남는지 확인하세요. 모든 걸 위에 몰아넣는 것은 해법이 아니고, 아래에 더 있다는 단서(살짝 보이는 다음 섹션)를 주는 편이 낫습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="header-main-footer">
+      <div class="demo">
+        <div style="display:grid;grid-template-rows:34px 1fr 28px;gap:6px;width:240px;height:160px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:10px">
+          <div class="w hl">헤더 Header</div><div class="w hl">본문 Main</div><div class="w hl">푸터 Footer</div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">헤더·본문·푸터 <span class="en">Header · Main · Footer</span></h2>
+        <p class="desc">거의 모든 화면의 가장 큰 세 덩어리. 위는 로고와 내비게이션, 가운데는 이 화면의 주인공, 아래는 약관·연락처·보조 링크가 들어갑니다.</p>
+        <p class="when"><b>언제 쓰나</b>웹사이트와 앱의 기본 뼈대를 AI에게 처음 시킬 때. 가장 바깥 구조부터 말해 주면 나머지가 안정됩니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>헤더·본문·푸터 세 영역으로 나누고, 헤더는 상단 고정, 푸터는 항상 화면 맨 아래에 오게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>헤더에 메뉴를 너무 많이 넣어 모바일에서 두 줄로 깨지는 경우가 흔합니다. 고정 헤더는 화면 높이를 계속 차지하므로 가로로 누운 폰에서는 본문이 거의 안 보일 수 있습니다. 푸터는 의외로 접근성 링크와 개인정보 안내가 법적으로 필요한 자리입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="section">
+      <div class="demo">
+        <div class="secs">
+          <div class="sec"><div class="d-bar dark" style="width:50%"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div></div>
+          <div class="sec"><div class="d-bar dark" style="width:40%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div></div>
+          <div class="sec"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:55%"></div></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">섹션 <span class="en">Section</span></h2>
+        <p class="desc">한 가지 주제를 담은 화면의 덩어리. 제목이 있고, 위아래로 충분한 간격이 있으며, 다른 섹션과 시각적으로 구분됩니다. 긴 랜딩 페이지는 섹션을 쌓아 만듭니다.</p>
+        <p class="when"><b>언제 쓰나</b>소개·기능·후기·가격처럼 긴 페이지를 주제별로 나눌 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>랜딩 페이지를 소개, 기능, 후기, 가격 네 개의 섹션으로 나누고 섹션 사이 위아래 여백을 96px로 줘</q></p>
+        <p class="senior"><b>20년차 메모</b>섹션 사이 간격이 섹션 안 간격과 비슷하면 어디서 끝나는지 알 수 없습니다. 안쪽 간격의 두 배 이상은 벌려야 덩어리가 보입니다. 개발에서 section은 HTML 태그 이름이기도 해서, 제목이 없는 section은 스크린 리더 사용자에게 의미 없는 구역이 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="column-count">
+      <div class="demo">
+        <div class="cc">
+          <div class="rc"><label class="d-chip"><input type="radio" name="cc" id="cc1" checked>1단</label><label class="d-chip"><input type="radio" name="cc" id="cc2">2단</label><label class="d-chip"><input type="radio" name="cc" id="cc3">3단</label></div>
+          <div class="cols"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <span class="d-cap">눌러 보세요. 같은 6개를 몇 줄로 세울지 바뀝니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">단 수 <span class="en">Column count · 1단 2단 3단</span></h2>
+        <p class="desc">내용을 세로 줄 몇 개로 나눠 담는지를 말합니다. 1단은 한 줄로 길게, 2단·3단은 옆으로 나란히. 보통 폰은 1단, 태블릿은 2단, 넓은 PC는 3단 이상으로 바뀝니다.</p>
+        <p class="when"><b>언제 쓰나</b>상품 목록, 기사 목록, 설정 화면을 기기 너비에 맞춰 나눌 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드 목록은 모바일 1단, 태블릿 2단, PC 3단으로 나눠서 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>단이 늘면 가로로 읽는 줄은 짧아지지만, 항목 순서가 위에서 아래인지 왼쪽에서 오른쪽인지 모호해집니다. 순서가 중요한 목록(순위, 단계)은 단을 나누지 마세요. 단 수는 기기 이름이 아니라 화면 너비(브레이크포인트)를 기준으로 정하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="single-column">
+      <div class="demo">
+        <div class="d-phone" style="width:130px"><div class="sgl"><div class="w d">1</div><div class="w">2</div><div class="w">3</div><div class="w">4</div><div class="w">5</div></div></div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">싱글 컬럼 <span class="en">Single column</span></h2>
+        <p class="desc">모든 것이 한 줄로 위에서 아래로만 이어지는 구조. 선택지가 하나라 읽는 순서가 틀릴 수 없고, 모바일 화면의 기본형입니다.</p>
+        <p class="when"><b>언제 쓰나</b>모바일 화면 전반, 회원가입·결제 같은 입력 폼, 한 편의 글을 읽는 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>가입 폼은 싱글 컬럼으로 한 줄에 입력칸 하나씩, 라벨은 입력칸 위에 두고 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>PC에서 싱글 컬럼을 화면 가득 늘리면 한 줄이 너무 길어져 읽기 어렵습니다. 최대 폭(대개 600~720px)을 걸고 가운데에 두세요. 입력 폼에서 "이름 / 성"을 옆에 나란히 두는 것은 괜찮지만 그 이상은 시선이 지그재그로 흔들립니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="holy-grail">
+      <div class="demo">
+        <div class="hgw">
+          <div class="hg"><div class="w d">헤더</div><div class="w">내비</div><div class="w l">본문</div><div class="w">광고</div><div class="w d">푸터</div></div>
+          <label class="d-cap"><input type="checkbox"> 좁은 화면으로 바꿔 보세요</label>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">홀리 그레일 <span class="en">Holy grail layout</span></h2>
+        <p class="desc">머리글, 왼쪽 메뉴, 가운데 본문, 오른쪽 보조 영역, 바닥글의 다섯 칸으로 이뤄진 고전적인 웹 레이아웃. 좌우는 고정 폭, 가운데는 남는 폭을 차지합니다. "성배"라 부른 건 예전에는 이 구조를 만들기가 몹시 어려워서입니다.</p>
+        <p class="when"><b>언제 쓰나</b>뉴스 포털, 문서 사이트, 관리자 페이지처럼 메뉴와 보조 정보가 모두 필요한 PC 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>홀리 그레일 레이아웃으로 만들어줘. 좌우는 200px 고정, 가운데 본문만 늘어나고, 모바일에서는 한 줄로 쌓아줘</q></p>
+        <p class="senior"><b>20년차 메모</b>좁은 화면에서 다섯 칸을 어떤 순서로 쌓을지 정하지 않으면 본문이 광고 아래로 밀려납니다. 모바일에서는 본문을 맨 위로, 메뉴는 접어서 버튼 뒤로 숨기는 것이 일반적입니다. 요즘은 보조 영역이 필요한 경우가 줄어 두 칸(메뉴 + 본문)으로 단순해진 서비스가 많습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="sticky-footer">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="d-phone sfp" style="width:130px;height:150px"><div class="w d" style="height:20px;flex:none">헤더</div><div class="w c"></div><div class="w d f">푸터</div></div>
+          <span class="d-cap">내용이 달라져도 푸터는 바닥에</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">스티키 푸터 <span class="en">Sticky footer</span></h2>
+        <p class="desc">내용이 짧아도 푸터가 화면 중간에 뜨지 않고 항상 화면 맨 아래에 붙어 있게 하는 배치. 내용이 길어지면 푸터는 내용 끝에서 따라 내려갑니다. 화면에 항상 떠 있는 고정 바와는 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>빈 목록이나 짧은 문의 페이지처럼 본문이 화면보다 짧아질 수 있는 모든 웹 페이지.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>본문이 짧아도 푸터가 화면 맨 아래에 붙도록 스티키 푸터 레이아웃으로 바꿔줘</q></p>
+        <p class="senior"><b>20년차 메모</b>빈 상태, 오류 화면, 로딩 직후처럼 내용이 거의 없는 순간에만 발견되는 버그라서 시안 검수에서 자주 놓칩니다. 이름 때문에 "항상 따라다니는 푸터"로 오해하기도 하는데, 그것은 고정 하단 바(Sticky bottom bar)이니 개발자와 이름을 맞추세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="full-screen-section">
+      <div class="demo">
+        <div class="fs"><div class="pgs"><div style="background:linear-gradient(160deg,#4f46e5,#7c3aed)">섹션 1</div><div style="background:linear-gradient(160deg,#ea580c,#f59e0b)">섹션 2</div></div></div>
+      </div>
+      <div class="body">
+        <p class="num">13</p>
+        <h2 class="term-name">풀 스크린 섹션 <span class="en">Full-screen section</span></h2>
+        <p class="desc">섹션 하나가 화면 높이를 꽉 채우는 구성. 스크롤할 때마다 한 장씩 다른 장면이 나오는 발표 자료 같은 느낌을 줍니다. 흔히 <strong>100vh 섹션</strong>이라고 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>제품 소개 페이지, 브랜드 스토리, 포트폴리오처럼 한 장면에 한 메시지만 전하고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>각 섹션을 풀 스크린 섹션으로 만들고, 스크롤할 때 섹션 단위로 딱 맞게 멈추게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모바일 브라우저는 주소창이 오르내려 100vh가 실제 보이는 높이보다 커지므로 내용이 가려집니다. 세로 길이가 짧은 가로 모드에서는 내용이 섹션 밖으로 넘치기도 하니, 최소 높이와 넘침 처리를 같이 정해 두세요. 정보를 많이 담는 화면에는 맞지 않습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="sticky-sidebar">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="ssb"><aside class="w d">목차</aside><main><div class="w l">본문 1</div><div class="w l">본문 2</div><div class="w l">본문 3</div><div class="w l">본문 4</div><div class="w l">본문 5</div><div class="w l">본문 6</div></main></div>
+          <span class="d-cap">상자 안에서 스크롤해 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">14</p>
+        <h2 class="term-name">스티키 사이드바 <span class="en">Sticky sidebar</span></h2>
+        <p class="desc">본문은 스크롤돼 올라가는데 옆 사이드바는 화면 위쪽에 붙어 따라오는 배치. 사이드바가 따라오며 항상 보인다는 점이 처음부터 끝까지 제자리에 있는 <strong>고정</strong> 사이드바와 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>긴 글의 목차, 상품 상세의 구매 박스, 필터 패널.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상품 상세 오른쪽의 구매 박스를 스티키 사이드바로 만들어서 스크롤해도 화면 위쪽에 붙어 있게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>사이드바가 화면보다 키가 크면 아래쪽이 영영 안 보이는 사고가 납니다. 사이드바 자체에 최대 높이와 내부 스크롤을 줘야 합니다. 부모에 overflow가 걸려 있으면 sticky가 조용히 안 먹는 일이 잦아, 개발자가 "안 돼요"라고 하면 대개 그 때문입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="tile">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="tl"><div style="background:#4f46e5">메일</div><div style="background:#0ea5e9">일정</div><div style="background:#16a34a">지도</div><div style="background:#ea580c">사진</div><div style="background:#d946ef">음악</div><div style="background:#475569">설정</div></div>
+          <span class="d-cap">마우스를 올려 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">15</p>
+        <h2 class="term-name">타일 <span class="en">Tile</span></h2>
+        <p class="desc">같은 크기의 정사각형 조각을 규칙적으로 깔아 만든 배치. 한 조각이 하나의 앱, 메뉴, 선택지를 뜻합니다. 카드와 달리 글을 길게 담지 않고 이름과 아이콘 정도만 담습니다.</p>
+        <p class="when"><b>언제 쓰나</b>앱 런처, 대시보드 바로가기, 카테고리 선택, 홈 화면의 서비스 메뉴.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>홈 화면 서비스 메뉴를 한 줄에 3개씩 보이는 정사각 타일로 만들고, 아이콘과 이름만 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>타일은 크기가 같으니 중요도 차이를 표현하지 못합니다. 눈에 띄게 하고 싶은 타일이 생기면 모듈식 레이아웃으로 넘어가야 합니다. 이름이 두 줄 이상 길어지는 순간 정사각이 깨지므로, 한글 줄바꿈과 말줄임 규칙을 함께 정해 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="modular-layout">
+      <div class="demo">
+        <div class="modw">
+          <div class="mod"><div class="w d a">A</div><div class="w b">B</div><div class="w l">C</div><div class="w c">D</div><div class="w l">E</div><div class="w l">F</div></div>
+          <label class="d-cap"><input type="checkbox"> 모듈을 작게 눌러 보세요</label>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">16</p>
+        <h2 class="term-name">모듈식 레이아웃 <span class="en">Modular layout</span></h2>
+        <p class="desc">화면을 같은 크기의 작은 칸(모듈)으로 나눈 뒤, 요소를 1칸, 2칸, 2×2칸처럼 칸 수 단위로 키워 배치하는 방식. 크기는 달라도 모두 같은 칸 위에 올라가 있어 가장자리가 맞습니다.</p>
+        <p class="when"><b>언제 쓰나</b>대시보드, 앱 홈, 잡지형 첫 화면처럼 정보 조각의 중요도가 서로 다른 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>홈 화면을 4열 모듈식 레이아웃으로 만들고, 중요한 카드는 2×2칸, 나머지는 1칸으로 빈틈없이 채워줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모듈 개수와 순서가 데이터에 따라 바뀌면 빈 칸이 생기기 쉽습니다. 항목이 3개뿐일 때, 12개일 때 모두 그려 보세요. 기본 칸 크기를 8의 배수로 정하면 개발과 디자인이 같은 숫자로 이야기할 수 있습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="density">
+      <div class="demo">
+        <div class="d-pair" style="width:290px">
+          <div class="side"><div class="dn cp"><div><i></i><span class="d-bar"></span></div><div><i></i><span class="d-bar"></span></div><div><i></i><span class="d-bar"></span></div><div><i></i><span class="d-bar"></span></div></div><span class="d-cap">컴팩트</span></div>
+          <span class="mid">vs</span>
+          <div class="side"><div class="dn cf"><div><i></i><span class="d-bar"></span></div><div><i></i><span class="d-bar"></span></div><div><i></i><span class="d-bar"></span></div><div><i></i><span class="d-bar"></span></div></div><span class="d-cap">컴포터블</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">17</p>
+        <h2 class="term-name">컴팩트 <span class="vs">vs</span> 컴포터블 <span class="en">Compact vs Comfortable density</span></h2>
+        <p class="desc">같은 내용을 얼마나 촘촘하게 담느냐를 가르는 기준이 밀도입니다. 한 화면에 더 많이 보이도록 행 높이를 줄이면 컴팩트, 여유 있게 눌러 읽도록 키우면 컴포터블입니다.</p>
+        <p class="when"><b>이렇게 구분</b>전문가가 매일 훑는 표·메일함이면 컴팩트, 처음 쓰는 사람이나 손가락으로 누르는 화면이면 컴포터블.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>메일 목록에 컴팩트와 컴포터블 밀도 설정을 만들고 기본은 컴포터블로 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>컴팩트는 마우스 기준이라 터치 화면에서는 눌림 영역이 44pt/48dp 아래로 내려가 오터치가 늘어납니다. 터치 기기에서는 컴팩트를 아예 막거나 터치 영역만 따로 키우세요. 밀도를 사용자 설정으로 열어 두면 전문가는 만족하지만 모든 상태를 두 벌씩 검수해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="aspect-ratio">
+      <div class="demo">
+        <div class="ar">
+          <div class="bx" role="img" aria-label="비율이 바뀌는 사진 틀">사진</div>
+          <div class="rc"><label class="d-chip"><input type="radio" name="ar" id="ar1" checked>16:9</label><label class="d-chip"><input type="radio" name="ar" id="ar2">1:1</label><label class="d-chip"><input type="radio" name="ar" id="ar3">4:3</label></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">18</p>
+        <h2 class="term-name">종횡비 <span class="en">Aspect ratio</span></h2>
+        <p class="desc">가로 대 세로의 비율. 16:9는 영상, 1:1은 프로필·피드 사진, 4:3은 일반 사진 비율입니다. 폭이 바뀌어도 이 비율을 지키면 높이가 알아서 따라옵니다.</p>
+        <p class="when"><b>언제 쓰나</b>썸네일, 영상 플레이어, 카드 이미지처럼 사진이 들어갈 자리를 미리 잡아야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상품 카드 이미지는 종횡비 1:1로 고정하고, 사진이 로딩되기 전에도 같은 자리를 차지하게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>종횡비를 미리 정해 두지 않으면 사진이 뜰 때 아래 내용이 밀리는 레이아웃 시프트가 납니다. 반대로 사용자가 올리는 사진은 종횡비가 제각각이라 틀과 사진의 비율이 어긋나는데, 그때 필요한 것이 오브젝트 핏입니다. 비율은 3종 이내로만 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="object-fit">
+      <div class="demo">
+        <div class="d-pair" style="width:280px">
+          <div class="side"><img class="of19 cv" alt="꽉 채우고 잘린 풍경" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Crect width='200' height='100' fill='%239ec5ff'/%3E%3Ccircle cx='160' cy='26' r='14' fill='%23fde68a'/%3E%3Cpath d='M0 100V70Q50 40 100 70T200 60V100z' fill='%232f6fe0'/%3E%3C/svg%3E"><span class="d-cap">cover</span></div>
+          <span class="mid">vs</span>
+          <div class="side"><img class="of19 ct" alt="전체가 보이고 위아래가 남는 풍경" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Crect width='200' height='100' fill='%239ec5ff'/%3E%3Ccircle cx='160' cy='26' r='14' fill='%23fde68a'/%3E%3Cpath d='M0 100V70Q50 40 100 70T200 60V100z' fill='%232f6fe0'/%3E%3C/svg%3E"><span class="d-cap">contain</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">19</p>
+        <h2 class="term-name">cover <span class="vs">vs</span> contain <span class="en">Object-fit</span></h2>
+        <p class="desc">틀의 비율과 사진의 비율이 다를 때 사진을 어떻게 맞출지 정하는 규칙입니다. 틀을 빈틈없이 채우고 넘치는 부분을 자르면 cover, 사진 전체가 보이게 줄이고 남는 자리를 비우면 contain입니다.</p>
+        <p class="when"><b>이렇게 구분</b>잘려도 분위기만 전하면 되는 사진이면 cover, 로고·제품 누끼·문서처럼 잘리면 안 되는 이미지면 contain.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>프로필 사진은 object-fit cover로 원형 틀을 채우고, 브랜드 로고는 contain으로 잘리지 않게 보여줘</q></p>
+        <p class="senior"><b>20년차 메모</b>cover는 기본적으로 가운데를 기준으로 자르기 때문에 얼굴이 위쪽에 있는 사진은 머리가 잘립니다. 초점 위치(object-position)를 같이 정하세요. contain에서 남는 빈자리는 투명하게 두면 페이지 배경에 묻히니, 연한 회색 배경을 깔아 두는 편이 안전합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="flex-wrap">
+      <div class="demo">
+        <div class="wrw"><div class="wr"><span class="d-chip">홈</span><span class="d-chip">검색</span><span class="d-chip">알림</span><span class="d-chip">메시지</span><span class="d-chip">프로필</span><span class="d-chip">설정</span></div></div>
+      </div>
+      <div class="body">
+        <p class="num">20</p>
+        <h2 class="term-name">플렉스 줄바꿈 <span class="en">Flex wrap</span></h2>
+        <p class="desc">가로로 늘어놓은 요소가 상자 너비를 넘을 때 다음 줄로 내려보낼지 정하는 설정입니다. 줄바꿈을 켜면 칩이나 태그가 줄을 바꿔 이어지고, 끄면 한 줄에 눌려 찌그러지거나 밖으로 삐져나갑니다.</p>
+        <p class="when"><b>언제 쓰나</b>태그 목록, 필터 칩, 카테고리 버튼처럼 개수가 정해져 있지 않은 가로 나열.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>필터 칩은 한 줄에 못 들어가면 flex wrap으로 아래 줄로 내려가게 하고 칩 사이 간격은 8px로 줘</q></p>
+        <p class="senior"><b>20년차 메모</b>줄바꿈된 줄의 오른쪽 끝이 들쭉날쭉해 정돈되지 않아 보일 수 있습니다. 항목 수가 많다면 줄바꿈 대신 가로 스크롤 한 줄로 가는 선택지도 비교해 보세요. 줄바꿈되어 두 줄이 되면 높이가 늘어나므로, 그 아래 요소가 밀려도 괜찮은지 확인해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="gap">
+      <div class="demo">
+        <div class="gp" role="img" aria-label="칸 사이 간격이 넓어졌다 좁아지는 격자"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="body">
+        <p class="num">21</p>
+        <h2 class="term-name">간격 <span class="en">Gap</span></h2>
+        <p class="desc">나란한 요소들 사이의 빈 틈. 요소 자신의 바깥 여백(margin)과 달리, 부모가 "자식들 사이는 이만큼"이라고 한 번에 정합니다. 가로와 세로 간격을 따로 줄 수도 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>카드 그리드, 버튼 그룹, 폼 항목 사이처럼 같은 종류의 요소가 반복되는 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드 그리드의 간격(gap)을 가로 16px, 세로 24px로 통일해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>간격 값을 카드마다 제각각 주면 나중에 "전체를 조금만 좁혀 줘"가 불가능해집니다. 간격 값은 4·8·16·24처럼 몇 단계로 정해 두고 쓰세요. 항목이 한 줄에 하나일 때도 같은 간격을 쓰는지 확인하세요. 한 줄과 여러 줄에서 간격이 달라 보이는 시안이 많습니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="inset">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="ins"><div class="w">내용</div></div>
+          <span class="d-cap">줄무늬가 인셋(안쪽 여백)</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">22</p>
+        <h2 class="term-name">인셋 <span class="en">Inset</span></h2>
+        <p class="desc">상자의 테두리와 그 안 내용 사이의 안쪽 여백. 흔히 패딩(padding)이라 부르고, 디자인 시스템에서는 "인셋"이라고 크기 이름을 붙여 관리합니다. 요소와 요소 사이의 바깥 간격과는 별개입니다.</p>
+        <p class="when"><b>언제 쓰나</b>카드, 버튼, 입력칸, 모달처럼 테두리가 있는 모든 컴포넌트의 안쪽 간격을 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드 인셋을 16px로 통일하고, 작은 카드(콤팩트)만 12px 인셋을 쓰게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>상하좌우를 모두 같은 값으로 두면 글이 있는 버튼은 위아래가 더 빡빡해 보입니다. 보통 세로보다 가로 인셋을 1.5~2배로 줍니다. 큰 카드 안쪽 여백이 작은 카드와 같은 값이면 큰 쪽이 답답해 보이니 크기별로 단계를 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="overflow">
+      <div class="demo">
+        <div class="ovf">
+          <div class="bx">이 상자보다 훨씬 긴 문장이 들어오면 어떻게 될지 정해 두어야 합니다. 넘친 글은 밖으로 보이거나, 잘리거나, 스크롤로 넘기게 됩니다.</div>
+          <div class="rc"><label class="d-chip"><input type="radio" name="of" id="of1" checked>visible</label><label class="d-chip"><input type="radio" name="of" id="of2">hidden</label><label class="d-chip"><input type="radio" name="of" id="of3">auto</label></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">23</p>
+        <h2 class="term-name">오버플로 <span class="en">Overflow</span></h2>
+        <p class="desc">내용이 틀보다 커서 넘쳤을 때의 처리 방식입니다. 그대로 밖에 보이게 두면 visible, 넘친 부분을 잘라 버리면 hidden, 스크롤바로 보게 하면 scroll 또는 auto입니다. 한 줄 말줄임(…)은 오버플로의 한 가지 형태입니다.</p>
+        <p class="when"><b>언제 쓰나</b>채팅방, 코드 블록, 표, 사이드 패널처럼 내용 길이를 예측할 수 없는 모든 틀.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>댓글 영역은 높이를 300px로 제한하고 넘치는 내용은 오버플로 auto로 안에서 스크롤되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>hidden은 쉽게 쓰지만, 잘린 글에 아무 표시가 없으면 사용자는 내용이 더 있는지 모릅니다. 가장자리가 흐려지거나 "더 보기"가 있어야 합니다. 스크롤 영역 안에 또 스크롤을 넣으면 휠이 어느 쪽에 먹는지 헷갈려 모바일에서 특히 불쾌하니, 중첩은 피하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="overlap">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="ovl"><div style="background:#4f46e5">A</div><div style="background:#ea580c">B</div><div style="background:#16a34a">C</div></div>
+          <span class="d-cap">마우스를 올려 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">24</p>
+        <h2 class="term-name">오버랩 <span class="en">Overlap</span></h2>
+        <p class="desc">요소를 일부러 서로 겹쳐 깊이와 리듬을 만드는 배치. 사진이 섹션 경계를 걸치거나, 카드가 배경 위로 튀어나오게 하는 식입니다. 실수로 겹치는 것(충돌)과 달리 어느 것이 위인지, 얼마나 겹칠지 의도가 있습니다.</p>
+        <p class="when"><b>언제 쓰나</b>히어로 영역의 이미지와 카드, 아바타 묶음, 단계별 카드 스택.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>요약 카드가 히어로 이미지 아래쪽에 40px 오버랩되게 걸쳐 보이도록 배치해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>겹친 부분에 글자가 놓이면 읽을 수 없게 됩니다. 글자는 겹침 영역을 피해서 두세요. 화면이 좁아져 레이아웃이 한 줄로 쌓이면 겹침이 어긋나 요소가 서로 가리는 경우가 많으니, 모바일 시안은 겹침 값을 따로 줘야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="z-index">
+      <div class="demo">
+        <div class="zi">
+          <div class="zs"><div class="a">A</div><div class="b">B</div><div class="c">C</div></div>
+          <div class="rc"><label class="d-chip"><input type="radio" name="z" id="za">A 앞으로</label><label class="d-chip"><input type="radio" name="z" id="zb">B</label><label class="d-chip"><input type="radio" name="z" id="zc" checked>C</label></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">25</p>
+        <h2 class="term-name">z축 · 레이어 순서 <span class="en">Z-index · Stacking order</span></h2>
+        <p class="desc">화면에는 가로(x), 세로(y) 말고도 "앞뒤"(z) 방향이 있습니다. 겹친 요소 중 어느 것이 위에 오는지를 정하는 값이 z-index이고, 숫자가 클수록 앞에 옵니다.</p>
+        <p class="when"><b>언제 쓰나</b>드롭다운, 모달, 토스트, 고정 헤더처럼 다른 요소 위에 떠야 하는 것들의 순서를 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>z-index를 헤더 100, 드롭다운 200, 모달 300, 토스트 400처럼 계층별로 정리해서 변수로 관리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>"안 보여요"의 흔한 원인은 z-index 숫자가 아니라 부모가 만든 별도의 쌓임 맥락입니다. 그럴 때 9999를 붙이면 일시적으로 해결되지만 다음 개발자가 99999를 씁니다. 계층 번호를 몇 단계로 정해 문서에 남기세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

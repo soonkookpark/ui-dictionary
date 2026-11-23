@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="반응형과 그리드 — 움직이는 예시로 보는 UI 용어 사전">
+<title>반응형과 그리드 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통: 오른쪽 아래 모서리를 끌면 폭이 바뀌는 상자(resize: horizontal) + 그 안의 컨테이너 */
+.rz { resize: horizontal; overflow: auto; width: 250px; max-width: 100%; min-width: 110px; background: #fff; border: 1.5px dashed #8d97d1; border-radius: 10px; }
+.qc { container-type: inline-size; padding: 8px; }
+
+/* 01 브레이크포인트: 컨테이너 쿼리로 폭 180px, 240px 에서 열 수와 라벨이 바뀐다 */
+.bp { display: grid; gap: 6px; grid-template-columns: 1fr; }
+.bp i { height: 30px; border-radius: 6px; background: var(--p-soft); }
+.bp-l { margin-top: 8px; font-weight: 800; color: var(--p); text-align: center; }
+.bp-l::after { content: "모바일 · 1열"; }
+@container (min-width: 180px) { .bp { grid-template-columns: repeat(2, 1fr); } .bp-l::after { content: "태블릿 · 2열"; } }
+@container (min-width: 240px) { .bp { grid-template-columns: repeat(3, 1fr); } .bp-l::after { content: "데스크톱 · 3열"; } }
+
+/* 02 12컬럼 그리드: repeat(12, 1fr) 격자 위에 grid-column: span N 으로 블록을 올린다 */
+.g12 { position: relative; display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px 4px; width: 252px; }
+.g12 .cols { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
+.g12 .cols i { background: rgba(239, 68, 68, .14); }
+.g12 .blk { position: relative; height: 24px; border-radius: 4px; background: var(--p); color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center; }
+
+/* 03 거터와 마진: 바깥 padding 이 마진(분홍), 칸 사이 gap 이 거터(파랑) */
+.gm { padding: 16px; background: #fbd5d5; border-radius: 8px; width: 250px; }
+.gm .in { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; background: #a5b4fc; }
+.gm .in b { height: 66px; background: #fff; display: grid; place-items: center; font-size: 11px; color: var(--mute); }
+
+/* 04 컨테이너: max-width 를 주고 margin: 0 auto 로 가운데 정렬 */
+.cw { background: repeating-linear-gradient(135deg, #eef0fa 0 6px, #fff 6px 12px); padding: 0; }
+.ct { max-width: 170px; margin: 0 auto; height: 96px; background: var(--p-soft); border-inline: 2px solid var(--p); display: grid; place-items: center; text-align: center; font-weight: 700; }
+
+/* 05 모바일 퍼스트: 기본 규칙 위에 min-width 규칙이 한 겹씩 얹힌다 */
+.ml { padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; color: #fff; background: var(--p); }
+.ml.l1 { width: 62%; }
+.ml.l2 { width: 72%; background: #6d66ee; animation: l2 6s infinite; }
+.ml.l3 { width: 100%; background: #8f89f3; animation: l3 6s infinite; }
+@keyframes l2 { 0%, 15% { opacity: .15; } 30%, 90% { opacity: 1; } 100% { opacity: .15; } }
+@keyframes l3 { 0%, 40% { opacity: .15; } 55%, 90% { opacity: 1; } 100% { opacity: .15; } }
+.code { font: 11px/1.5 Consolas, monospace; background: #1e1b4b; color: #e0e7ff; border-radius: 8px; padding: 8px 10px; }
+
+/* 06 유동 vs 고정: 바깥 폭이 줄었다 늘었다 할 때 100% 는 따라가고 110px 은 그대로 */
+.vp { height: 64px; padding: 6px; background: #fff; border: 1.5px dashed #8d97d1; border-radius: 8px; overflow: hidden; animation: vpw 4s ease-in-out infinite; }
+@keyframes vpw { 0%, 15% { width: 126px; } 50%, 65% { width: 70px; } 100% { width: 126px; } }
+.vp b { display: grid; place-items: center; height: 100%; border-radius: 6px; font-size: 11px; color: #fff; white-space: nowrap; }
+.fl { width: 100%; background: var(--p); }
+.fx { width: 96px; background: var(--warn); }
+
+/* 07 반응형 vs 적응형: 같은 폭 변화를 연속(부드럽게)과 계단(steps)으로 보여준다 */
+.rv, .ad { height: 66px; padding: 8px; background: #fff; border: 1.5px solid var(--line); border-radius: 8px; display: grid; gap: 6px; align-content: center; }
+.rv { animation: wr 4s linear infinite; }
+.ad { animation: wa 4s step-end infinite; }
+@keyframes wr { 0%, 100% { width: 60px; } 50% { width: 120px; } }
+@keyframes wa { 0%, 100% { width: 60px; } 25%, 75% { width: 90px; } 50% { width: 120px; } }
+
+/* 08 세이프 에어리어: 노치·홈 인디케이터 영역(붉은 띠)을 피해 안쪽(초록 점선)에만 배치 */
+.sa { width: 130px; height: 210px; border-radius: 22px; }
+.sa::before, .sa::after { content: ""; position: absolute; left: 0; right: 0; background: rgba(220, 38, 38, .13); }
+.sa::before { top: 0; height: 30px; }
+.sa::after { bottom: 0; height: 22px; }
+.sa .notch { position: absolute; top: 7px; left: 50%; width: 54px; height: 14px; margin-left: -27px; border-radius: 99px; background: var(--ink); z-index: 1; }
+.sa .home { position: absolute; bottom: 7px; left: 50%; width: 44px; height: 4px; margin-left: -22px; border-radius: 99px; background: var(--ink); z-index: 1; }
+.sa .safe { position: absolute; inset: 30px 0 22px; border: 1.5px dashed var(--ok); padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.sa .safe .d-btn { margin-top: auto; min-height: 30px; }
+
+/* 09 엄지 영역: 아래쪽 오른손 엄지가 닿는 호를 방사형 그라데이션으로 칠한다 */
+.tz { width: 130px; height: 210px; border-radius: 22px; background: radial-gradient(circle at 85% 105%, rgba(22, 163, 74, .38) 0 38%, rgba(217, 119, 6, .3) 38% 68%, rgba(220, 38, 38, .2) 68%), #fff; }
+.tz span { position: absolute; font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 99px; background: #fff; }
+.tz .a { right: 8px; bottom: 46px; color: var(--ok); }
+.tz .b { left: 10px; top: 96px; color: var(--warn); }
+.tz .c { left: 10px; top: 14px; color: var(--danger); }
+
+/* 10 스택·리플로: 컨테이너가 200px 이상이면 가로(row), 좁으면 세로(column) */
+.sr { display: flex; flex-direction: column; gap: 8px; }
+.sr .pic { height: 48px; flex: none; border-radius: 8px; background: linear-gradient(135deg, #a5b4fc, #6d66ee); }
+.sr .tx { flex: 1; display: grid; gap: 6px; align-content: center; }
+@container (min-width: 200px) { .sr { flex-direction: row; } .sr .pic { width: 70px; height: 60px; } }
+
+/* 11 뷰포트: 틀(overflow: hidden)이 뷰포트, 안의 긴 페이지가 translateY 로 스크롤된다 */
+.win { width: 120px; height: 190px; border: 3px solid var(--p); border-radius: 12px; overflow: hidden; background: #fff; }
+.page { height: 440px; animation: scrl 6s ease-in-out infinite; background: repeating-linear-gradient(180deg, var(--p-soft) 0 70px, #fff 70px 84px); }
+@keyframes scrl { 0%, 15% { transform: none; } 55%, 80% { transform: translateY(-250px); } 100% { transform: none; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">캡쳐에 없는 기본기</a><span class="sep">›</span>
+  <span>반응형과 그리드</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>반응형과 그리드</h1>
+    <p class="lead">화면 크기가 달라져도 무너지지 않는 말들</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="breakpoint">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="rz"><div class="qc"><div class="bp"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="bp-l"></div></div></div>
+          <span class="d-cap">상자의 오른쪽 아래 모서리를 끌어 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">브레이크포인트 <span class="en">Breakpoint</span></h2>
+        <p class="desc">화면 폭이 이 숫자를 넘거나 못 미치면 배치를 바꾸기로 정해둔 경계선. <strong>분기점</strong>이라고도 합니다. 데모의 180px, 240px이 그 경계입니다.</p>
+        <p class="when"><b>언제 쓰나</b>한 줄에 놓는 카드 수, 메뉴가 펼쳐지는지 햄버거로 접히는지처럼 배치 자체가 달라지는 지점을 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>브레이크포인트를 640px, 1024px 두 개로 잡고 카드를 1열, 2열, 3열로 바꿔줘</q></p>
+        <p class="senior"><b>20년차 메모</b>기기 이름(아이폰, 아이패드)으로 경계를 잡으면 새 기기가 나올 때마다 어긋납니다. 내용이 어색해지는 폭에서 끊으세요. 그리고 시안은 보통 모바일과 데스크톱 두 장뿐이라, 그 사이 폭(태블릿, 가로 모드)에서 어떻게 보일지는 개발자가 추측하게 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="column-grid">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="g12">
+            <div class="cols"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="blk" style="grid-column:span 8">8</div><div class="blk" style="grid-column:span 4">4</div>
+            <div class="blk" style="grid-column:span 6">6</div><div class="blk" style="grid-column:span 6">6</div>
+            <div class="blk" style="grid-column:span 4">4</div><div class="blk" style="grid-column:span 4">4</div><div class="blk" style="grid-column:span 4">4</div>
+          </div>
+          <span class="d-cap">12칸을 나눠 쓰는 방식</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">컬럼 그리드 <span class="en">12 column grid</span></h2>
+        <p class="desc">화면을 세로 칸 12개로 나누고, 요소가 그중 몇 칸을 차지할지로 배치하는 격자. 12는 2, 3, 4, 6으로 모두 나누어떨어져서 널리 쓰입니다. <strong>그리드 시스템</strong>이라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>대시보드, 쇼핑몰 목록, 관리자 화면처럼 여러 덩어리를 정렬해 놓아야 하는 웹 화면.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>데스크톱은 12 column grid로 본문 8칸, 사이드바 4칸으로 나누고 모바일에서는 12칸 한 줄로 바꿔줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모바일은 12칸이 아니라 보통 4칸으로 그립니다. 시안은 칸 수가 폭마다 다르다는 걸 알고 그려야 하고, 디자인 툴의 칸 오버레이가 코드의 칸과 같다고 믿으면 안 됩니다. 칸 수·거터·마진 숫자를 개발자와 먼저 맞추세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="gutter-margin">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="gm"><div class="in"><b>칸</b><b>칸</b><b>칸</b></div></div>
+          <div class="d-row"><span class="d-chip" style="background:#fbd5d5">마진: 바깥 여백</span><span class="d-chip" style="background:#a5b4fc">거터: 칸 사이</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">거터와 마진 <span class="en">Gutter · Margin</span></h2>
+        <p class="desc"><strong>거터</strong>는 칸과 칸 사이의 빈 통로, <strong>마진</strong>은 화면 가장자리와 격자 사이의 바깥 여백입니다. 둘을 합쳐 격자의 숨 쉴 공간을 만듭니다.</p>
+        <p class="when"><b>언제 쓰나</b>카드를 나란히 놓을 때 간격, 화면 양옆에 글이 붙지 않게 하는 여백을 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>그리드의 거터는 16px, 모바일 좌우 마진은 20px로 맞춰줘</q></p>
+        <p class="senior"><b>20년차 메모</b>가장 흔한 사고는 모바일에서 좌우 마진이 0이라 글이 화면 끝에 딱 붙는 것입니다. 또 거터를 "카드 안쪽 padding"과 섞어 부르면 개발자는 다른 값을 넣습니다. 칸 사이는 거터, 카드 안쪽은 패딩으로 말을 나누세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="container">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="rz cw"><div class="ct">콘텐츠<br>최대 170px</div></div>
+          <span class="d-cap">상자를 넓히고 좁혀 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">컨테이너 <span class="en">Container · max-width</span></h2>
+        <p class="desc">본문 영역을 감싸는 상자로, 최대 폭(max-width)을 정해 두고 가운데에 놓습니다. 화면이 아무리 넓어도 글줄이 한없이 길어지지 않게 막습니다.</p>
+        <p class="when"><b>언제 쓰나</b>넓은 모니터에서 기사, 설명 글, 폼이 양옆으로 늘어지는 것을 막을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>본문을 max-width 1120px 컨테이너에 담고 가운데 정렬해줘. 좁은 화면에서는 좌우 마진 16px</q></p>
+        <p class="senior"><b>20년차 메모</b>배경색이나 이미지는 컨테이너 밖까지 꽉 차게(풀 블리드), 글과 버튼만 컨테이너 안에 두는 구분을 시안에 표시해 주세요. 표시가 없으면 개발자가 배경까지 상자에 가둬서 양옆에 흰 띠가 생깁니다. 글줄 길이는 한글 기준 한 줄 40자 안팎이 읽기 편합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="mobile-first">
+      <div class="demo">
+        <div class="d-col" style="width:250px">
+          <div class="ml l1">기본 · 모든 화면</div>
+          <div class="ml l2">+ 600px 이상이면 추가</div>
+          <div class="ml l3">+ 1024px 이상이면 추가</div>
+          <div class="code">.card { 1열 }<br>@media (min-width: 600px) { 2열 }</div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">모바일 퍼스트 <span class="en">Mobile first</span></h2>
+        <p class="desc">가장 작은 화면을 먼저 설계하고, 화면이 커질 때 요소를 하나씩 더하는 순서. 거꾸로 데스크톱을 먼저 만들고 덜어내는 방식은 데스크톱 퍼스트라고 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>새 서비스를 시작할 때, 특히 사용자가 대부분 휴대폰으로 들어오는 서비스.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>모바일 퍼스트로 작성하고, 기본 스타일은 360px 기준, 넓은 화면은 min-width 미디어 쿼리로 확장해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>작은 화면에 모든 것을 넣을 수 없으니 "무엇이 가장 중요한가"를 강제로 정하게 되는 점이 진짜 장점입니다. 다만 모바일 시안만 만들고 데스크톱은 늘려서 쓰라고 넘기면, 데스크톱에서 모바일 화면이 그대로 커진 어색한 결과가 나옵니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="fluid-vs-fixed">
+      <div class="demo">
+        <div class="d-col" style="width:100%">
+          <div class="d-pair">
+            <div class="side"><div class="vp"><b class="fl">100%</b></div><span class="d-cap">유동: 폭을 따라감</span></div>
+            <span class="mid">vs</span>
+            <div class="side"><div class="vp"><b class="fx">96px</b></div><span class="d-cap">고정: 폭이 안 변함</span></div>
+          </div>
+          <span class="d-cap" style="text-align:center">바깥 점선 상자의 폭이 줄었다 늘어납니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">유동 <span class="vs">vs</span> 고정 <span class="en">Fluid vs Fixed</span></h2>
+        <p class="desc">요소의 폭을 %처럼 상대값으로 주면 유동, px처럼 절대값으로 주면 고정입니다. 둘을 섞어 쓰는 것이 보통이고, 어느 쪽인지 말해야 개발자가 같은 그림을 그립니다.</p>
+        <p class="when"><b>이렇게 구분</b>화면이 줄 때 같이 줄어야 하면 유동, 줄어도 크기가 같아야 하면 고정(아이콘, 아바타, 버튼 높이).</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드 영역은 유동 폭으로 늘어나게 하고, 왼쪽 프로필 이미지는 64px 고정으로 둬줘</q></p>
+        <p class="senior"><b>20년차 메모</b>시안에 적힌 "320px"는 고정인지 그 순간의 예시인지 알 수 없습니다. 모든 폭을 고정값으로 넘기면 좁은 화면에서 가로 스크롤이 생깁니다. 시안에 "이 폭은 늘어남"이라고 한 줄만 적어도 사고가 줄어듭니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="responsive-vs-adaptive">
+      <div class="demo">
+        <div class="d-col" style="width:100%">
+          <div class="d-pair">
+            <div class="side"><div class="rv"><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div></div><span class="d-cap">반응형: 연속으로</span></div>
+            <span class="mid">vs</span>
+            <div class="side"><div class="ad"><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div></div><span class="d-cap">적응형: 계단으로</span></div>
+          </div>
+          <span class="d-cap" style="text-align:center">단순화한 예시</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">반응형 <span class="vs">vs</span> 적응형 <span class="en">Responsive vs Adaptive</span></h2>
+        <p class="desc">폭에 따라 레이아웃이 연속해서 유연하게 변하면 반응형, 미리 만든 몇 개의 고정 레이아웃 중 맞는 것을 골라 보여주면 적응형입니다. 영어 원어로는 Responsive, Adaptive.</p>
+        <p class="when"><b>이렇게 구분</b>창 폭을 천천히 줄였을 때 매끄럽게 변하면 반응형, 어느 순간 화면이 통째로 바뀌면 적응형.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>별도 모바일 페이지 없이 하나의 코드로 반응형 웹으로 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>요즘 웹은 대부분 두 방식을 섞어 씁니다. 순수한 적응형은 레이아웃 수만큼 시안과 코드가 늘어나서, 기기마다 화면이 완전히 다른 서비스가 아니면 유지가 어렵습니다. "반응형으로 해주세요"만 쓰지 말고 몇 개 폭에서 어떻게 달라지는지를 같이 적으세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="safe-area">
+      <div class="demo">
+        <div class="d-row" style="gap:14px">
+          <div class="d-phone sa" role="img" aria-label="노치와 홈 인디케이터를 피한 안전 영역">
+            <div class="notch"></div><div class="home"></div>
+            <div class="safe"><div class="d-bar dark" style="width:60%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div><button class="d-btn" type="button">계속하기</button></div>
+          </div>
+          <div class="d-col" style="width:96px">
+            <span class="d-chip" style="background:rgba(220,38,38,.13)">붉은 띠: 가려지는 곳</span>
+            <span class="d-chip" style="border:1.5px dashed var(--ok)">점선 안: 안전</span>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">세이프 에어리어 <span class="en">Safe area</span></h2>
+        <p class="desc">노치(카메라가 파인 부분), 상태 표시줄, 아래 홈 인디케이터(가로 막대)에 가리지 않는 화면 안쪽 영역. <strong>안전 영역</strong>이라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>화면 맨 위 헤더, 맨 아래 탭바나 "다음" 버튼처럼 화면 가장자리에 붙는 모든 요소.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>하단 고정 버튼이 홈 인디케이터에 가리지 않게 safe area 안쪽에 두고, 배경색은 끝까지 채워줘</q></p>
+        <p class="senior"><b>20년차 메모</b>안전 영역은 "여백을 늘려라"가 아니라 "배경은 끝까지, 조작할 것은 안쪽에"입니다. 배경까지 안쪽에 가두면 위아래에 흰 띠가 생깁니다. 가로 모드에서는 좌우에도 안전 영역이 생기고, 웹은 env(safe-area-inset-bottom) 값을 직접 써야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="thumb-zone">
+      <div class="demo">
+        <div class="d-row" style="gap:14px">
+          <div class="d-phone tz" role="img" aria-label="엄지가 닿는 영역을 초록, 주황, 빨강으로 표시한 화면">
+            <span class="a">쉬움</span><span class="b">닿음</span><span class="c">어려움</span>
+          </div>
+          <div class="d-col" style="width:92px"><span class="d-cap">오른손으로 한 손에 쥐었을 때</span><span class="d-cap">단순화한 예시</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">엄지 영역 <span class="en">Thumb zone</span></h2>
+        <p class="desc">한 손으로 폰을 쥐었을 때 엄지가 편하게 닿는 범위. 화면 아래쪽, 쥔 손 쪽 가까이가 가장 쉽고 위쪽 반대편 모서리가 가장 어렵습니다.</p>
+        <p class="when"><b>언제 쓰나</b>휴대폰 앱의 주요 버튼, 탭바, 하단 시트, 결제·다음 버튼의 위치를 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>주요 행동 버튼은 엄지 영역인 화면 아래쪽에 두고, 되돌릴 수 없는 삭제 버튼은 일부러 먼 위쪽에 둬줘</q></p>
+        <p class="senior"><b>20년차 메모</b>화면이 커진 요즘은 왼쪽 위 뒤로가기 버튼이 가장 닿기 어려운 곳이 됐습니다. 그래서 하단 탭바와 바텀 시트가 늘었습니다. 다만 "자주 쓰는 것은 아래"가 원칙이어서 위험한 버튼까지 엄지 영역에 두면 오터치 사고가 납니다. 왼손잡이와 태블릿에는 그대로 적용되지 않습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="stack-reflow">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="rz"><div class="qc"><div class="sr"><div class="pic"></div><div class="tx"><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar" style="width:60%"></div></div></div></div></div>
+          <span class="d-cap">폭을 줄이면 옆에서 아래로 쌓입니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">스택과 리플로 <span class="en">Stack · Reflow</span></h2>
+        <p class="desc">공간이 좁아지면 나란히 있던 것들이 세로로 쌓이고(stack), 내용이 새 폭에 맞춰 다시 흘러가며 자리를 잡는(reflow) 동작. 데모는 컨테이너 쿼리라는 CSS 기능으로 만들었습니다.</p>
+        <p class="when"><b>언제 쓰나</b>이미지 옆 글, 가로로 놓인 카드 3장, 두 칸짜리 폼이 모바일에서 한 줄로 바뀔 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드 3장은 데스크톱에서 가로로 놓고, 좁아지면 세로로 쌓이도록 flex-wrap으로 리플로되게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>쌓이는 순서를 빼먹는 경우가 많습니다. 좌우로 놓인 두 덩어리가 위아래가 될 때 어느 것이 먼저 오는지 정해 주지 않으면, 코드 순서대로 나와 중요한 것이 아래로 밀립니다. 또 글을 확대해서 보는 사용자는 데스크톱에서도 리플로를 겪으니, 가로 스크롤 없이 한 줄로 읽혀야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="viewport">
+      <div class="demo">
+        <div class="d-row" style="gap:16px">
+          <div class="win" role="img" aria-label="긴 페이지 위로 움직이는 화면 틀"><div class="page"></div></div>
+          <div class="d-col" style="width:100px"><span class="d-cap" style="color:var(--p)">파란 틀 = 뷰포트(지금 보이는 창)</span><span class="d-cap">안의 줄무늬 = 더 긴 페이지</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">뷰포트 <span class="en">Viewport</span></h2>
+        <p class="desc">사용자가 지금 실제로 보고 있는 화면 창. 페이지 전체가 아니라 그중 보이는 부분입니다. 화면 폭·높이를 말할 때의 기준이 되며, 코드에서는 vw, vh 단위로 씁니다.</p>
+        <p class="when"><b>언제 쓰나</b>"첫 화면에 보이는 것", 화면 높이를 꽉 채우는 히어로, 스크롤 없이 보여야 하는 핵심 버튼을 말할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>첫 뷰포트 안에 제목과 시작하기 버튼이 모두 보이게 하고, 모바일에서는 주소창을 고려해 dvh 단위를 써줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모바일 브라우저는 스크롤하면 주소창이 접히고 펴져서 100vh가 실제 보이는 높이와 다릅니다. 그래서 하단 버튼이 주소창 뒤로 숨는 사고가 납니다. 요즘은 dvh 단위로 해결하니 개발자에게 이 이름을 알려 주세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

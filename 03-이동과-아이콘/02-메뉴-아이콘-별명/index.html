@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="메뉴 아이콘 별명 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>메뉴 아이콘 별명 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+/* 공통 틀: 숨은 체크박스(.t) + 앱 바(.bar) + 눌렀을 때 열리는 패널(.pop). :checked 형제 선택자로 연다 */
+.mb { position: relative; width: 250px; height: 190px; }
+.mb .t { position: absolute; opacity: 0; pointer-events: none; }
+.bar { display: flex; align-items: center; justify-content: space-between; height: 44px; padding: 0 4px 0 12px; background: #fff; border: 1px solid var(--line); border-radius: 12px; font-weight: 700; }
+.bar.l { justify-content: flex-start; gap: 6px; padding: 0 12px 0 4px; }
+.mi { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; cursor: pointer; color: var(--ink); transition: background .15s; }
+.mi:hover { background: var(--p-soft); }
+.mi svg { width: 24px; height: 24px; fill: currentColor; stroke: none; }
+.t:focus-visible ~ .bar .mi { outline: 3px solid var(--p); }
+.pop { position: absolute; top: 50px; padding: 6px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 24px rgba(30,27,75,.18); opacity: 0; pointer-events: none; transform: translateY(-6px) scale(.96); transform-origin: top right; transition: opacity .18s, transform .18s; font-weight: 600; z-index: 2; }
+.pop.l { left: 0; transform-origin: top left; }
+.pop.r { right: 0; }
+.t:checked ~ .pop { opacity: 1; pointer-events: auto; transform: none; }
+.it { display: block; padding: 7px 14px; border-radius: 8px; }
+.it:first-child { background: var(--p-soft); color: var(--p); }
+.it.dg { color: var(--danger); }
+.cap { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; }
+
+/* 01 햄버거: 가로줄 3개를 absolute 로 쌓고, 열리면 위·아래 줄은 X 로 돌리고 가운데 줄은 사라진다 */
+.hb { position: relative; width: 20px; height: 14px; }
+.hb i { position: absolute; left: 0; width: 100%; height: 2px; border-radius: 2px; background: currentColor; transition: transform .25s, top .25s, opacity .2s; }
+.hb i:nth-child(1) { top: 0; } .hb i:nth-child(2) { top: 6px; } .hb i:nth-child(3) { top: 12px; }
+#m1:checked ~ .bar .hb i:nth-child(1) { top: 6px; transform: rotate(45deg); }
+#m1:checked ~ .bar .hb i:nth-child(2) { opacity: 0; }
+#m1:checked ~ .bar .hb i:nth-child(3) { top: 6px; transform: rotate(-45deg); }
+
+/* 04·05 와플/벤토: 3x3 격자 패널. 점 대신 색 칸으로 앱 목록을 흉내 낸다 */
+.grid9 { display: grid; grid-template-columns: repeat(3, 56px); gap: 4px; padding: 4px; }
+.grid9 span { display: grid; justify-items: center; gap: 3px; padding: 6px 0; border-radius: 8px; font-size: 11px; }
+.grid9 span:hover { background: var(--p-soft); }
+.grid9 span::before { content: ""; width: 26px; height: 26px; border-radius: 8px; background: var(--c, var(--p)); }
+.grid9.rd span::before { border-radius: 50%; }
+
+/* 09 슬라이더: 눌러서 패널이 열리면 손잡이 위치가 바뀐다. 아이콘 속 손잡이도 같이 이동(transform) */
+.sl i { transition: transform .3s; }
+#m9:checked ~ .bar .k1 { transform: translateX(6px); }
+#m9:checked ~ .bar .k2 { transform: translateX(-6px); }
+#m9:checked ~ .bar .k3 { transform: translateX(5px); }
+.flt { width: 190px; padding: 8px 10px 4px; display: grid; gap: 4px; font-size: 12px; }
+.flt input { width: 100%; accent-color: var(--p); }
+
+/* 추가: 더보기 메뉴 — 공간이 모자랄 때 뒷순서 도구를 ⋯ 안으로 접는다 */
+.tool { display: flex; align-items: center; gap: 4px; padding: 4px 6px; background: #fff; border-radius: 12px; border: 1px solid var(--line); }
+.tool .d-icon { width: 36px; height: 36px; box-shadow: none; }
+.tool .more { background: var(--p-soft); color: var(--p); }
+.tool .more svg { fill: currentColor; stroke: none; }
+/* 추가: 터치 영역 — 보이는 아이콘은 24px, 눌리는 칸은 44px 점선 */
+.hit { display: grid; place-items: center; width: 44px; height: 44px; border: 2px dashed var(--p); border-radius: 10px; background: rgba(79,70,229,.08); }
+.hit .d-svg { width: 24px; height: 24px; }
+/* 추가: 아이콘만 vs 아이콘+글자 */
+.lab { display: grid; justify-items: center; gap: 2px; font-size: 11px; font-weight: 700; }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">이동과 아이콘</a><span class="sep">›</span>
+  <span>메뉴 아이콘 별명</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>메뉴 아이콘 별명 9가지</h1>
+    <p class="lead">점과 줄이 만든 아이콘마다 별명이 있어요</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="hamburger">
+      <div class="demo">
+        <div class="mb">
+          <input class="t" type="checkbox" id="m1" aria-label="햄버거 메뉴 열기">
+          <div class="bar l"><label class="mi" for="m1" aria-hidden="true"><span class="hb"><i></i><i></i><i></i></span></label>앱 이름</div>
+          <div class="pop l" style="width:150px"><span class="it">홈</span><span class="it">알림</span><span class="it">보관함</span><span class="it">설정</span></div>
+          <span class="cap d-cap">눌러 보세요. 줄이 X 로 바뀝니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">햄버거 <span class="en">Hamburger</span></h2>
+        <p class="desc">가로줄 3개를 겹쳐 놓은 모양으로, 빵 사이에 고기가 낀 햄버거처럼 보여서 붙은 이름입니다. 누르면 <strong>전체 메뉴</strong>(드로어나 전체 화면 메뉴)가 열리는 것이 가장 널리 쓰이는 약속입니다.</p>
+        <p class="when"><b>언제 쓰나</b>메뉴가 많아 한 줄에 다 못 담는 모바일 웹, 왼쪽 위 또는 오른쪽 위에 두는 앱 바.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>왼쪽 위에 햄버거 아이콘을 두고, 누르면 X 모양으로 바뀌면서 전체 메뉴가 펼쳐지게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>메뉴를 햄버거 안에 숨기면 눈에 보이는 메뉴보다 훨씬 덜 눌립니다. PC 웹이나 주요 메뉴가 4~5개뿐이라면 펼쳐서 보여주세요. 아이콘만 두지 말고 "메뉴"라는 접근성 이름과 열림 상태(aria-expanded)를 같이 달아야 스크린리더가 읽습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="kebab">
+      <div class="demo">
+        <div class="mb">
+          <input class="t" type="checkbox" id="m2" aria-label="케밥 메뉴 열기">
+          <div class="bar">게시글 제목<label class="mi" for="m2" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></label></div>
+          <div class="pop r"><span class="it">공유</span><span class="it">수정</span><span class="it dg">삭제</span></div>
+          <span class="cap d-cap">눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">케밥 <span class="en">Kebab</span></h2>
+        <p class="desc">세로로 점 3개가 늘어선 모양이 꼬치(케밥)와 닮아 붙은 이름입니다. 누르면 그 항목에만 해당하는 <strong>더보기 메뉴</strong>가 열립니다. 세로 점 세 개라서 <strong>세로 더보기(Vertical ellipsis)</strong>라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>목록의 한 줄, 카드, 앱 바 오른쪽 끝에서 공유·수정·삭제 같은 부가 동작을 숨길 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드 오른쪽 위에 케밥 아이콘을 두고, 누르면 공유·수정·삭제가 담긴 작은 메뉴가 그 아이콘 아래에 열리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>삭제처럼 위험한 항목은 맨 아래에 두고 빨간색으로 구분하되, 누르면 바로 지우지 말고 확인 단계를 두세요. 아이콘 자체가 작아서 눌리는 영역을 48dp 이상으로 잡지 않으면 오터치가 많습니다. 안드로이드는 세로(kebab), 아이폰 앱은 가로(meatballs)를 선호하는 편이라 플랫폼별로 맞출지 정해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="meatballs">
+      <div class="demo">
+        <div class="mb">
+          <input class="t" type="checkbox" id="m3" aria-label="미트볼 메뉴 열기">
+          <div class="bar">댓글 작성자<label class="mi" for="m3" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></label></div>
+          <div class="pop r"><span class="it">링크 복사</span><span class="it">숨기기</span><span class="it dg">신고하기</span></div>
+          <span class="cap d-cap">눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">미트볼 <span class="en">Meatballs</span></h2>
+        <p class="desc">가로로 점 3개가 놓인 모양이 접시 위 미트볼 같아서 붙은 이름입니다. 케밥과 하는 일이 같고 방향만 다릅니다. 줄임표(…)와 같아서 <strong>더보기, Horizontal ellipsis</strong>라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>댓글, 게시물, 메시지 한 건에 붙는 부가 동작. 아이폰 스타일 화면과 가로로 공간이 있는 곳.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>댓글 오른쪽 끝에 미트볼 아이콘을 두고 누르면 링크 복사·숨기기·신고하기 메뉴가 뜨게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>케밥과 미트볼을 한 서비스에서 섞어 쓰면 "이 둘은 다른 메뉴인가?" 하고 의심하게 만듭니다. 하나를 정하세요. 또 점 3개 안에 가장 중요한 동작을 넣으면 아무도 못 찾으니, 자주 쓰는 동작은 밖으로 꺼내고 나머지만 넣어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="waffle">
+      <div class="demo">
+        <div class="mb">
+          <input class="t" type="checkbox" id="m4" aria-label="와플 메뉴 열기">
+          <div class="bar">서비스<label class="mi" for="m4" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="5" cy="5" r="1.800"/><circle cx="12" cy="5" r="1.800"/><circle cx="19" cy="5" r="1.800"/><circle cx="5" cy="12" r="1.800"/><circle cx="12" cy="12" r="1.800"/><circle cx="19" cy="12" r="1.800"/><circle cx="5" cy="19" r="1.800"/><circle cx="12" cy="19" r="1.800"/><circle cx="19" cy="19" r="1.800"/></svg></label></div>
+          <div class="pop r"><div class="grid9 rd"><span style="--c:#6366f1">메일</span><span style="--c:#10b981">일정</span><span style="--c:#f59e0b">문서</span><span style="--c:#ec4899">사진</span><span style="--c:#0ea5e9">지도</span><span style="--c:#8b5cf6">메모</span></div></div>
+          <span class="cap d-cap">눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">와플 <span class="en">Waffle</span></h2>
+        <p class="desc">둥근 점을 3x3으로 찍은 모양이 와플 표면 같아서 붙은 이름입니다. 누르면 같은 회사가 만든 <strong>다른 앱·서비스 목록</strong>이 격자로 열립니다. 이런 격자 메뉴를 <strong>앱 런처(App launcher)</strong>라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>한 계정으로 쓰는 여러 서비스를 오가는 업무용 도구, 포털, 관리자 화면의 오른쪽 위.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>오른쪽 위에 와플 아이콘을 두고, 누르면 서비스 아이콘이 3열 격자로 나오는 앱 목록 패널이 열리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>와플은 "다른 서비스로 이동"이라는 뜻이라, 현재 화면의 메뉴를 넣으면 사용자가 길을 잃습니다. 서비스가 하나뿐이거나 항목이 4개 이하면 격자를 만들지 마세요. 아이콘 아래 글자를 꼭 붙이고, 바깥을 누르면 닫히는지도 점검하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="bento">
+      <div class="demo">
+        <div class="mb">
+          <input class="t" type="checkbox" id="m5" aria-label="벤토 메뉴 열기">
+          <div class="bar">바로가기<label class="mi" for="m5" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="4" height="4" rx=".8"/><rect x="10" y="4" width="4" height="4" rx=".8"/><rect x="16" y="4" width="4" height="4" rx=".8"/><rect x="4" y="10" width="4" height="4" rx=".8"/><rect x="10" y="10" width="4" height="4" rx=".8"/><rect x="16" y="10" width="4" height="4" rx=".8"/><rect x="4" y="16" width="4" height="4" rx=".8"/><rect x="10" y="16" width="4" height="4" rx=".8"/><rect x="16" y="16" width="4" height="4" rx=".8"/></svg></label></div>
+          <div class="pop r"><div class="grid9"><span style="--c:#6366f1">홈</span><span style="--c:#10b981">주문</span><span style="--c:#f59e0b">고객</span><span style="--c:#ec4899">리뷰</span><span style="--c:#0ea5e9">통계</span><span style="--c:#8b5cf6">설정</span></div></div>
+          <span class="cap d-cap">눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">벤토 <span class="en">Bento</span></h2>
+        <p class="desc">네모 점을 3x3으로 놓은 모양이 일본 도시락(벤토)의 칸막이를 닮았습니다. 와플과 거의 같지만 점이 둥글면 와플, 네모면 벤토로 구분합니다. 열리는 내용도 대개 <strong>앱 목록·바로가기 모음</strong>으로 같습니다.</p>
+        <p class="when"><b>언제 쓰나</b>제품군을 오가는 상단 바, 대시보드의 위젯 모음처럼 여러 영역을 한눈에 골라야 할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>상단 오른쪽에 둥근 점이 아닌 네모 점 3x3 벤토 아이콘을 넣고 누르면 바로가기 격자가 열리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>점이 둥근지 네모인지는 시안에서 거의 안 보여서, 개발자에게 와플이라고만 말하면 다른 모양이 나옵니다. "네모 점 3x3, 한 변 4px"처럼 모양을 같이 적어 주세요. 한 서비스에서 와플과 벤토를 섞어 쓰면 서로 다른 메뉴로 오해합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="doner">
+      <div class="demo">
+        <div class="mb">
+          <input class="t" type="checkbox" id="m6" aria-label="도너 메뉴 열기">
+          <div class="bar">메뉴<label class="mi" for="m6" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="2" rx="1"/><rect x="4" y="11" width="12" height="2" rx="1"/><rect x="4" y="17" width="8" height="2" rx="1"/></svg></label></div>
+          <div class="pop r"><span class="it" style="text-align:right">회사 소개</span><span class="it" style="text-align:right">요금</span><span class="it" style="text-align:right">문의</span></div>
+          <span class="cap d-cap">눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">도너 <span class="en">Döner</span></h2>
+        <p class="desc">아래로 갈수록 줄이 짧아지는 3줄로, 터키식 도너 케밥 고기를 깎는 모습과 닮아 붙은 별명입니다. 햄버거의 변형이라 누르면 보통 <strong>메뉴</strong>가 열리고, 줄이 오른쪽(또는 왼쪽)으로 정렬돼 메뉴도 그쪽에 붙습니다.</p>
+        <p class="when"><b>언제 쓰나</b>햄버거보다 개성을 주고 싶은 브랜드 사이트, 오른쪽 끝에 붙은 앱 바. 흔한 표준은 아니라서 쓸 때 주의가 필요합니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>메뉴 아이콘은 햄버거 대신 위에서 아래로 짧아지는 도너 모양 3줄로 그리고, 누르면 오른쪽 정렬된 메뉴가 열리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>모양을 바꾼 만큼 알아보는 사람이 줄어듭니다. 반응 속도로 바로 이어지는 지름길 같은 아이콘이 아니므로 처음 방문하는 사용자가 많은 서비스는 햄버거를 쓰세요. 이 이름은 업계 공식 용어가 아니라 디자이너들 사이의 별명이라는 것도 알아 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="veggie-burger">
+      <div class="demo">
+        <div class="mb">
+          <input class="t" type="checkbox" id="m7" aria-label="베지 버거 메뉴 열기">
+          <div class="bar">브랜드<label class="mi" for="m7" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="2" rx="1"/><rect x="4" y="14" width="16" height="2" rx="1"/></svg></label></div>
+          <div class="pop" style="left:0;right:0;transform-origin:top"><span class="it">소개</span><span class="it">가격</span><span class="it">문의</span></div>
+          <span class="cap d-cap">눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">베지 버거 <span class="en">Veggie burger</span></h2>
+        <p class="desc">햄버거에서 고기(가운데 줄)를 뺀 가로줄 2개짜리입니다. 뜻은 햄버거와 같아서 누르면 <strong>전체 메뉴</strong>가 열립니다. 줄이 2개라 작은 크기에서 덜 답답해 보인다는 점만 다릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>헤더가 낮은 모바일 웹, 아이콘을 작게 써야 하는 좁은 바.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>메뉴 버튼은 가로줄 2개짜리 베지 버거 아이콘으로 만들고 누르면 가로 전체 폭 메뉴가 내려오게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>줄이 2개면 "정렬"이나 "같음(=)" 기호로 읽힐 위험이 있습니다. 주변에 다른 뜻의 줄 아이콘이 있으면 쓰지 마세요. 접근성 이름은 "메뉴"로 똑같이 붙이고, 줄 사이 간격이 너무 좁으면 흐릿해지니 최소 4px 이상 띄우세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="stairs">
+      <div class="demo">
+        <div class="mb">
+          <input class="t" type="checkbox" id="m8" aria-label="계단 아이콘 열기">
+          <div class="bar">목록<label class="mi" for="m8" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="8" height="2" rx="1"/><rect x="8" y="11" width="8" height="2" rx="1"/><rect x="12" y="17" width="8" height="2" rx="1"/></svg></label></div>
+          <div class="pop r"><span class="it">이름순</span><span class="it">최신순</span><span class="it">오래된순</span></div>
+          <span class="cap d-cap">눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">계단 <span class="en">Stairs</span></h2>
+        <p class="desc">같은 길이의 줄 3개가 계단처럼 한 칸씩 어긋난 모양입니다. 햄버거의 변형으로 쓰이기도 하지만, 정렬이나 단계처럼 <strong>순서를 다루는 도구</strong>로 쓰는 경우가 더 많습니다. 아직 합의된 표준 이름은 없는 편입니다.</p>
+        <p class="when"><b>언제 쓰나</b>정렬 기준 고르기, 목록 정리 같은 순서 관련 메뉴. 전체 메뉴 용도로는 권하지 않습니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>정렬 버튼에 계단처럼 어긋난 줄 3개 아이콘을 쓰고, 누르면 이름순·최신순·오래된순 목록이 열리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>햄버거를 계단으로 바꾸고 싶다는 요청은 대부분 브랜드 개성 때문인데, 사용자는 처음 보는 모양을 메뉴로 읽지 못합니다. 열리는 내용이 순서 관련이 아니면 계단 모양을 피하고, 쓴다면 글자 라벨을 곁들이세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="sliders">
+      <div class="demo">
+        <div class="mb">
+          <input class="t" type="checkbox" id="m9" aria-label="슬라이더 아이콘 열기">
+          <div class="bar">상품<label class="mi" for="m9" aria-hidden="true"><svg class="sl" viewBox="0 0 24 24" style="stroke:currentColor"><path d="M4 6h16M4 12h16M4 18h16" stroke-width="2" stroke-linecap="round"/><g fill="#fff" stroke-width="2"><circle class="k1" cx="8" cy="6" r="2.500"/><circle class="k2" cx="16" cy="12" r="2.500"/><circle class="k3" cx="10" cy="18" r="2.500"/></g></svg></label></div>
+          <div class="pop r flt"><label>가격<input type="range" min="0" max="100" value="60" aria-label="가격"></label><label>평점<input type="range" min="0" max="100" value="30" aria-label="평점"></label></div>
+          <span class="cap d-cap">눌러 보세요. 손잡이가 움직입니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">슬라이더 <span class="en">Sliders</span></h2>
+        <p class="desc">줄 위에 조절 손잡이가 달린 모양으로, 음량 조절기 같습니다. 누르면 <strong>필터·설정 패널</strong>이 열립니다. 이 아이콘은 줄을 가로로 놓은 것(Sliders)과 세로로 놓은 것(Equalizer)이 있고, 보통 <strong>필터 아이콘</strong>이라고 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>검색 결과나 지도 위에서 가격·평점·거리 같은 조건을 좁힐 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>검색창 옆에 슬라이더 모양 필터 아이콘을 두고, 누르면 가격과 평점 조건을 고르는 패널이 열리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>필터를 적용한 뒤에는 아이콘 위에 개수 배지를 달아 "지금 걸러진 상태"임을 알려 주세요. 안 그러면 결과가 줄어든 이유를 모릅니다. 깔때기(Funnel) 모양과 뜻이 겹치는데, 조건을 세밀하게 바꾸면 슬라이더, 단순히 걸러내기면 깔때기를 씁니다.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">메뉴 아이콘을 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="overflow-menu">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:10px">
+          <div class="tool">
+            <span class="d-icon"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.500-4.500"/></svg></span>
+            <span class="d-icon"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg></span>
+            <span class="d-icon more"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span>
+          </div>
+          <span class="d-cap">자리가 부족하면 나머지는 점 3개 안으로</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">오버플로 메뉴 <span class="en">Overflow menu</span></h2>
+        <p class="desc">도구가 한 줄에 다 안 들어갈 때 넘치는(overflow) 항목을 접어 담는 메뉴입니다. 케밥과 미트볼은 이 메뉴를 여는 아이콘입니다. 아이콘이 이름이고, 오버플로 메뉴가 기능의 이름입니다.</p>
+        <p class="when"><b>언제 쓰나</b>화면 폭이 좁아져 도구 막대의 일부를 숨겨야 할 때, 우선순위가 낮은 동작을 정리할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>화면이 좁아지면 앞의 두 도구만 보이고 나머지는 점 3개 오버플로 메뉴로 옮겨줘</q></p>
+        <p class="senior"><b>20년차 메모</b>어떤 동작을 안에 넣을지 우선순위를 정하지 않고 "넘치는 순서대로" 넣으면, 가장 중요한 저장 버튼이 접히는 사고가 납니다. 반드시 보여야 할 동작은 고정하세요.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="hit-area">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;gap:10px">
+          <div class="hit"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></div>
+          <span class="d-cap">아이콘은 24, 눌리는 영역은 44</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">터치 영역 <span class="en">Hit area · Touch target</span></h2>
+        <p class="desc">눈에 보이는 아이콘 크기와 상관없이, 손가락이 눌렀을 때 반응하는 영역입니다. 아이폰은 44pt, 안드로이드는 48dp 이상을 권장합니다. 작은 점 3개 아이콘일수록 영역을 따로 키워야 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>케밥·햄버거처럼 작은 아이콘 버튼을 만들 때. 보이는 크기와 누르는 크기를 따로 정합니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>메뉴 아이콘은 24px로 보이되 눌리는 영역(터치 영역)은 48px 정사각형이 되게 패딩을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>시안에 아이콘을 24px로 그려 주면 개발자는 정확히 24px짜리 버튼을 만듭니다. 시안에 점선으로 터치 영역을 같이 표시해 주세요. 옆 버튼과 터치 영역이 겹치는 것도 자주 놓치는 오류입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="labeled-icon">
+      <div class="demo">
+        <div class="d-pair">
+          <div class="side"><span class="d-icon"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9H4z"/></svg></span><span class="d-cap">아이콘만</span></div>
+          <div class="mid">vs</div>
+          <div class="side"><div class="lab"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9H4z"/></svg>홈</div><span class="d-cap">아이콘 + 글자</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">아이콘만 <span class="vs">vs</span> 아이콘+글자 <span class="en">Icon-only vs Labeled icon</span></h2>
+        <p class="desc">모두가 아는 뜻이 아니면 글자를 붙이고, 전 세계 공통으로 통하는 아이콘만 단독으로 씁니다. 별명이 붙은 메뉴 아이콘은 익숙하지만, 처음 보는 사람에게는 여전히 추측입니다.</p>
+        <p class="when"><b>이렇게 구분</b>햄버거·돋보기·닫기처럼 누구나 아는 아이콘이면 아이콘만, 와플·벤토·슬라이더처럼 의미가 흐리면 아이콘+글자.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>필터 아이콘 옆에 "필터" 글자를 붙이고, 화면이 좁을 때만 글자를 숨겨줘</q></p>
+        <p class="senior"><b>20년차 메모</b>글자를 숨기더라도 접근성 이름(aria-label)과 길게 눌렀을 때 뜨는 툴팁은 남겨야 합니다. 아이콘 뜻을 사용자 테스트 없이 "당연하다"고 믿는 것이 가장 비싼 착각입니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

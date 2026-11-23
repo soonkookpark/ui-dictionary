@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="리서치 방법 9가지 — 움직이는 예시로 보는 UI 용어 사전">
+<title>리서치 방법 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+.bx { width: 270px; display: grid; gap: 8px; }
+
+/* 01 사용자 인터뷰: 질문과 답이 차례로 나타나는 대화 */
+.bub { max-width: 210px; padding: 8px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; opacity: 0; animation: bub 6s ease-out infinite; animation-delay: calc(var(--i) * 1.3s); }
+.bub.q { background: var(--p); color: #fff; justify-self: start; border-bottom-left-radius: 3px; }
+.bub.a { background: #fff; border: 1px solid var(--line); justify-self: end; border-bottom-right-radius: 3px; }
+@keyframes bub { 0% { opacity: 0; transform: translateY(8px); } 8%, 78% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; } }
+
+/* 02 사용성 테스트: 화면에서 커서가 헤매다 엉뚱한 곳을 누른다 */
+.ut { position: relative; width: 250px; height: 130px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.ut .btns { position: absolute; left: 14px; right: 14px; top: 44px; display: flex; gap: 8px; }
+.ut .btns span { flex: 1; text-align: center; padding: 8px 0; border-radius: 8px; background: var(--p-soft); font-size: 11px; font-weight: 700; color: var(--p); }
+.ut .cur { position: absolute; left: 30px; top: 70px; width: 18px; height: 18px; animation: cur 5s ease-in-out infinite; }
+.ut .cur svg { width: 18px; height: 18px; fill: var(--ink); stroke: #fff; stroke-width: 1.5; }
+.ut .q { position: absolute; right: 18px; top: 84px; width: 22px; height: 22px; border-radius: 50%; background: var(--warn); color: #fff; font-weight: 800; display: grid; place-items: center; opacity: 0; animation: qm 5s ease-in-out infinite; }
+@keyframes cur { 0%, 6% { transform: translate(0, 0); } 25% { transform: translate(90px, -4px); } 40% { transform: translate(40px, 12px); } 60%, 72% { transform: translate(150px, 0); } 100% { transform: translate(0, 0); } }
+@keyframes qm { 0%, 30% { opacity: 0; transform: scale(.5); } 40%, 72% { opacity: 1; transform: scale(1); } 85%, 100% { opacity: 0; } }
+
+/* 03 A/B 테스트: 두 안을 각각 보여주고 결과 막대를 비교한다 */
+.ab { width: 100px; padding: 8px; background: #fff; border: 1px solid var(--line); border-radius: 8px; display: grid; gap: 5px; }
+.rbar { width: 100%; height: 10px; border-radius: 99px; background: #d5daea; overflow: hidden; }
+.rbar i { transform-origin: left; display: block; height: 100%; background: var(--p); transform-origin: left; animation: rb 4s ease-out infinite; }
+@keyframes rb { 0%, 10% { transform: scaleX(0); } 50%, 100% { transform: scaleX(1); } }
+
+/* 04 카드 소팅: 카드가 사용자가 생각하는 묶음으로 이동한다 */
+.cs { position: relative; width: 280px; height: 180px; }
+.cs .grp { position: absolute; top: 80px; width: 124px; height: 100px; border: 2px dashed #c9cfe6; border-radius: 10px; font-size: 11px; font-weight: 700; color: var(--mute); padding: 4px 8px; }
+.cs .c { position: absolute; width: 56px; padding: 3px 0; text-align: center; background: #fff; border: 1.5px solid var(--p); border-radius: 6px; font-size: 11px; font-weight: 700; animation: cs 5s ease-in-out infinite; animation-delay: calc(var(--k) * .12s); }
+@keyframes cs { 0%, 12% { transform: none; } 40%, 80% { transform: translate(var(--dx), var(--dy)); } 100% { transform: none; } }
+
+/* 05 트리 테스트: 사용자가 메뉴 구조(글자뿐인 트리)를 따라 내려가며 정답을 찾는다 */
+.tt { font-size: 12px; font-weight: 600; display: grid; gap: 2px; }
+.tt div { padding: 3px 8px; border-radius: 6px; animation: tt 5s steps(1) infinite; animation-delay: calc(var(--k) * 1s - 5s); }
+@keyframes tt { 0% { background: var(--p); color: #fff; } 20%, 100% { background: transparent; color: var(--ink); } }
+
+/* 07 다이어리 스터디: 일주일 동안 매일 기록이 하나씩 쌓인다 */
+.dy { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 270px; }
+.dy div { text-align: center; font-size: 11px; font-weight: 700; color: var(--mute); }
+.dy i { display: block; height: 46px; margin-top: 4px; border-radius: 6px; background: #e8ebf5; position: relative; }
+.dy i::after { content: ""; position: absolute; inset: 8px 6px; border-radius: 3px; background: var(--p); opacity: 0; animation: dy 7s ease-out infinite; animation-delay: calc(var(--k) * .7s); }
+@keyframes dy { 0% { opacity: 0; transform: scale(.4); } 8%, 90% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+
+/* 08 히트맵: 많이 눌린 곳일수록 붉게 (radial-gradient 얼룩이 숨쉬듯 변함) */
+.hm { position: relative; width: 190px; height: 150px; background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; padding: 12px; display: grid; gap: 8px; align-content: start; }
+.hm i { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(239,68,68,.85) 0, rgba(250,204,21,.55) 45%, transparent 70%); animation: hm 3s ease-in-out infinite; }
+@keyframes hm { 0%, 100% { opacity: .35; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.1); } }
+
+/* 09 퍼널 분석: 단계마다 좁아지는 깔때기 모양 막대 */
+.fn { display: grid; gap: 6px; justify-items: center; width: 250px; }
+.fn div { height: 28px; border-radius: 6px; background: var(--p); color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; transform-origin: center; animation: fn 4.5s ease-out infinite; animation-delay: calc(var(--k) * .3s); }
+@keyframes fn { 0%, 5% { transform: scaleX(0); } 30%, 90% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+
+/* 추가 */
+.pers { width: 250px; padding: 12px; background: #fff; border-radius: 12px; border: 1px solid var(--line); display: grid; grid-template-columns: 44px 1fr; gap: 4px 12px; align-items: center; }
+.pers .face { width: 44px; height: 44px; border-radius: 50%; background: #a5b4fc; grid-row: span 2; }
+.rc { width: 250px; display: grid; gap: 6px; font-size: 12px; font-weight: 600; }
+.rc label { display: flex; gap: 8px; align-items: center; padding: 7px 10px; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.rc .pass { border-color: var(--ok); }
+.rc .out { color: var(--mute); text-decoration: line-through; }
+.mini-chart { display: flex; align-items: flex-end; gap: 5px; height: 70px; }
+.mini-chart i { width: 14px; background: var(--p); border-radius: 3px 3px 0 0; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-cursor" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-2 6z"/></symbol></defs></svg>
+
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">UX 지식</a><span class="sep">›</span>
+  <span>리서치 방법</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>리서치 방법 9가지</h1>
+    <p class="lead">무엇을 알고 싶은가에 따라 방법이 달라집니다</p>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="user-interview">
+      <div class="demo"><div class="bx" role="img" aria-label="질문과 답이 차례로 오가는 인터뷰 대화">
+        <div class="bub q" style="--i:0">처음 앱을 켰을 때 무엇을 하려고 했나요?</div>
+        <div class="bub a" style="--i:1">일단 오늘 일정부터 보려고요.</div>
+        <div class="bub q" style="--i:2">그때 어떤 점이 불편했나요?</div>
+        <div class="bub a" style="--i:3">일정이 어디 있는지 한참 찾았어요.</div>
+      </div></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">사용자 인터뷰 <span class="en">User interview</span></h2>
+        <p class="desc">사용자와 일대일로 이야기하며 행동의 이유와 배경을 깊이 듣는 방법입니다. 화면을 보여주는 것이 아니라 사용자의 경험과 맥락을 듣는 데 초점이 있습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>"사람들이 왜 그렇게 행동하는지 모르겠다", "어떤 문제를 가진 사람들이 우리 서비스를 쓰는지 알고 싶다"처럼 이유와 맥락을 알고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>가계부 앱 신규 사용자 대상 사용자 인터뷰(User interview) 질문지를 만들어줘. 유도 질문은 빼고 "마지막으로 했을 때"처럼 실제 경험을 묻는 질문 위주로</q></p>
+        <p class="senior"><b>20년차 메모</b>"이 기능이 있으면 쓰시겠어요?"는 거의 항상 "네"가 나와서 아무것도 알려주지 못합니다. 앞으로의 의견이 아니라 과거에 실제로 한 행동을 물으세요. 흔히 5명 안팎으로도 반복되는 큰 불편은 보인다고 알려져 있지만, 서로 다른 유형의 사용자를 섞어야 의미가 있고 숫자로 비율을 말하면 안 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="usability-test">
+      <div class="demo"><div class="d-col" style="align-items:center"><span class="d-chip">과제: 환불 신청 버튼을 찾아보세요</span><div class="ut" role="img" aria-label="커서가 헤매다 엉뚱한 곳을 누르는 모습"><div class="d-bar dark" style="margin:12px;width:40%"></div><div class="btns"><span>주문 내역</span><span>쿠폰</span><span>고객센터</span></div><div class="cur"><svg viewBox="0 0 24 24"><use href="#i-cursor"/></svg></div><div class="q">?</div></div></div></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">사용성 테스트 <span class="en">Usability test</span></h2>
+        <p class="desc">사용자에게 실제 화면(또는 시안)을 주고 과제를 시켜 보며 어디서 막히는지 관찰하는 방법입니다. 인터뷰가 "말"을 듣는다면 사용성 테스트는 "행동"을 봅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>"이 화면에서 사용자가 목적을 이룰 수 있는지", "어디서 헷갈리는지" 알고 싶을 때. 출시 전 시안이나 개편 직후에 특히 쓴다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>환불 신청 화면에 대한 사용성 테스트(Usability test) 과제 3개와 관찰 체크리스트를 만들어줘. 과제는 "환불 버튼을 누르세요"처럼 답을 알려주지 않게</q></p>
+        <p class="senior"><b>20년차 메모</b>과제 문장에 화면 속 단어를 그대로 쓰면 사용자는 글자를 찾기만 하고, 정작 길을 찾는 어려움은 보이지 않습니다. 사용자가 막혀도 바로 도와주지 말고 몇 초 기다리세요. 실패를 숫자 하나로 요약하기보다 어디서 왜 막혔는지 장면을 기록하는 것이 더 쓸모 있습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="ab-test">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="d-pair" style="width:270px"><div class="side"><div class="ab"><div class="d-bar dark" style="width:70%"></div><span class="d-btn" style="min-height:24px;font-size:10px;background:#8b8fb0">무료 체험</span></div><b>A안</b></div><span class="mid">vs</span><div class="side"><div class="ab"><div class="d-bar dark" style="width:70%"></div><span class="d-btn" style="min-height:24px;font-size:10px">지금 시작</span></div><b>B안</b></div></div><div class="d-row" style="width:270px;gap:10px"><div class="rbar"><i style="transform-origin:left;width:60%"></i></div><div class="rbar"><i style="width:80%"></i></div></div><span class="d-cap">같은 시기에 사람을 나눠서 비교합니다 (막대 길이는 예시)</span></div></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">A/B 테스트 <span class="en">A/B test</span></h2>
+        <p class="desc">두 가지 안을 같은 시기에 서로 다른 사용자 그룹에게 보여주고, 어느 쪽이 더 나은 결과를 내는지 숫자로 비교하는 방법입니다. 둘 중 무엇이 더 나은지 답을 정해 주지만 왜 그런지는 알려주지 않습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>"버튼 문구나 배치 중 어느 쪽이 더 많이 눌리는지" 처럼 이미 후보가 있고 방문자가 충분히 많을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>가입 버튼 문구에 대한 A/B 테스트(A/B test) 계획서를 써줘. 가설, 비교할 지표 한 가지, 진행 기간, 결과를 해석할 때 주의할 점을 포함해서</q></p>
+        <p class="senior"><b>20년차 메모</b>방문자가 적은 서비스에서는 결과가 우연으로 갈릴 수 있고, 며칠 보고 중간에 이긴 쪽을 고르면 틀리기 쉽습니다. 시작 전에 기간과 판단 기준을 정해 두세요. 한 번에 여러 가지를 바꾸면 무엇 때문에 달라졌는지 알 수 없고, 클릭이 늘었다고 해서 사용자가 만족했다는 뜻은 아닙니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="card-sorting">
+      <div class="demo"><div class="cs" role="img" aria-label="카드들이 사용자가 생각하는 묶음으로 이동하는 모습">
+        <div class="grp" style="left:6px">주문 관련</div><div class="grp" style="left:150px">혜택 관련</div>
+        <span class="c" style="--k:0;left:10px;top:8px;--dx:8px;--dy:88px">환불</span>
+        <span class="c" style="--k:1;left:80px;top:8px;--dx:78px;--dy:88px">쿠폰</span>
+        <span class="c" style="--k:2;left:150px;top:8px;--dx:-132px;--dy:114px">교환</span>
+        <span class="c" style="--k:3;left:10px;top:36px;--dx:148px;--dy:86px">포인트</span>
+        <span class="c" style="--k:4;left:80px;top:36px;--dx:-62px;--dy:112px">배송 조회</span>
+        <span class="c" style="--k:5;left:150px;top:36px;--dx:8px;--dy:112px">등급</span>
+      </div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">카드 소팅 <span class="en">Card sorting</span></h2>
+        <p class="desc">항목 이름을 적은 카드를 사용자가 자기 생각대로 묶고 이름을 붙이게 하는 방법입니다. 사용자의 머릿속 분류를 알아내서 메뉴 구조를 짜는 데 씁니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>"메뉴나 카테고리를 어떻게 묶어야 사용자가 찾기 쉬울지" 모를 때. 새 서비스를 만들거나 메뉴를 개편하기 전에.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>쇼핑몰 마이페이지 메뉴 항목 24개로 카드 소팅(Card sorting) 진행 계획을 짜줘. 참여자에게 줄 안내문과 결과를 정리하는 표도 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>카드 이름에 회사 내부 용어가 섞여 있으면 사용자가 뜻을 몰라 아무렇게나 묶습니다. 사용자의 말로 카드를 적으세요. 결과가 사람마다 달라도 정상이니 가장 많이 겹치는 묶음을 찾는 것이지 정답 하나를 구하는 것이 아닙니다. 카드가 40개를 넘으면 참여자가 지쳐 대충 묶기 시작합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="tree-testing">
+      <div class="demo"><div class="d-box bx" style="gap:8px"><span class="d-cap">과제: 환불 방법을 찾아보세요</span><div class="tt"><div style="--k:0">홈</div><div style="--k:1;margin-left:14px">고객센터</div><div style="--k:2;margin-left:28px">주문·배송</div><div style="--k:3;margin-left:42px">교환·환불</div></div></div></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">트리 테스트 <span class="en">Tree testing</span></h2>
+        <p class="desc">화면 디자인 없이 글자로만 된 메뉴 구조를 보여주고, 사용자가 과제의 답을 어디서 찾을지 따라가게 하는 방법입니다. 카드 소팅이 구조를 만든다면, 트리 테스트는 만든 구조가 맞는지 검증합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>"만든 메뉴 구조에서 사람들이 원하는 항목을 찾아내는지" 확인하고 싶을 때. 디자인에 들어가기 전에.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>고객센터 메뉴 구조에 대한 트리 테스트(Tree testing) 과제 5개와 각 과제의 정답 경로를 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>정답을 찾은 사람 수만 보지 말고 틀린 사람이 어디로 갔는지를 보세요. 많은 사람이 같은 틀린 항목을 눌렀다면 그 항목의 이름이 문제입니다. 화면 디자인이 빠진 상태라서 검색창, 배너, 추천처럼 실제로는 도움이 되는 길은 이 테스트에 반영되지 않는다는 한계도 기억하세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="survey">
+      <div class="demo"><div class="d-box bx" style="gap:10px"><b>이 앱을 친구에게 권할 가능성이 있나요?</b><div class="d-row" style="justify-content:space-between;font-size:12px"><span class="d-cap">전혀 아니다</span><span class="d-cap">매우 그렇다</span></div><div class="d-row" style="justify-content:space-between"><input type="radio" name="s1" aria-label="1점"><input type="radio" name="s1" aria-label="2점"><input type="radio" name="s1" aria-label="3점" checked><input type="radio" name="s1" aria-label="4점"><input type="radio" name="s1" aria-label="5점"></div><span class="d-cap" style="text-align:center">눌러 보세요</span></div></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">설문 <span class="en">Survey</span></h2>
+        <p class="desc">같은 질문지를 많은 사람에게 보내 응답을 모으는 방법입니다. 사용자의 생각과 만족도를 숫자로 모아 전체 경향을 볼 수 있습니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>"전체 사용자 중 얼마나 비슷하게 느끼는지", "시간이 지나며 만족도가 어떻게 바뀌는지" 알고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>새 기능에 대한 만족도를 묻는 설문(Survey) 질문 8개를 만들어줘. 유도 질문과 한 문장에 두 가지를 묻는 질문은 빼줘</q></p>
+        <p class="senior"><b>20년차 메모</b>설문은 답한 사람의 이야기일 뿐 전체의 이야기가 아닙니다. 불만이 큰 사람이나 아주 만족하는 사람이 더 많이 답하는 편향이 있어서 응답이 곧 사용자 전체의 마음은 아닙니다. "왜"를 묻는 질문은 선택지로 만들지 말고 주관식 한두 개로 열어 두세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="diary-study">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="dy" role="img" aria-label="일주일 동안 하루씩 기록이 쌓이는 달력"><div>월<i style="--k:0"></i></div><div>화<i style="--k:1"></i></div><div>수<i style="--k:2"></i></div><div>목<i style="--k:3"></i></div><div>금<i style="--k:4"></i></div><div>토<i style="--k:5"></i></div><div>일<i style="--k:6"></i></div></div><span class="d-cap" style="margin-top:8px">사용자가 며칠 동안 직접 기록합니다</span></div></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">다이어리 스터디 <span class="en">Diary study</span></h2>
+        <p class="desc">사용자가 며칠에서 몇 주 동안 일상 속에서 서비스를 쓰며 그때그때 기록을 남기게 하는 방법입니다. 한 번의 만남으로는 볼 수 없는 긴 시간의 변화를 봅니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>"하루 중 언제 어떤 상황에서 쓰는지", "처음 쓸 때와 익숙해진 뒤가 어떻게 다른지" 알고 싶을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>운동 앱에 대한 2주짜리 다이어리 스터디(Diary study) 계획을 짜줘. 매일 기록할 질문 3개와 참여자가 지치지 않게 하는 방법도 포함해서</q></p>
+        <p class="senior"><b>20년차 메모</b>매일 쓰는 일은 귀찮아서 3~4일째부터 기록이 급격히 부실해집니다. 질문은 3개 이내로 줄이고 사진이나 짧은 음성으로도 남길 수 있게 하세요. 기록이 끝난 뒤 사용자와 짧은 인터뷰를 붙여야 "이 기록이 무슨 상황이었는지"를 알 수 있습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="heatmap">
+      <div class="demo"><div class="hm" role="img" aria-label="많이 눌린 곳이 붉게 표시된 화면"><div class="d-bar dark" style="width:50%"></div><div class="d-bar"></div><div class="d-bar" style="width:75%"></div><div class="d-bar" style="width:40%"></div><span class="d-btn" style="width:80px;min-height:26px;font-size:10px">구매하기</span><i style="left:12px;top:70px;width:70px;height:70px"></i><i style="left:100px;top:6px;width:60px;height:60px;animation-delay:-1.4s"></i></div></div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">히트맵 <span class="en">Heatmap</span></h2>
+        <p class="desc">화면 위에 사람들이 많이 누르거나 스크롤하거나 마우스를 둔 곳을 색으로 겹쳐 보여주는 분석입니다. 붉을수록 많이 눌린 곳입니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>"사람들이 어디를 눌러 보는지", "페이지 어디까지 내려 읽는지" 알고 싶을 때. 이상한 클릭이 많은 곳을 찾을 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>랜딩 페이지 히트맵(Heatmap) 결과를 볼 때 확인할 질문 목록과, 이 결과로 알 수 없는 것을 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>많이 눌렸다는 것은 인기라는 뜻일 수도, 안 눌려서 혼란스러워 계속 누른다는 뜻일 수도 있습니다. 버튼이 아닌 곳을 반복해서 누른다면 사용자는 거기가 눌리는 줄 안 것이니 실제로 링크로 만들어야 하는지 살펴보세요. 히트맵은 무엇이 일어났는지만 알려주고 이유는 알려주지 않으니 인터뷰나 사용성 테스트와 함께 보세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="funnel-analysis">
+      <div class="demo"><div class="d-col" style="align-items:center"><div class="fn" role="img" aria-label="단계마다 줄어드는 깔때기 모양 막대"><div style="--k:0;width:100%">상품 보기</div><div style="--k:1;width:76%">장바구니</div><div style="--k:2;width:52%">결제 시작</div><div style="--k:3;width:34%">결제 완료</div></div><span class="d-cap" style="margin-top:6px">막대 길이는 예시입니다</span></div></div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">퍼널 분석 <span class="en">Funnel analysis</span></h2>
+        <p class="desc">사용자가 목표(구매, 가입)에 이르는 단계별로 몇 명이 남고 몇 명이 빠지는지 깔때기(funnel) 모양으로 보는 분석입니다. 어느 단계에서 가장 많이 이탈하는지 위치를 알려줍니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>"가입이나 결제 과정에서 어디서 사람들이 떠나는지" 알고 싶을 때. 개선할 우선순위를 정할 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>회원가입 단계별 퍼널 분석(Funnel analysis)을 하려고 해. 추적해야 할 이벤트 이름과 단계 정의를 정리해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>퍼널은 어디서 빠지는지는 알려주지만 왜 빠지는지는 알려주지 않습니다. 많이 빠지는 단계를 찾았다면 그 지점에서 사용성 테스트나 인터뷰로 이유를 확인하세요. 단계 정의가 틀리면 숫자 전체가 의미를 잃으니, 각 단계가 "정확히 무슨 행동이 일어난 순간"인지 개발자와 먼저 맞추세요.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 class="section-title">캡쳐엔 없지만 알아둘 용어</h2>
+  <p class="section-note">리서치를 이야기할 때 함께 나오는 말들입니다.</p>
+  <div class="terms">
+
+    <article class="term added" id="qualitative-quantitative">
+      <div class="demo"><div class="d-pair"><div class="side"><div class="bub q" style="opacity:1;animation:none;max-width:110px">"찾기 어려웠어요"</div><span class="d-cap">이유를 들음</span></div><span class="mid">vs</span><div class="side"><div class="mini-chart" role="img" aria-label="막대그래프"><i style="height:30px"></i><i style="height:55px"></i><i style="height:42px"></i></div><span class="d-cap">정도를 잼</span></div></div></div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">정성 조사 <span class="vs">vs</span> 정량 조사 <span class="en">Qualitative vs Quantitative</span></h2>
+        <p class="desc">답이 말과 행동의 이유(왜)이면 정성, 숫자와 비율(얼마나)이면 정량입니다. 인터뷰·사용성 테스트는 정성에, 설문·A/B 테스트·퍼널·히트맵은 주로 정량에 속합니다.</p>
+        <p class="when"><b>이렇게 구분</b>"왜 그런지, 어떻게 느끼는지" 알고 싶으면 정성, "얼마나 많은지, 어느 쪽이 나은지" 알고 싶으면 정량.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>가입 이탈 문제를 풀기 위해 정량 조사(Quantitative)로 위치를 찾고 정성 조사(Qualitative)로 이유를 찾는 리서치 순서를 짜줘</q></p>
+        <p class="senior"><b>20년차 메모</b>정성 조사의 5~6명 의견을 "사용자의 80%"처럼 비율로 말하는 순간 오독이 시작됩니다. 정성은 이유를 찾는 도구이고 비율은 정량으로 확인해야 합니다. 보통은 정량으로 문제의 위치를 찾고, 정성으로 이유를 파고드는 순서가 효율적입니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="persona">
+      <div class="demo"><div class="pers"><div class="face"></div><b>민지, 32세 직장인</b><span class="d-cap">점심시간에 한 손으로 주문</span><div style="grid-column:1/-1;margin-top:6px" class="d-col"><div class="d-bar" style="width:90%"></div><div class="d-bar" style="width:65%"></div></div></div></div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">페르소나 <span class="en">Persona</span></h2>
+        <p class="desc">조사에서 발견한 사용자 유형을 한 사람처럼 이름과 상황, 목표를 붙여 정리한 가상의 인물입니다. 팀이 "누구를 위한 화면인지" 같은 그림을 보게 해 줍니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>"우리 사용자가 누구인지 팀 안에서 생각이 다르다" 할 때. 기능 우선순위를 두고 의견이 갈릴 때.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>인터뷰 메모 10개를 바탕으로 페르소나(Persona) 2개를 만들어줘. 인구통계보다 상황, 목표, 불편을 중심으로</q></p>
+        <p class="senior"><b>20년차 메모</b>조사 없이 상상으로 만든 페르소나는 팀의 편견을 그림으로 그린 것일 뿐입니다. 나이와 직업 같은 정보보다 "어떤 상황에서 무엇을 하려는가"가 더 쓸모 있습니다. 완성한 뒤 벽에 붙이고 끝내지 말고 결정할 때 "민지라면?" 하고 실제로 꺼내 써야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term added" id="recruiting">
+      <div class="demo"><div class="rc"><label class="pass">지난 한 달 안에 배달 앱을 쓴 적이 있다</label><label class="pass">혼자 결제한 경험이 있다</label><label class="out">디자인 업계에서 일한다</label><span class="d-cap" style="text-align:center">조건에 맞는 사람만 참여합니다</span></div></div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">리크루팅 <span class="en">Recruiting</span></h2>
+        <p class="desc">리서치에 참여할 사람을 조건에 맞게 모집하고 걸러내는 일. 조건을 확인하는 사전 질문을 스크리너(screener)라고 합니다.</p>
+        <p class="when"><b>이럴 때 쓴다</b>모든 인터뷰·사용성 테스트·설문 전에. 참여자가 대상 사용자가 맞는지가 결과를 결정하기 때문.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>배달 앱 사용성 테스트의 참여자 리크루팅(Recruiting) 조건과 스크리너 질문 5개를 만들어줘. 정답을 짐작할 수 없는 질문으로</q></p>
+        <p class="senior"><b>20년차 메모</b>가까운 지인이나 동료로 채우면 서비스를 이미 알고 있어서 처음 쓰는 사람의 어려움이 보이지 않습니다. 스크리너 질문에 "이 조건이면 통과"가 보이면 참여 사례비를 노리고 거짓으로 답하는 사람이 섞입니다. 사례비 지급 방식과 개인정보 동의 안내도 모집할 때 함께 준비하세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>
