@@ -365,18 +365,59 @@ a.cv:active { transform: scale(.985); transition: transform .1s ease-out; }
 @keyframes cv9 { 0%, 4% { transform: none; } 9% { transform: scale(.93); } 18%, 100% { transform: none; } }
 
 /* ── 7) 좁은 화면과 접근성 ── */
-@media (max-width: 60rem) {
+@media (max-width: 60rem) {   /* 태블릿과 폰: 한 줄로 쌓는다 */
   :root { --stage-zoom: 1.15; }
-  .term, .cat { grid-template-columns: minmax(0, 1fr); }
+  html { scroll-padding-top: 7.5rem; }                      /* 위에 붙는 바 두 줄만큼 띄워서 가려지지 않게 */
+  .term, .cat { grid-template-columns: minmax(0, 1fr); scroll-margin-top: 7.5rem; }
   .cat:nth-child(even) .cv { order: 0; }
   .cv { min-height: 15rem; }
   .body, .cat-body { padding: 1.5rem; }
-  .hero { padding-top: 2.5rem; }
-  .top a:not(.brand):not(:first-child), .top .sep { display: none; }
-  /* 좁으면 옆 바가 상단 바 밑의 가로 줄이 된다 */
+  .hero { padding: 2rem 0 1.25rem; }
+  .top a:not(.brand):not(.ui-tool):not(:first-child), .top .sep { display: none; }   /* 경로는 처음과 지금 것만 */
+  .top > a:first-child:not(.brand) { flex: none; }
+  /* 옆 목록은 상단 바 바로 밑의 가로 줄이 된다. 손가락으로 옆으로 민다 */
   main.with-side { display: block; }
-  .ui-side { position: sticky; top: 3.25rem; z-index: 40; flex-direction: row; max-height: none; overflow-x: auto; overflow-y: hidden; margin: 0 -1.5rem; padding: .5rem 1.5rem; background: var(--bar); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); scrollbar-width: none; }
-  .ui-side a { white-space: nowrap; }   /* 좁으면 빵부스러기는 처음과 지금 것만 */
+  main.with-side > .ui-side {
+    position: sticky; top: 3.25rem; z-index: 40;
+    flex-direction: row; gap: .25rem; max-height: none; overflow-x: auto; overflow-y: hidden;
+    margin: 0 -1.5rem; padding: .375rem 1.5rem;
+    background: var(--bar); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: 0 .5px 0 var(--line); scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  main.with-side > .ui-side::-webkit-scrollbar { display: none; }
+  .ui-side a { flex: none; white-space: nowrap; padding: .375rem .75rem; font-size: .875rem; }
+  body:has(.with-side) .top { padding-inline: 1.5rem; }
+}
+@media (max-width: 34rem) {   /* 폰: 여백을 줄이고, 예시가 카드 안에 다 들어오게 한다 */
+  :root { --stage-zoom: 1; --r-card: 22px; }
+  main { padding: 0 1rem 4rem; }
+  .top, body:has(.with-side) .top { padding-inline: 1rem; }
+  main.with-side > .ui-side { margin: 0 -1rem; padding-inline: 1rem; }
+  .demo { min-height: 190px; padding: 12px; }
+  .body, .cat-body { padding: 1.25rem; }
+  .hero h1 { font-size: 2rem; }
+  .lead { font-size: 1.0625rem; }
+  .terms, .cats { gap: 1rem; }
+  .cat, .banner, .list { border-radius: 24px; }
+  .cv { min-height: 12.5rem; padding: 1.25rem; }
+  .cv > * { zoom: 1; }
+  .list { padding: .5rem 1.25rem .75rem; }
+  .list .row h2 { font-size: 1.1875rem; }
+  .ui-pager { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
+  .ui-pager > span { display: none; }
+  .ui-pager .next { text-align: left; align-items: flex-start; }
+  .ui-pager b { font-size: 1.1875rem; }
+  /* 찾는 동안에는 이름을 숨겨 찾기 칸이 넓게 쓴다 */
+  .searching .brand { display: none; }
+  .searching .ui-tools { flex: 1; }
+  .searching .search { flex: 1; width: auto; }
+}
+@media (max-width: 24rem) {     /* 폭 360대 폰: 예시를 조금 줄여 잘리지 않게 */
+  :root { --stage-zoom: .92; }
+}
+@media (max-width: 21.5rem) {   /* 아주 좁은 폰 */
+  :root { --stage-zoom: .84; }
+  .cv > * { zoom: .85; }
 }
 @media (prefers-reduced-motion: reduce) {    /* 움직임 대신 짧은 페이드만. 예시는 눌러야 재생 */
   html { scroll-behavior: auto; }

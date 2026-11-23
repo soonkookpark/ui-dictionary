@@ -162,7 +162,10 @@ if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
 }
 
 // 5) 점검용: 주소 끝에 ?check 를 붙이면 예시가 무대 밖으로 잘리는 카드에 빨간 테두리를 친다
-if (location.search === '?check') addEventListener('load', () => {
+//    ?check=390 처럼 숫자를 주면 본문 폭을 그 값으로 좁혀서(폰 폭) 점검한다
+if (location.search.startsWith('?check')) addEventListener('load', () => {
+  const w = +location.search.split('=')[1];
+  if (w) { const m = document.querySelector('main'); m.style.maxWidth = w + 'px'; m.style.margin = '0'; }
   const cut = [...document.querySelectorAll('.term')].filter(t => {
     const d = t.querySelector('.demo');
     return d.scrollWidth > d.clientWidth + 4 || d.scrollHeight > d.clientHeight + 4;
