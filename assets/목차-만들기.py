@@ -141,9 +141,9 @@ PAGE = """<!doctype html>
 <body>
 <header class="top">
   <a class="brand" href="index.html">UI 용어 사전</a>
-  <div class="tools">
+  <div class="ui-tools">
     <input class="search" id="q" type="search" name="q" placeholder="용어 찾기" aria-label="용어 찾기" autocomplete="off" tabindex="-1">
-    <button class="tool" id="find" type="button" aria-label="용어 찾기" title="용어 찾기" aria-expanded="false">
+    <button class="ui-tool" id="find" type="button" aria-label="용어 찾기" title="용어 찾기" aria-expanded="false">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
     </button>
   </div>

@@ -14,13 +14,13 @@ const root = document.documentElement;
 try { const saved = localStorage.getItem('theme'); if (saved) root.dataset.theme = saved; } catch {}
 const bar = document.querySelector('.top');
 if (bar) {
-  let tools = bar.querySelector('.tools');
-  if (!tools) { tools = document.createElement('div'); tools.className = 'tools'; bar.append(tools); }
+  let tools = bar.querySelector('.ui-tools');
+  if (!tools) { tools = document.createElement('div'); tools.className = 'ui-tools'; bar.append(tools); }
   const SUN = svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>');
   const MOON = svg('<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>');
   const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
   const t = document.createElement('button');
-  t.type = 'button'; t.className = 'tool';
+  t.type = 'button'; t.className = 'ui-tool';
   const paint = () => { t.innerHTML = isDark() ? SUN : MOON; t.setAttribute('aria-label', isDark() ? '밝은 화면으로' : '어두운 화면으로'); t.title = t.getAttribute('aria-label'); };
   t.onclick = () => { root.dataset.theme = isDark() ? 'light' : 'dark'; try { localStorage.setItem('theme', root.dataset.theme); } catch {} paint(); };
   paint(); tools.append(t);
@@ -31,7 +31,7 @@ const first = document.querySelector('.terms');
 if (first) {
   const main = first.parentElement, terms = [...document.querySelectorAll('.term[id]')];
   const nav = document.createElement('nav');
-  nav.className = 'side'; nav.setAttribute('aria-label', '이 페이지의 용어');
+  nav.className = 'ui-side'; nav.setAttribute('aria-label', '이 페이지의 용어');
   const links = terms.map(t => {
     const name = t.querySelector('.term-name').cloneNode(true);
     name.querySelector('.en')?.remove();
@@ -92,16 +92,16 @@ if (first) {
     const k = all.findIndex(([href]) => here.endsWith('/' + href));
     if (k < 0) return;
     const prev = all[k - 1], next = all[k + 1], to = p => '../../' + p[0];
-    const tools = document.querySelector('.top .tools');
+    const tools = document.querySelector('.top .ui-tools');
     const arrow = (p, label, d) => {
       const a = document.createElement(p ? 'a' : 'span');
-      a.className = 'tool'; a.innerHTML = svg(d);
+      a.className = 'ui-tool'; a.innerHTML = svg(d);
       if (p) { a.href = to(p); a.title = label + ': ' + p[1]; a.setAttribute('aria-label', a.title); } else a.setAttribute('aria-disabled', 'true');
       return a;
     };
     tools?.prepend(arrow(prev, '이전 주제', '<path d="M15 5l-7 7 7 7"/>'), arrow(next, '다음 주제', '<path d="M9 5l7 7-7 7"/>'));
     const pager = document.createElement('nav');
-    pager.className = 'pager'; pager.setAttribute('aria-label', '이전·다음 주제');
+    pager.className = 'ui-pager'; pager.setAttribute('aria-label', '이전·다음 주제');
     pager.innerHTML = [[prev, '이전', 'prev'], [next, '다음', 'next']].map(([p, label, cls]) =>
       p ? `<a class="${cls}" href="${to(p)}"><small>${label}</small><b>${p[1]}</b></a>` : '<span></span>').join('');
     main.append(pager);
@@ -113,9 +113,9 @@ if (first) {
 //    컨트롤은 제자리에 있고, 그 아래 자리의 높이만 지금 값에서 새 값으로 부드럽게 바뀐다.
 document.querySelectorAll('.term .body').forEach(body => {
   const seg = document.createElement('div');
-  seg.className = 'seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', '더 보기');
+  seg.className = 'ui-seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', '더 보기');
   const panel = document.createElement('div'), inner = document.createElement('div');
-  panel.className = 'panel'; inner.className = 'panel-in'; panel.append(inner);
+  panel.className = 'ui-panel'; inner.className = 'ui-panel-in'; panel.append(inner);
   const pairs = [];
   for (const [k, name, icon] of MORE) {
     const p = body.querySelector('.' + k);
@@ -138,14 +138,14 @@ document.querySelectorAll('.term .body').forEach(body => {
   }
   body.querySelector('.term-name')?.after(seg, panel);
 });
-addEventListener('resize', () => document.querySelectorAll('.panel').forEach(p => { if (p.offsetHeight) p.style.height = p.firstChild.offsetHeight + 'px'; }));
+addEventListener('resize', () => document.querySelectorAll('.ui-panel').forEach(p => { if (p.offsetHeight) p.style.height = p.firstChild.offsetHeight + 'px'; }));
 
 // 3) "AI에게 시킬 문장"마다 복사 버튼
 document.querySelectorAll('.prompt').forEach(p => {
   const q = p.querySelector('q');
   if (!q) return;
   const b = document.createElement('button');
-  b.className = 'copy'; b.type = 'button'; b.textContent = '복사';
+  b.className = 'ui-copy'; b.type = 'button'; b.textContent = '복사';
   b.onclick = () => navigator.clipboard.writeText(q.textContent.trim())
     .then(() => { b.textContent = '복사됨'; setTimeout(() => b.textContent = '복사', 1200); });
   p.prepend(b);
@@ -155,7 +155,7 @@ document.querySelectorAll('.prompt').forEach(p => {
 if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
   document.querySelectorAll('.term .demo').forEach(d => {
     const b = document.createElement('button');
-    b.type = 'button'; b.className = 'replay'; b.textContent = '움직임 보기';
+    b.type = 'button'; b.className = 'ui-replay'; b.textContent = '움직임 보기';
     b.onclick = () => { d.classList.add('playing'); b.remove(); };
     d.append(b);
   });

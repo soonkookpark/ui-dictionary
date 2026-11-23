@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="손맛 글자: 움직이는 예시로 보는 UI 용어 사전">
+<title>손맛 글자 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS. 카드가 원래 있던 묶음별로 .s1, .s2 … 안에 가둬서 서로 섞이지 않게 했다 ── */
+.s1 {
+  /* ── 이 주제 전용 데모 CSS ── */
+  /* 공통: 글자 견본 무대. 확대(zoom) 전 기준 280x170 안에 "TYPE" 한 단어를 그린다 */
+  .tp { position: relative; width: 280px; height: 170px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; font-size: 64px; line-height: 1; text-align: center; }
+  .tp > * { position: relative; }
+  .sans { font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; }
+  .serif { font-family: Georgia, "Times New Roman", serif; }
+  .mono { font-family: Consolas, "Courier New", monospace; }
+  .imp { font-family: Impact, "Arial Narrow Bold", "Arial Black", sans-serif; }
+  /* 01 애시드 그래픽 핵심: SVG 왜곡 필터(feTurbulence+feDisplacementMap)로 글자를 일그러뜨리고 + 형광 그라데이션(background-clip: text) + 빛 번짐(drop-shadow) */
+  .acid { background: #050505; }
+  .acid .glow { filter: drop-shadow(0 0 10px #7cff00) drop-shadow(0 0 2px #d4ff00); }
+  .acid b { display: block; font: 900 78px/1 Impact, "Arial Black", sans-serif; letter-spacing: .02em; background: linear-gradient(90deg, #d4ff00, #32ff6a 50%, #ffe600); -webkit-background-clip: text; background-clip: text; color: transparent; filter: url(#acid-w); }
+  .acid .star { position: absolute; right: 22px; top: 16px; width: 14px; height: 14px; background: #d4ff00; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); animation: s1-twinkle 2.4s ease-in-out infinite; }
+  /* 02 글리치 핵심: 같은 글자를 ::before/::after 로 두 장 더 겹쳐(content: attr) 시안·마젠타로 칠하고, clip-path 로 일부만 잘라 순간적으로 옆으로 밀기 */
+  .glitch { background: #0a0a0a; }
+  .gl { font: 900 66px/1 Arial, Helvetica, sans-serif; color: #fff; letter-spacing: .03em; }
+  .gl::before, .gl::after { content: attr(data-t); position: absolute; left: 0; top: 0; mix-blend-mode: screen; clip-path: inset(0 0 100% 0); }
+  .gl::before { color: #00f0ff; animation: s1-gA 2.6s steps(1) infinite; }
+  .gl::after { color: #ff2bd6; animation: s1-gB 2.6s steps(1) infinite; }
+  /* 03 인플레이트 3D 핵심: 분홍 세로 그라데이션 글자(background-clip: text) + 굵은 외곽선(text-stroke) + 여러 겹 drop-shadow 로 부풀어 오른 두께와 바닥 그림자 */
+  .infl { background: linear-gradient(160deg, #ffe0ef, #ffc2de); }
+  .infl b { display: block; font: 900 80px/1 "Arial Rounded MT Bold", "Nunito", Arial, sans-serif; letter-spacing: -.02em; background: linear-gradient(180deg, #ff9fce 0%, #ff4fa3 55%, #e0307f 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-stroke: 5px transparent; filter: drop-shadow(0 4px 0 #c2185b) drop-shadow(0 9px 6px rgba(150, 20, 90, .35)); animation: s1-bob 3s ease-in-out infinite; }
+  /* 04 바우하우스 핵심: 원·사각형·삼각형(border-radius, clip-path)의 원색 도형 + 검은 굵은 선 + 기하학적 산세리프 */
+  .bau { background: #f1e6cb; }
+  .bau i { position: absolute; display: block; }
+  .bau .c { left: 26px; top: 20px; width: 54px; height: 54px; border-radius: 50%; background: #e63a2a; }
+  .bau .s { right: 26px; top: 14px; width: 48px; height: 48px; background: #1f4fb8; animation: s1-quarter 5s ease-in-out infinite; }
+  .bau .t { left: 50%; margin-left: -34px; bottom: 26px; width: 68px; height: 58px; background: #f6c21a; clip-path: polygon(50% 0, 0 100%, 100% 100%); }
+  .bau .l { left: 20px; right: 20px; bottom: 22px; height: 4px; background: #000; }
+  .bau b { z-index: 1; margin-top: -6px; font: 800 62px/1 Futura, "Century Gothic", "Avant Garde", Arial, sans-serif; letter-spacing: -.02em; color: #111; }
+  /* 05 아르데코 핵심: 금색 그라데이션 글자 + 넓은 자간(letter-spacing) + 가는 이중 테두리(border+outline) + 부챗살(repeating-conic-gradient) */
+  .deco { background: #0e3b2c; }
+  .deco::before { content: ""; position: absolute; inset: 0; background: repeating-conic-gradient(from -90deg at 50% 100%, rgba(226, 190, 110, .55) 0 .8deg, transparent .8deg 9deg); -webkit-mask: linear-gradient(0deg, #000, transparent 85%); mask: linear-gradient(0deg, #000, transparent 85%); }
+  .deco::after { content: ""; position: absolute; inset: 8px; border: 1px solid #d9b968; outline: 1px solid #d9b968; outline-offset: 3px; }
+  .deco b { font: 700 52px/1 Copperplate, "Copperplate Gothic Light", "Optima", Georgia, serif; letter-spacing: .14em; margin-right: -.14em; background: linear-gradient(180deg, #f6e3a6, #c99a3b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  /* 06 아웃라인 핵심: 글자 칠을 투명하게(color: transparent) 하고 -webkit-text-stroke 로 윤곽선만 그린다 */
+  .outl { background: #0b0b0b; }
+  .outl div { font: 900 34px/.88 Impact, "Arial Black", sans-serif; letter-spacing: .02em; color: transparent; -webkit-text-stroke: 1.5px #fff; }
+  .outl .fill { color: #fff; -webkit-text-stroke: 0; font-size: 38px; }
+  /* 07 모노스페이스 핵심: 글자 폭이 모두 같은 글꼴(font-family: monospace) + 깜박이는 블록 커서(step-end 애니메이션) */
+  .monof { background: #0b1118; place-items: center start; padding-left: 24px; }
+  .monof .dots { position: absolute; left: 12px; top: 10px; display: flex; gap: 5px; }
+  .monof .dots i { width: 8px; height: 8px; border-radius: 50%; background: #ff5f57; }
+  .monof .dots i:nth-child(2) { background: #febc2e; }
+  .monof .dots i:nth-child(3) { background: #28c840; }
+  .monof small { display: block; margin-bottom: 8px; color: #6b7a8c; font: 12px/1 Consolas, "Courier New", monospace; text-align: left; }
+  .monof b { font: 700 56px/1 Consolas, "Courier New", monospace; color: #2fe58a; letter-spacing: .02em; }
+  .monof b::after { content: ""; display: inline-block; width: .5em; height: .85em; margin-left: .12em; vertical-align: -.06em; background: #2fe58a; animation: s1-caret .9s step-end infinite; }
+  /* 08 핸드레터링 핵심: 필기체 계열 글꼴 + 살짝 기울임(rotate) + SVG 선을 stroke-dashoffset 으로 그려 나가기 */
+  .hand { background: #fdf3e3; }
+  .hand b { display: block; margin-top: -14px; font: italic 400 78px/1 "Segoe Script", "Brush Script MT", "Snell Roundhand", "Comic Sans MS", cursive; color: #1d2b53; transform: rotate(-6deg); }
+  .hand svg { position: absolute; left: 24px; bottom: 18px; width: 232px; height: 34px; fill: none; stroke: #ff7a3d; stroke-width: 5; stroke-linecap: round; }
+  .hand path { stroke-dasharray: 260; animation: s1-draw 3.6s ease-in-out infinite; }
+  /* 09 미니멀 핵심: 가는 굵기(font-weight: 300) + 아주 넓은 자간 + 작은 크기 + 넓은 여백, 색은 한두 가지만 */
+  .mini { background: #efede8; }
+  .mini b { font: 300 38px/1 Pretendard, Arial, sans-serif; letter-spacing: .38em; margin-right: -.38em; color: #3a3a3a; }
+  .mini::after { content: ""; position: absolute; left: 50%; top: 62%; width: 18px; height: 1px; margin-left: -9px; background: #3a3a3a; }
+  /* 추가: 세리프 vs 산세리프 — font-family 만 바꾼다 */
+  .sf { font-size: 64px; line-height: 1; font-weight: 700; color: var(--ink); }
+  .sf.se { font-family: Georgia, "Times New Roman", serif; }
+  .sf.ss { font-family: Arial, Helvetica, sans-serif; }
+  /* 추가: 디스플레이 vs 본문 서체 — 같은 자리에서 크기와 용도가 다르다 */
+  .dsp { font: 400 40px/1 Impact, "Arial Black", sans-serif; color: var(--ink); letter-spacing: .01em; }
+  .bdy { width: 112px; font-size: 11px; line-height: 1.6; text-align: left; color: var(--ink); }
+  /* 추가: 한글 글꼴 분류 — 명조(바탕)와 고딕은 font-family 로 갈린다 */
+  .hg { font-size: 34px; line-height: 1.2; font-weight: 700; }
+  .hg.my { font-family: "Batang", "AppleMyungjo", "Noto Serif KR", serif; }
+  .hg.go { font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+}
+@keyframes s1-twinkle { 0%, 40%, 100% { transform: scale(.4) rotate(0); opacity: .5; } 70% { transform: scale(1.2) rotate(90deg); opacity: 1; } }
+@keyframes s1-gA { 0%, 58%, 80%, 100% { clip-path: inset(0 0 100% 0); } 60% { transform: translate(-6px, 0); clip-path: inset(10% 0 55% 0); } 66% { transform: translate(5px, 0); clip-path: inset(55% 0 12% 0); } 72% { transform: translate(-3px, 0); clip-path: inset(30% 0 40% 0); } }
+@keyframes s1-gB { 0%, 60%, 82%, 100% { clip-path: inset(0 0 100% 0); } 62% { transform: translate(6px, 0); clip-path: inset(45% 0 25% 0); } 68% { transform: translate(-5px, 0); clip-path: inset(5% 0 70% 0); } 74% { transform: translate(4px, 0); clip-path: inset(65% 0 5% 0); } }
+@keyframes s1-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes s1-quarter { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(90deg); } }
+@keyframes s1-caret { 50% { opacity: 0; } }
+@keyframes s1-draw { 0% { stroke-dashoffset: 260; } 45%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -260; } }
+
+.s2 {
+  /* ── 이 주제 전용 데모 CSS ── */
+  /* 공통: 글자 견본 무대. 확대(zoom) 전 기준 280x170 안에 "TYPE" 한 단어를 그린다 */
+  .tp { position: relative; width: 280px; height: 170px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; font-size: 64px; line-height: 1; text-align: center; }
+  .tp > * { position: relative; }
+  .sans { font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; }
+  .serif { font-family: Georgia, "Times New Roman", serif; }
+  .mono { font-family: Consolas, "Courier New", monospace; }
+  .imp { font-family: Impact, "Arial Narrow Bold", "Arial Black", sans-serif; }
+  /* 01 브루탈리즘 핵심: 매우 큰 굵은 글꼴(font-size 크게 + Impact) + 음수 자간·좁은 줄간격으로 화면을 가득 채우고, 장식은 없이 기본 색(흰 종이·검정)만 */
+  .brut { background: #e9e5d9; }
+  .brut b { font: 400 132px/.78 Impact, "Arial Black", sans-serif; letter-spacing: -.01em; color: #000; }
+  .brut small { position: absolute; left: 8px; top: 6px; font: 10px/1 Consolas, "Courier New", monospace; color: #000; }
+  .brut small + small { left: auto; right: 8px; }
+  /* 02 네오 브루탈리즘 핵심: 두꺼운 검정 테두리(border) + 번지지 않는 단단한 그림자(box-shadow blur 0) + 원색 면, 올려 보면 눌린다(hover) */
+  .nbru { background: #fff; border: 4px solid #000; border-radius: 12px; font-size: 60px; }
+  .nbru small { position: absolute; left: 10px; top: 8px; font: 700 10px/1 Consolas, "Courier New", monospace; }
+  .nbru b { display: block; padding: 8px 18px; background: #ffd400; border: 4px solid #000; box-shadow: 6px 6px 0 #000; font: 900 56px/1 "Arial Black", Impact, Arial, sans-serif; transform: rotate(-2deg); transition: transform .12s, box-shadow .12s; cursor: pointer; }
+  .nbru b:hover { transform: rotate(-2deg) translate(4px, 4px); box-shadow: 2px 2px 0 #000; }
+  /* 03 스위스 스타일 핵심: 왼쪽 맞춤(text-align: left) + 격자 선 + 헬베티카 계열 산세리프 + 빨강 한 가지 포인트 */
+  .swiss { background: #f2eee3; place-items: center start; padding-left: 52px; text-align: left; }
+  .swiss::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 26px; background: #e4261b; }
+  .swiss::after { content: ""; position: absolute; left: 26px; right: 0; top: 0; bottom: 0; background: repeating-linear-gradient(0deg, transparent 0 33px, rgba(0, 0, 0, .12) 33px 34px); }
+  .swiss div { z-index: 1; }
+  .swiss b { display: block; font: 700 64px/1 Helvetica, "Helvetica Neue", Arial, sans-serif; letter-spacing: -.03em; color: #111; }
+  .swiss span { display: block; margin-top: 6px; font: 600 10px/1.5 Helvetica, Arial, sans-serif; color: #111; }
+  /* 04 에디토리얼 핵심: 대비가 큰 세리프 큰 제목 + 일부 글자만 색·이탤릭 + 가는 선과 작은 호수 표기 */
+  .edit { background: #efe6d6; }
+  .edit::before { content: ""; position: absolute; left: 24px; right: 24px; top: 22px; height: 1px; background: #1c1410; }
+  .edit b { font: 400 76px/1 Georgia, "Times New Roman", serif; letter-spacing: -.03em; color: #1c1410; }
+  .edit b i { color: #b4311f; }
+  .edit small { position: absolute; bottom: 22px; left: 0; right: 0; font: italic 11px/1 Georgia, serif; color: #b4311f; }
+  /* 05 청키 핵심: 굵은 둥근 글꼴 + 굵은 외곽선(-webkit-text-stroke + paint-order) 으로 더 두껍게 + 단단한 아래 그림자 */
+  .chunky { background: #ffdcb8; }
+  .chunky b { font: 900 76px/1 "Arial Rounded MT Bold", "Arial Black", Arial, sans-serif; letter-spacing: -.02em; color: #ff6a1a; -webkit-text-stroke: 8px #ff6a1a; paint-order: stroke fill; text-shadow: 0 6px 0 #c2410c; }
+  /* 06 레트로 그루비 핵심: 동심원 줄무늬(repeating-radial-gradient) 배경 + 굵은 세리프 이탤릭 + 겹겹이 밀린 색 그림자 */
+  .groovy { background: repeating-radial-gradient(circle at 50% 135%, #f5a623 0 14px, #e8742a 14px 28px, #b9461a 28px 42px, #f6e2b0 42px 56px); }
+  .groovy b { font: italic 900 76px/1 "Cooper Black", "Bookman Old Style", Georgia, serif; color: #5a2a0c; letter-spacing: -.02em; text-shadow: 2px 2px 0 #f6e2b0, 4px 4px 0 #e8742a, 6px 6px 0 #b9461a; animation: s2-sway 4s ease-in-out infinite; }
+  /* 07 Y2K 크롬 핵심: 위아래로 번갈아 밝고 어두운 띠 그라데이션(background-clip: text)으로 금속 반사를 만들고 + 푸른 빛 번짐(drop-shadow) + 반짝이 */
+  .y2k { background: radial-gradient(circle at 50% 40%, #20357c, #0a1030 75%); }
+  .y2k b { font: italic 900 70px/1 "Arial Black", Arial, sans-serif; letter-spacing: .01em; padding-right: 6px; background: linear-gradient(180deg, #fff 0 32%, #a9bff0 44%, #26418f 50%, #cfe0ff 58%, #fff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 7px #6ea0ff); }
+  .y2k i { position: absolute; left: 30px; top: 22px; width: 18px; height: 18px; background: #fff; clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%); animation: s2-spark 2.6s ease-in-out infinite; }
+  /* 08 픽셀 핵심: 5x7 점 도트를 box-shadow 로 하나씩 찍어 만든 글자(폰트 없음) + 어두운 줄무늬(scanline) 배경 + 어긋난 그림자 */
+  .pix { background: repeating-linear-gradient(0deg, #1b1236 0 3px, #241748 3px 6px); }
+  .pxw { width: 184px; height: 56px; position: relative; }
+  .pxw i { position: absolute; left: 0; top: 0; width: 8px; height: 8px; box-shadow: 0px 0px 0 #fff27a,8px 0px 0 #fff27a,16px 0px 0 #fff27a,24px 0px 0 #fff27a,32px 0px 0 #fff27a,16px 8px 0 #ffe14d,16px 16px 0 #ffcf3a,16px 24px 0 #ffb52e,16px 32px 0 #ff9a26,16px 40px 0 #ff7f22,16px 48px 0 #ff6420,48px 0px 0 #fff27a,80px 0px 0 #fff27a,48px 8px 0 #ffe14d,80px 8px 0 #ffe14d,56px 16px 0 #ffcf3a,72px 16px 0 #ffcf3a,64px 24px 0 #ffb52e,64px 32px 0 #ff9a26,64px 40px 0 #ff7f22,64px 48px 0 #ff6420,96px 0px 0 #fff27a,104px 0px 0 #fff27a,112px 0px 0 #fff27a,120px 0px 0 #fff27a,96px 8px 0 #ffe14d,128px 8px 0 #ffe14d,96px 16px 0 #ffcf3a,128px 16px 0 #ffcf3a,96px 24px 0 #ffb52e,104px 24px 0 #ffb52e,112px 24px 0 #ffb52e,120px 24px 0 #ffb52e,96px 32px 0 #ff9a26,96px 40px 0 #ff7f22,96px 48px 0 #ff6420,144px 0px 0 #fff27a,152px 0px 0 #fff27a,160px 0px 0 #fff27a,168px 0px 0 #fff27a,176px 0px 0 #fff27a,144px 8px 0 #ffe14d,144px 16px 0 #ffcf3a,144px 24px 0 #ffb52e,152px 24px 0 #ffb52e,160px 24px 0 #ffb52e,168px 24px 0 #ffb52e,144px 32px 0 #ff9a26,144px 40px 0 #ff7f22,144px 48px 0 #ff6420,152px 48px 0 #ff6420,160px 48px 0 #ff6420,168px 48px 0 #ff6420,176px 48px 0 #ff6420,4px 4px 0 #5a1f6e,12px 4px 0 #5a1f6e,20px 4px 0 #5a1f6e,28px 4px 0 #5a1f6e,36px 4px 0 #5a1f6e,20px 12px 0 #5a1f6e,20px 20px 0 #5a1f6e,20px 28px 0 #5a1f6e,20px 36px 0 #5a1f6e,20px 44px 0 #5a1f6e,20px 52px 0 #5a1f6e,52px 4px 0 #5a1f6e,84px 4px 0 #5a1f6e,52px 12px 0 #5a1f6e,84px 12px 0 #5a1f6e,60px 20px 0 #5a1f6e,76px 20px 0 #5a1f6e,68px 28px 0 #5a1f6e,68px 36px 0 #5a1f6e,68px 44px 0 #5a1f6e,68px 52px 0 #5a1f6e,100px 4px 0 #5a1f6e,108px 4px 0 #5a1f6e,116px 4px 0 #5a1f6e,124px 4px 0 #5a1f6e,100px 12px 0 #5a1f6e,132px 12px 0 #5a1f6e,100px 20px 0 #5a1f6e,132px 20px 0 #5a1f6e,100px 28px 0 #5a1f6e,108px 28px 0 #5a1f6e,116px 28px 0 #5a1f6e,124px 28px 0 #5a1f6e,100px 36px 0 #5a1f6e,100px 44px 0 #5a1f6e,100px 52px 0 #5a1f6e,148px 4px 0 #5a1f6e,156px 4px 0 #5a1f6e,164px 4px 0 #5a1f6e,172px 4px 0 #5a1f6e,180px 4px 0 #5a1f6e,148px 12px 0 #5a1f6e,148px 20px 0 #5a1f6e,148px 28px 0 #5a1f6e,156px 28px 0 #5a1f6e,164px 28px 0 #5a1f6e,172px 28px 0 #5a1f6e,148px 36px 0 #5a1f6e,148px 44px 0 #5a1f6e,148px 52px 0 #5a1f6e,156px 52px 0 #5a1f6e,164px 52px 0 #5a1f6e,172px 52px 0 #5a1f6e,180px 52px 0 #5a1f6e; }
+  /* 09 키네틱 핵심: 글자마다 span 으로 쪼개 animation-delay 를 조금씩 엇갈려 튀게 하고(transform), 가는 글자와 굵은 글자를 섞는다 */
+  .kin { background: #2f7bff; }
+  .kin b { display: flex; font: 300 72px/1 Pretendard, Arial, sans-serif; color: #fff; }
+  .kin b span { display: inline-block; animation: s2-hop 2.8s ease-in-out infinite; }
+  .kin b span:nth-child(2) { animation-delay: .12s; }
+  .kin b span:nth-child(3) { animation-delay: .24s; }
+  .kin b span:nth-child(4) { animation-delay: .36s; font-weight: 900; }
+  /* 추가: 가독성 vs 판독성 — 글자 하나를 알아보는 것과 글을 편하게 읽는 것 */
+  .rd2 { font-size: 30px; font-weight: 700; letter-spacing: .08em; color: var(--ink); }
+  .rd2 span { font-family: Arial, sans-serif; }
+  .para { width: 120px; font-size: 11px; text-align: left; color: var(--ink); }
+  .para.tight { line-height: 1.05; }
+  .para.loose { line-height: 1.7; }
+  /* 추가: 커닝과 자간 — font-kerning 은 글자 쌍마다, letter-spacing 은 전체 간격 */
+  .kn { font: 700 34px/1 Arial, Helvetica, sans-serif; color: var(--ink); }
+  .kn.k0 { font-kerning: none; }
+  .kn.k1 { font-kerning: normal; }
+  .kn.k2 { letter-spacing: .22em; }
+  .krow { display: grid; grid-template-columns: 76px auto; gap: 10px; align-items: center; }
+}
+@keyframes s2-sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(2deg); } }
+@keyframes s2-spark { 0%, 50%, 100% { transform: scale(.3); opacity: .4; } 75% { transform: scale(1.1) rotate(45deg); opacity: 1; } }
+@keyframes s2-hop { 0%, 40%, 100% { transform: none; } 15% { transform: translateY(-16px) scaleY(1.12); } 28% { transform: translateY(2px) scaleY(.9); } }
+
+.s3 {
+  /* ── 이 주제 전용 데모 CSS ── */
+  /* 공통: 글자 견본 무대. 확대(zoom) 전 기준 280x170 안에 "TYPE" 한 단어를 그린다 */
+  .tp { position: relative; width: 280px; height: 170px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; font-size: 64px; line-height: 1; text-align: center; }
+  .tp > * { position: relative; }
+  .sans { font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; }
+  .serif { font-family: Georgia, "Times New Roman", serif; }
+  .mono { font-family: Consolas, "Courier New", monospace; }
+  .imp { font-family: Impact, "Arial Narrow Bold", "Arial Black", sans-serif; }
+  /* 01 네온 사인 핵심: 흰 글자 + 같은 색 text-shadow 를 반경을 키우며 4겹 쌓아 빛 번짐을 만들고, 가끔 깜박(opacity 키프레임) */
+  .neon { background: #14041f; }
+  .neon::before { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 100% 20px, linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 20px 100%; }
+  .neon b { font: 400 66px/1 "Segoe Script", "Brush Script MT", "Snell Roundhand", cursive; color: #fff; text-shadow: 0 0 4px #fff, 0 0 12px #ff2bd6, 0 0 26px #ff2bd6, 0 0 48px #ff2bd6; animation: s3-flick 4s infinite; }
+  .neon i { position: absolute; left: 70px; right: 70px; bottom: 34px; height: 3px; border-radius: 3px; background: #7ff; box-shadow: 0 0 8px #0ff, 0 0 18px #0ff; }
+  /* 02 그래피티 핵심: 굵은 이탤릭(skew·rotate) + 검정 외곽선(text-stroke) + 색이 다른 어긋난 그림자 + 벽 질감의 연한 격자 */
+  .graf { background-color: #d9d3c4; background-image: repeating-linear-gradient(0deg, transparent 0 21px, rgba(0, 0, 0, .08) 21px 22px), repeating-linear-gradient(90deg, transparent 0 21px, rgba(0, 0, 0, .08) 21px 22px); }
+  .graf b { font: italic 900 74px/1 Impact, "Arial Black", sans-serif; letter-spacing: .01em; color: #ff3d6e; -webkit-text-stroke: 3px #151515; paint-order: stroke fill; text-shadow: 4px 4px 0 #1fc7c0, 7px 7px 0 #151515; transform: rotate(-6deg) skewX(-6deg); }
+  /* 03 블랙레터 핵심: 중세 필사체 계열 글꼴(font-family: "Old English Text MT" 등) + 큰 첫 글자만 빨강 + 가는 이중 테두리 */
+  .black { background: #eee3c9; }
+  .black::before { content: ""; position: absolute; inset: 8px; border: 1px solid #8c7a4a; outline: 1px solid #8c7a4a; outline-offset: -5px; }
+  .black b { font: 400 78px/1 "Old English Text MT", "Blackadder ITC", UnifrakturCook, "Luminari", Georgia, serif; color: #1c1710; }
+  .black b i { font-style: normal; color: #b01c1c; }
+  .black::after { content: ""; position: absolute; left: 50%; bottom: 26px; width: 8px; height: 8px; margin-left: -4px; background: #b01c1c; transform: rotate(45deg); }
+  /* 04 스텐실 핵심: 글자를 가로로 가르는 틈(linear-gradient 로 중간을 투명하게 + background-clip: text) + 스텐실 글꼴 + 점선 박스 */
+  .sten { background: #4d5a2b; }
+  .sten::before { content: ""; position: absolute; inset: 8px; border: 2px dashed rgba(235, 228, 190, .6); }
+  .sten b { font: 400 66px/1 "Stencil", "Stencil Std", Impact, "Arial Black", sans-serif; letter-spacing: .06em; background: linear-gradient(180deg, #ebe4be 0 44%, transparent 44% 52%, #ebe4be 52%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sten small { position: absolute; bottom: 20px; left: 0; right: 0; font: 700 9px/1 Consolas, "Courier New", monospace; letter-spacing: .3em; color: #ebe4be; }
+  /* 05 코믹 팝아트 핵심: 별 모양 폭발(clip-path: polygon) + 반복 점 무늬(radial-gradient 하프톤) + 굵은 기울임 글자와 흰 외곽 그림자 */
+  .comic { background: #ffcc00 radial-gradient(circle, rgba(255, 90, 0, .55) 1.6px, transparent 2px) 0 0 / 9px 9px; }
+  .comic .burst { position: absolute; left: 50%; top: 50%; width: 250px; height: 150px; margin: -75px 0 0 -125px; background: #fff; clip-path: polygon(100.0% 50.0%,86.1% 58.2%,95.0% 71.7%,78.9% 73.1%,81.2% 89.1%,66.1% 83.3%,61.1% 98.7%,50.0% 87.0%,38.9% 98.7%,33.9% 83.3%,18.8% 89.1%,21.1% 73.1%,5.0% 71.7%,13.9% 58.2%,0.0% 50.0%,13.9% 41.8%,5.0% 28.3%,21.1% 26.9%,18.8% 10.9%,33.9% 16.7%,38.9% 1.3%,50.0% 13.0%,61.1% 1.3%,66.1% 16.7%,81.2% 10.9%,78.9% 26.9%,95.0% 28.3%,86.1% 41.8%); animation: s3-pop 2.6s ease-in-out infinite; }
+  .comic b { z-index: 1; font: italic 900 60px/1 Impact, "Arial Black", sans-serif; color: #d8101a; letter-spacing: .01em; -webkit-text-stroke: 2px #111; paint-order: stroke fill; text-shadow: 3px 3px 0 #111; transform: rotate(-6deg) skewX(-8deg); }
+  /* 06 콜라주 핵심: 글자마다 다른 종이 조각(배경색·글꼴·rotate)을 붙이고 그림자(box-shadow)로 떠 있게 + 반투명 테이프 */
+  .coll { background: #e8dfd0; }
+  .coll .tape { position: absolute; left: 44px; top: 24px; width: 64px; height: 20px; background: rgba(255, 214, 102, .8); transform: rotate(-9deg); }
+  .coll div { display: flex; align-items: center; }
+  .coll span { display: grid; place-items: center; width: 48px; height: 64px; margin: 0 -1px; box-shadow: 2px 3px 6px rgba(0, 0, 0, .3); }
+  .coll .a { background: #111; color: #fff; font: 900 44px/1 Georgia, serif; transform: rotate(-5deg); }
+  .coll .b { background: #f6ecd2; color: #333; font: italic 400 38px/1 Georgia, serif; transform: rotate(4deg) translateY(6px); }
+  .coll .c { background: #e2402a; color: #fff; font: 700 42px/1 Consolas, "Courier New", monospace; transform: rotate(-3deg) translateY(-4px); }
+  .coll .d { background: #f7b6cf; color: #111; font: 700 32px/1 "Arial Black", Arial, sans-serif; transform: rotate(8deg) translateY(4px); width: 40px; height: 52px; }
+  /* 07 3D 입체 핵심: 1px 씩 어긋난 같은 색 text-shadow 를 12겹 쌓아 두께를 만들고 맨 끝에 번지는 그림자를 한 겹 더 */
+  .ext { background: #2e2163; }
+  .ext b { font: 900 70px/1 "Arial Black", Impact, sans-serif; letter-spacing: .01em; color: #ffd24d; margin-right: 14px; margin-bottom: 12px; text-shadow: 1px 1px 0 #d6336c,2px 2px 0 #d6336c,3px 3px 0 #d6336c,4px 4px 0 #d6336c,5px 5px 0 #d6336c,6px 6px 0 #d6336c,7px 7px 0 #d6336c,8px 8px 0 #d6336c,9px 9px 0 #d6336c,10px 10px 0 #d6336c,11px 11px 0 #d6336c,12px 12px 0 #d6336c,14px 16px 14px rgba(0,0,0,.35); }
+  /* 08 그라데이션 핵심: 글자 모양으로 배경을 오려내는 background-clip: text + 글자색 투명 + 천천히 흐르는 background-position */
+  .grad { background: radial-gradient(circle at 25% 80%, rgba(200, 60, 120, .55), transparent 55%), radial-gradient(circle at 75% 20%, rgba(90, 70, 220, .5), transparent 55%), #0b0a1c; }
+  .grad b { font: 800 78px/1 Pretendard, Arial, sans-serif; letter-spacing: -.02em; background: linear-gradient(90deg, #f9a8d4, #a78bfa, #60a5fa, #f9a8d4) 0 0 / 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: s3-flow 5s linear infinite; }
+  /* 09 엠보싱 핵심: 배경과 거의 같은 글자색 + 왼쪽 위 밝은 text-shadow, 오른쪽 아래 어두운 text-shadow 로 도장처럼 눌린 요철 */
+  .emb { background: #dde3ee; }
+  .emb b { font: 900 82px/1 "Arial Black", Arial, sans-serif; letter-spacing: -.01em; color: #dde3ee; text-shadow: -2px -2px 3px #fff, 3px 3px 4px rgba(120, 135, 165, .75); }
+  /* 추가: 가변 글꼴 — 하나의 글꼴 파일에서 굵기 같은 축을 연속으로 바꾼다 */
+  .vf { font: 400 58px/1 Bahnschrift, "Segoe UI Variable", Pretendard, Arial, sans-serif; color: var(--ink); transition: none; }
+  .vfr { width: 220px; accent-color: var(--p); }
+  /* 추가: 글꼴 스택 — 앞 글꼴이 없으면 뒤 글꼴로 이어서 쓴다 */
+  .fs { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 8px 12px; background: #fff; border: 1px solid var(--line); border-radius: 10px; width: 100%; }
+  .fs code { font: 11px/1.3 Consolas, monospace; color: var(--mute); text-align: left; }
+  .fs b { font-size: 26px; line-height: 1; }
+  /* 추가: 글자 대비 — 글자색과 배경색의 밝기 차이(WCAG 4.5:1 이상) */
+  .cr { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; width: 100%; }
+  .cr b { display: grid; place-items: center; height: 38px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font-size: 22px; }
+}
+@keyframes s3-flick { 0%, 88%, 92%, 100% { opacity: 1; } 89% { opacity: .45; } 90% { opacity: 1; } 91% { opacity: .55; } }
+@keyframes s3-pop { 0%, 55%, 100% { transform: scale(1); } 65% { transform: scale(1.08); } 75% { transform: scale(.98); } }
+@keyframes s3-flow { to { background-position: -200% 0; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">레이아웃과 스타일</a><span class="sep">›</span>
+  <span>손맛 글자</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>손맛 글자</h1>
+  </section>
+
+  <div class="terms">
+
+    <article class="term s1" id="hand-lettering">
+      <div class="demo"><div class="tp hand" role="img" aria-label="손으로 쓴 듯한 필기체 Type 글자와 주황색 밑줄"><b>Type</b><svg viewBox="0 0 232 34" aria-hidden="true"><path d="M4 22 C40 6 70 34 110 18 S190 8 228 20"/></svg></div><span class="d-cap" style="position:absolute;top:2px;left:8px">글꼴이 없으면 비슷한 필기체로 보입니다</span></div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">핸드레터링 <span class="en">Hand lettering</span></h2>
+        <p class="desc">글꼴을 불러다 쓰는 게 아니라 손으로 한 글자씩 그리듯 만든 글자입니다. 글자마다 모양과 기울기가 조금씩 달라서 정성이 느껴지고, 서체(폰트)와 구별해 <strong>레터링</strong>이라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>카페·베이커리 같은 로컬 브랜드 로고, 포장지, 감사 카드, 스토리 이미지의 한마디 문구.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>핸드레터링 스타일로 크림색 배경에 남색 필기체 Type 을 약간 기울여 쓰고, 아래에 주황색 손그림 밑줄이 그려지는 애니메이션을 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>손글씨는 한 번 그림으로 만들면 글자를 못 고칩니다. 메뉴판처럼 자주 바뀌는 글에는 쓰지 말고 로고·제목에만 쓰세요. 이미지로 넣을 때는 대체 텍스트를 달고, 한글 필기체는 영문보다 굵기·자간이 훨씬 까다로우니 시안에 한글을 직접 써 보고 확인해야 합니다.</p>
+      </div>
+    </article>
+    <article class="term s3" id="graffiti">
+      <div class="demo"><div class="tp graf" role="img" aria-label="붉은 분홍색에 청록 그림자가 붙은 기울어진 그래피티 TYPE 글자"><b>TYPE</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 굵은 글꼴로 보입니다</span></div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">그래피티 <span class="en">Graffiti</span></h2>
+        <p class="desc">스프레이로 벽에 그린 낙서에서 온 스타일로, 굵고 기울어진 글자, 검은 윤곽, 색이 다른 그림자와 겹침이 특징입니다. 글자가 서로 엉키는 것도 일부러 하는 표현입니다.</p>
+        <p class="when"><b>언제 쓰나</b>스트리트웨어, 힙합·댄스 이벤트, 청소년 대상 서비스의 캠페인 배너.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>그래피티 스타일로 벽 질감 배경에 기울어진 굵은 분홍색 TYPE 글자, 두꺼운 검정 외곽선과 청록색 어긋난 그림자를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>진짜 그래피티체는 글자 모양이 흐트러져 있어서 읽는 사람이 단어를 알고 있어야 합니다. 브랜드명처럼 처음 보는 단어에는 판독성이 떨어지니 짧고 익숙한 단어에만 쓰세요. 외곽선과 그림자가 겹겹이라 작게 줄이면 한 덩어리로 뭉개집니다.</p>
+      </div>
+    </article>
+    <article class="term s3" id="stencil">
+      <div class="demo"><div class="tp sten" role="img" aria-label="가운데가 가로로 끊긴 군용 상자 스타일 TYPE 글자"><b>TYPE</b><small>NO. 03 &nbsp;FRAGILE</small></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴이어도 틈은 CSS 로 만든 것이라 비슷하게 보입니다</span></div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">스텐실 <span class="en">Stencil</span></h2>
+        <p class="desc">구멍을 뚫은 판 위에 페인트를 뿌려 찍은 글자처럼 획 사이사이에 틈이 있는 스타일입니다. 군용 상자, 공사 현장 표지, 택배 상자에서 보던 모양입니다.</p>
+        <p class="when"><b>언제 쓰나</b>아웃도어·밀리터리·공구 브랜드, 배송·물류 서비스의 라벨 느낌 제목, 거친 질감이 필요한 포스터.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>스텐실 스타일로 올리브색 배경에 크림색 스텐실 TYPE 글자를 틈이 가로로 지나가게 하고, 점선 테두리와 작은 일련번호 문구를 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>틈이 있는 글자는 크기가 작아지면 틈이 노이즈로 보여 읽기 어렵습니다. 대문자 큰 제목으로만 쓰고, 한글은 획 구조 때문에 틈 위치를 일일이 손봐야 하므로 로고처럼 이미지로 만드는 편이 현실적입니다. 올리브 위 크림색은 대비가 충분하지만 군청·적갈색 배경에 쓰면 쉽게 무너집니다.</p>
+      </div>
+    </article>
+    <article class="term s3" id="cutout-collage">
+      <div class="demo"><div class="tp coll" role="img" aria-label="글자마다 다른 종이 조각에 오려 붙인 Type 글자"><i class="tape"></i><div><span class="a">T</span><span class="b">y</span><span class="c">p</span><span class="d">e</span></div></div></div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">콜라주 <span class="en">Cutout collage</span></h2>
+        <p class="desc">신문이나 잡지에서 글자를 오려 붙인 것처럼 글자마다 종이 색, 글꼴, 크기, 기울기를 다르게 하는 스타일입니다. 협박 편지 같다는 이미지가 있어 <strong>ransom note</strong>라고도 불립니다.</p>
+        <p class="when"><b>언제 쓰나</b>음악 앨범 커버, 패션·문화 행사 포스터, 개성이 강한 소규모 브랜드의 제목.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>콜라주 스타일로 글자 하나하나가 서로 다른 색 종이 조각에 붙은 것처럼 Type 을 만들고, 조각마다 다른 글꼴과 살짝 다른 기울기, 그림자를 줘</q></p>
+        <p class="senior"><b>20년차 메모</b>글꼴을 섞는 규칙이 없으면 그냥 엉성해 보이니, 글꼴은 서너 가지, 색은 같은 팔레트에서만 뽑으세요. 글자마다 요소가 나뉘어 있어 화면 읽기 프로그램이 한 글자씩 읽는 사고가 흔하니 전체에 aria-label 을 달고 조각은 숨겨야 합니다. 번역·글자 수 변경이 어려워 바뀌는 문구에는 쓰지 마세요.</p>
+      </div>
+    </article>
+    <article class="term s2" id="brutalism">
+      <div class="demo"><div class="tp brut" role="img" aria-label="화면을 가득 채운 굵고 큰 검정 TYPE 글자"><small>NO DECORATION</small><small>2025</small><b>TYPE</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 굵은 글꼴로 보입니다</span></div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">브루탈리즘 <span class="en">Brutalism</span></h2>
+        <p class="desc">굵고 큰 글자를 화면 가득 채우고 장식은 걷어낸 투박한 스타일입니다. 원래는 콘크리트를 그대로 드러낸 건축 양식에서 따온 이름입니다. 웹에서는 <strong>브루탈리스트 웹 디자인</strong>이라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>디자인 스튜디오·잡지·전시의 소개 화면, 개성을 강하게 드러내야 하는 포트폴리오.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>브루탈리즘 스타일로 연한 종이색 배경에 검정 굵은 TYPE 글자를 화면 가득 채우고, 모서리에 작은 고정폭 글씨 두 줄만 넣어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>정보가 많은 서비스에서는 위계가 사라져 어디를 눌러야 하는지 모르게 됩니다. 글자는 투박하게 써도 버튼 크기, 눌림 상태, 오류 문구 같은 기본기는 그대로 지켜야 합니다. 큰 글자가 휴대폰 폭을 넘쳐 잘리는 일이 흔하니 좁은 화면에서 줄 바꿈이 되는지 먼저 확인하세요.</p>
+      </div>
+    </article>
+    <article class="term s2" id="neo-brutalism">
+      <div class="demo"><div class="tp nbru" role="img" aria-label="굵은 검정 테두리와 단단한 그림자가 있는 노란 TYPE 상자"><small>NEO / 002</small><b>TYPE</b></div><span class="d-cap" style="position:absolute;bottom:4px">올려 보세요. 그림자가 눌립니다</span></div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">네오 브루탈리즘 <span class="en">Neo-brutalism</span></h2>
+        <p class="desc">브루탈리즘의 투박함을 가져오되 선명한 원색, 굵은 검정 테두리, 번지지 않는 단단한 그림자를 더해 친근하게 만든 스타일입니다. 요즘 스타트업 사이트와 노션형 도구 템플릿에서 흔히 봅니다.</p>
+        <p class="when"><b>언제 쓰나</b>개발자 도구, 스타트업 랜딩 페이지, 개성을 보여줘야 하는 가벼운 서비스의 카드와 버튼.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>네오 브루탈리즘 스타일로 두꺼운 검정 테두리와 번지지 않는 6px 그림자가 있는 노란 TYPE 상자를 만들고, 올리면 그림자가 줄며 눌리게 해줘</q></p>
+        <p class="senior"><b>20년차 메모</b>테두리와 그림자가 늘 선명해서 요소가 많아지면 화면이 시끄러워집니다. 그림자 있는 카드를 줄줄이 늘어놓지 말고 강조할 곳 하나에만 쓰세요. 노랑 배경에 흰 글씨를 쓰면 대비가 전혀 안 나오니 글자는 검정으로 고정하고, 눌림 상태는 키보드 포커스에서도 똑같이 보여줘야 합니다.</p>
+      </div>
+    </article>
+    <article class="term s2" id="chunky">
+      <div class="demo"><div class="tp chunky" role="img" aria-label="굵고 통통한 주황색 Type 글자"><b>Type</b></div><span class="d-cap" style="position:absolute;bottom:4px">없는 글꼴은 비슷한 굵은 글꼴로 보입니다</span></div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">청키 <span class="en">Chunky</span></h2>
+        <p class="desc">글자 획을 두껍고 뭉툭하게, 모서리는 둥글게 만든 스타일입니다. 글자 사이도 거의 붙을 만큼 좁혀서 한 덩어리처럼 보이는 것이 핵심입니다. <strong>청키 타입</strong>이라고도 합니다.</p>
+        <p class="when"><b>언제 쓰나</b>식품·음료 패키지, 어린이·반려동물 브랜드, 이벤트 배너, 쇼핑몰의 할인 문구.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>청키 스타일로 연한 살구색 배경에 아주 굵고 둥근 주황색 Type 글자를 자간을 좁게, 아래에 진한 주황 그림자를 붙여서 만들어줘</q></p>
+        <p class="senior"><b>20년차 메모</b>획이 너무 굵으면 한글의 안쪽 공간이 막혀서 "과"와 "파" 같은 글자가 뭉개집니다. 한글 제목은 반드시 실제 문장으로 확인하세요. 몇 글자짜리 제목에는 훌륭하지만 두 줄이 넘어가는 설명에 쓰면 읽기 힘들고, 주황 글자는 흰 배경에서 대비 3:1 정도라 큰 글자에만 안전합니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+
+<script src="../../assets/app.js"></script>
+</body>
+</html>
