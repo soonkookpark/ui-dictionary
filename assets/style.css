@@ -270,10 +270,8 @@ a.cv:active { transform: scale(.985); transition: transform .1s ease-out; }
 /* 카테고리 페이지: 위에 대표 예시, 아래에 주제와 그 안의 용어들 */
 .banner { min-height: 20rem; border-radius: 32px; box-shadow: var(--shadow-card); }
 .list { margin-top: 1.75rem; padding: .75rem 2rem 1rem; border-radius: 32px; background: var(--surface); box-shadow: var(--shadow-card); }
-.list .row { min-height: 3.5rem; }
+.list .row { min-height: 4rem; }
 .list .row h2 { flex: 1; font-size: 1.375rem; font-weight: 700; letter-spacing: -.015em; }
-.list .tags { padding-bottom: 1.125rem; }
-.list .tags a:hover { background: var(--tint); color: var(--on-tint); text-decoration: none; }
 
 /* ── 6) 카테고리 대표 예시(cv-*): 전부 CSS로 그린 움직이는 그림. 올려 두면 멈춘다 ── */
 .cv > * { zoom: 1.25; }                      /* 대표 예시는 크게 */

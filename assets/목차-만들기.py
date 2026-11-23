@@ -32,9 +32,9 @@ CATS = {
            '<div class="cv6"><p class="q">제주 일정 짜줘</p><p class="dots"><i></i><i></i><i></i></p>'
            '<p class="a"><span>첫날은 공항 근처부터 돌아보세요</span></p></div>'),
     "07": ("UX 지식", "cv-gray", '<div class="cv7"><i></i><i></i><i></i><i></i></div>'),
-    "08": ("캡쳐에 없는 기본기", "cv-mint",
+    "08": ("기본기", "cv-mint",
            '<div class="cv8 cv-card"><p class="aa"><b>가</b><b>가</b><b>가</b><b>가</b></p><p class="sw"><i></i><i></i><i></i><i></i></p></div>'),
-    "09": ("버튼 이름과 추가 용어", "cv-warm", '<div class="cv9"><b>시작하기</b><b>자세히 보기</b><b>나중에</b></div>'),
+    "09": ("버튼과 그 밖의 용어", "cv-warm", '<div class="cv9"><b>시작하기</b><b>자세히 보기</b><b>나중에</b></div>'),
 }
 
 TERM = re.compile(r'<article class="term[^"]*" id="([^"]+)">.*?<h2 class="term-name">(.*?)</h2>', re.S)
@@ -80,8 +80,7 @@ def build() -> str:
                 f'<p class="tags">{links(t["href"])}</p></div>'
             )
             deep.append(
-                f'<div class="topic"><a class="row" href="{html.escape(here)}"><h2>{html.escape(t["title"])}</h2>{CHEVRON}</a>'
-                f'<p class="tags">{links(here)}</p></div>'
+                f'<div class="topic"><a class="row" href="{html.escape(here)}"><h2>{html.escape(t["title"])}</h2>{CHEVRON}</a></div>'
             )
         if not rows:
             continue
