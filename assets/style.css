@@ -135,6 +135,16 @@ main.with-side > .ui-side {
 .ui-side a[aria-current] { color: var(--tint); background: var(--tint-soft); font-weight: 600; }
 .ui-side a:active { transform: scale(.97); transition: transform .1s ease-out; }
 
+/* 예시는 기기의 '동작 줄이기' 설정과 상관없이 재생된다(움직임이 곧 내용이라서).
+   멈추고 싶으면 상단의 멈춤 버튼을 누른다 */
+.still .demo *, .still .demo *::before, .still .demo *::after,
+.still .cv *, .still .cv *::before, .still .cv *::after { animation-play-state: paused !important; }
+.ui-tool b { font-size: .8125rem; font-weight: 700; letter-spacing: 0; }
+.top .ui-home { margin-left: -.5rem; }
+/* 영문: 이름 아래의 영어 이름은 겹치므로 숨긴다 */
+:lang(en) .term-name .en { display: none; }
+:lang(en) :lang(en) body { word-break: normal; overflow-wrap: break-word; }
+
 /* 이전·다음 주제: 상단 바의 화살표와 맨 아래의 큰 카드 */
 .ui-tool[aria-disabled] { opacity: .28; pointer-events: none; }
 .top a.tool { opacity: 1; color: var(--ink); }
@@ -175,7 +185,6 @@ main.with-side > .ui-side {
 
 .body { min-width: 0; padding: 2.25rem 2.25rem 2rem; display: flex; flex-direction: column; gap: .625rem; }   /* 위에서부터 쌓는다: 글이 열려도 이름과 컨트롤이 움직이지 않는다 */
 .num { color: var(--mute); font-size: .8125rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.term.added .num::after { content: "추가"; margin-left: .5rem; padding: .0625rem .5rem; border-radius: 999px; background: var(--amber-soft); color: var(--amber); font-size: .75rem; }
 .term-name { font-size: clamp(1.5rem, 2.6vw, 2.125rem); font-weight: 700; line-height: 1.14; letter-spacing: -.02em; }
 .term-name .en { display: block; margin-top: .25rem; color: var(--mute); font-size: 1.0625rem; font-weight: 400; line-height: 1.35; letter-spacing: -.005em; }
 .term-name .vs { color: var(--mute); font-size: .6em; font-weight: 500; letter-spacing: 0; }
@@ -373,8 +382,7 @@ a.cv:active { transform: scale(.985); transition: transform .1s ease-out; }
   .cv { min-height: 15rem; }
   .body, .cat-body { padding: 1.5rem; }
   .hero { padding: 2rem 0 1.25rem; }
-  .top a:not(.brand):not(.ui-tool):not(:first-child), .top .sep { display: none; }   /* 경로는 처음과 지금 것만 */
-  .top > a:first-child:not(.brand) { flex: none; }
+  .top > a:not(.brand):not(.ui-tool), .top .sep { display: none; }   /* 경로는 지금 것만. 처음으로는 홈 버튼이 간다 */
   /* 옆 목록은 상단 바 바로 밑의 가로 줄이 된다. 손가락으로 옆으로 민다 */
   main.with-side { display: block; }
   main.with-side > .ui-side {
@@ -424,8 +432,6 @@ a.cv:active { transform: scale(.985); transition: transform .1s ease-out; }
   *, *::before, *::after { transition-duration: .2s !important; transition-property: opacity, background-color, color !important; }
   .ui-panel { transition: none !important; }
   .ui-seg button:active, .ui-copy:active, .row:active, .ui-replay:active, .ui-tool:active { transform: none; }
-  .demo:not(.playing) *, .demo:not(.playing) *::before, .demo:not(.playing) *::after { animation-play-state: paused !important; }
-  .cv *, .cv *::before, .cv *::after { animation: none !important; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .top { background: var(--bg); backdrop-filter: none; -webkit-backdrop-filter: none; }

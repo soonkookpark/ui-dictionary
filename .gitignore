@@ -1,16 +1,8 @@
-# 공개 저장소에 올리지 않는 것
-
-# 원본 캡쳐: 다른 사람의 게시물을 찍은 것이라 공개하지 않는다
+# 올리지 않는 것
 *.jpg
-
-# 이전 디자인 백업
-assets/style-이전.css
-assets/app-이전.js
-assets/style-wayfind.css
-assets/app-wayfind.js
-assets/style-apple1.css
+DEV_LOG.md
+.hallmark/
+assets/style-*.css
+assets/app-*.js
 assets/tokens.css
 assets/base.css
-
-# 도구가 남긴 기록
-.hallmark/

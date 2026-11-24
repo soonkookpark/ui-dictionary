@@ -491,10 +491,10 @@
         <p class="desc">탭은 서로 다른 내용의 화면으로 옮겨 가는 것이고, 세그먼트(세그먼티드 컨트롤)는 같은 내용을 보는 기준만 바꾸는 것입니다.</p>
         <p class="when"><b>이렇게 구분</b>추천·인기·신규처럼 목록 자체가 달라지면 탭, 같은 통계를 일·주·월로 바꿔 보는 거라면 세그먼트.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>상단에 추천·인기·신규 탭을 만들고, 통계 카드에는 일·주·월 세그먼트 컨트롤을 넣어줘</q></p>
-        <p class="senior"><b>20년차 메모</b>탭은 스와이프와 뒤로 가기가 따라와야 하는데, 개발에서 이걸 빼먹어 '탭을 바꿨는데 뒤로 가기가 앱 종료'가 되는 경우가 많습니다. 세그먼트는 항목이 2~4개일 때만 보기 좋고 5개를 넘으면 글자가 잘리니 탭이나 드롭다운으로 바꾸세요. iOS는 세그먼트가 기본 부품이지만 안드로이드엔 같은 모양이 없어 따로 만들어야 합니다.</p>
+        <p class="senior"><b>실무 팁</b>탭은 스와이프와 뒤로 가기가 따라와야 하는데, 개발에서 이걸 빼먹어 '탭을 바꿨는데 뒤로 가기가 앱 종료'가 되는 경우가 많습니다. 세그먼트는 항목이 2~4개일 때만 보기 좋고 5개를 넘으면 글자가 잘리니 탭이나 드롭다운으로 바꾸세요. iOS는 세그먼트가 기본 부품이지만 안드로이드엔 같은 모양이 없어 따로 만들어야 합니다.</p>
       </div>
     </article>
-    <article class="term added s4" id="tab-navbar">
+    <article class="term s4" id="tab-navbar">
       <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="tbs"><input type="radio" name="tnx" id="tnx0" class="sr" checked><input type="radio" name="tnx" id="tnx1" class="sr"><input type="radio" name="tnx" id="tnx2" class="sr"><label for="tnx0">소개</label><label for="tnx1">후기</label><label for="tnx2">문의</label><div class="pn"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:80%"></div></div><div class="pn"><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:50%"></div></div><div class="pn"><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div></div></div></div><span class="d-cap">탭: 같은 화면의 내용</span></div><div class="mid">vs</div><div class="side"><div class="ph" style="padding:0 6px 0"><div class="tbs bt"><input type="radio" name="nbx" id="nbx0" class="sr" checked><input type="radio" name="nbx" id="nbx1" class="sr"><input type="radio" name="nbx" id="nbx2" class="sr"><label for="nbx0"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></label><label for="nbx1"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></label><label for="nbx2"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></label><div class="pn"><span class="screen-t">홈</span></div><div class="pn"><span class="screen-t">검색</span></div><div class="pn"><span class="screen-t">내 정보</span></div></div></div><span class="d-cap">내비게이션 바: 다른 화면으로</span></div></div></div>
       <div class="body">
         <p class="num">02</p>
@@ -502,7 +502,7 @@
         <p class="desc"><strong>탭은 지금 보는 화면 안에서 내용을 바꾸고</strong>, <strong>내비게이션 바는 앱의 큰 목적지(화면)로 이동</strong>합니다. 탭은 한 주제 안의 층, 내비게이션 바는 앱의 큰 방입니다.</p>
         <p class="when"><b>이렇게 구분</b>상품 상세 안의 소개·후기·문의 전환이면 탭, 홈·검색·내 정보처럼 앱의 주요 영역으로 이동하면 내비게이션 바입니다.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>하단에 홈·검색·내 정보 내비게이션 바를 두고, 상세 화면 안에서는 소개·후기 탭으로 내용을 바꿔줘</q></p>
-        <p class="senior"><b>20년차 메모</b>내비게이션 바를 탭이라 부르는 사람이 많고, iOS의 "Navigation Bar"는 오히려 위쪽 제목 줄이라 용어가 어긋납니다. 하단 것은 iOS에서 탭 바, 머티리얼에서 내비게이션 바입니다. 하단 바는 항목을 3~5개로 제한하고, 현재 위치를 색만이 아니라 아이콘 채움이나 글자로도 알려 주세요.</p>
+        <p class="senior"><b>실무 팁</b>내비게이션 바를 탭이라 부르는 사람이 많고, iOS의 "Navigation Bar"는 오히려 위쪽 제목 줄이라 용어가 어긋납니다. 하단 것은 iOS에서 탭 바, 머티리얼에서 내비게이션 바입니다. 하단 바는 항목을 3~5개로 제한하고, 현재 위치를 색만이 아니라 아이콘 채움이나 글자로도 알려 주세요.</p>
       </div>
     </article>
     <article class="term s2" id="topbar-vs-tabbar">
@@ -513,7 +513,7 @@
         <p class="desc">화면 위에서 지금 있는 곳의 제목과 뒤로 가기를 알려주면 상단 바, 화면 아래에서 큰 갈래 사이를 옮겨 다니게 하면 탭 바입니다.</p>
         <p class="when"><b>이렇게 구분</b>지금 화면의 이름과 되돌아가기가 필요하면 상단 바, 홈·검색·내 정보처럼 늘 오가는 큰 메뉴는 탭 바.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>상세 화면 위에는 뒤로 가기가 있는 상단 바를, 앱 아래에는 홈·검색·내 정보 탭 바를 넣어줘</q></p>
-        <p class="senior"><b>20년차 메모</b>탭 바 항목은 5개를 넘기지 마세요. 6개부터는 터치가 좁아져서 오작동이 늘고, 넘치는 건 '더보기' 탭으로 묶는 게 표준입니다. 탭 바는 하위 화면으로 들어가도 유지할지 숨길지를 정해야 하는데, 개발에서 화면마다 다르게 구현해 깜빡이는 경우가 많습니다. 웹 PC 화면에서는 탭 바를 위쪽 메뉴나 옆 메뉴로 옮깁니다.</p>
+        <p class="senior"><b>실무 팁</b>탭 바 항목은 5개를 넘기지 마세요. 6개부터는 터치가 좁아져서 오작동이 늘고, 넘치는 건 '더보기' 탭으로 묶는 게 표준입니다. 탭 바는 하위 화면으로 들어가도 유지할지 숨길지를 정해야 하는데, 개발에서 화면마다 다르게 구현해 깜빡이는 경우가 많습니다. 웹 PC 화면에서는 탭 바를 위쪽 메뉴나 옆 메뉴로 옮깁니다.</p>
       </div>
     </article>
     <article class="term s3" id="appbar-vs-tabbar">
@@ -524,10 +524,10 @@
         <p class="desc">앱 바(Top app bar)는 제목과 그 화면에서 쓰는 도구(검색, 더보기)를 담고, 탭 바는 앱의 큰 영역 사이를 오가는 길입니다. 앞 페이지의 '상단 바 vs 탭 바'와 위치 차이가 같되, 여기서는 앱 바가 품은 도구 아이콘에 주목합니다.</p>
         <p class="when"><b>이렇게 구분</b>화면 이름과 오른쪽 도구가 필요하면 앱 바, 홈·검색·내 정보로 옮겨 가는 것이면 탭 바.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>앱 바에는 뒤로 가기, 제목, 검색·더보기 아이콘을 넣고 하단에는 홈·검색·MY 탭 바를 넣어줘</q></p>
-        <p class="senior"><b>20년차 메모</b>앱 바 오른쪽에 아이콘을 3개 넘게 늘어놓으면 제목이 잘립니다. 넘치는 건 케밥으로 묶으세요. 탭 바에서 현재 위치는 색만이 아니라 아이콘 채움이나 굵기로도 구분해야 색 구분이 어려운 사용자도 알 수 있습니다.</p>
+        <p class="senior"><b>실무 팁</b>앱 바 오른쪽에 아이콘을 3개 넘게 늘어놓으면 제목이 잘립니다. 넘치는 건 케밥으로 묶으세요. 탭 바에서 현재 위치는 색만이 아니라 아이콘 채움이나 굵기로도 구분해야 색 구분이 어려운 사용자도 알 수 있습니다.</p>
       </div>
     </article>
-    <article class="term added s4" id="header-appbar-navbar">
+    <article class="term s4" id="header-appbar-navbar">
       <div class="demo"><div class="tri"><div class="side"><div class="ph s"><div class="hd hl"><span class="lg"></span><span class="lk"><i></i><i></i><i></i></span></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div></div><span class="d-cap">헤더: 웹 맨 위</span></div><div class="side"><div class="ph s"><div class="ab hl"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><path d="M15 5l-7 7 7 7"/></svg><span class="d-bar dark" style="width:30px"></span><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div></div><span class="d-cap">앱 바: 앱 맨 위</span></div><div class="side"><div class="ph s"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="nv hl"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div></div><span class="d-cap">내비 바: 이동 줄</span></div></div></div>
       <div class="body">
         <p class="num">05</p>
@@ -535,10 +535,10 @@
         <p class="desc">화면 가장자리의 줄이라는 점은 같지만 쓰이는 곳이 다릅니다. <strong>헤더는 웹페이지 맨 위의 로고·메뉴 영역</strong>, <strong>앱 바는 앱 화면 맨 위의 제목·뒤로가기·액션 줄</strong>, <strong>내비게이션 바는 주요 목적지로 이동하는 막대</strong>입니다.</p>
         <p class="when"><b>이렇게 구분</b>웹에서 로고와 링크가 가로로 놓이면 헤더, 앱 화면 위에서 제목과 뒤로가기가 있으면 앱 바, 홈·검색처럼 이동 항목들이 줄지어 있으면 내비게이션 바입니다.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>웹은 로고와 메뉴가 있는 헤더로, 앱 화면은 뒤로가기와 제목이 있는 앱 바로, 하단에는 내비게이션 바를 만들어줘</q></p>
-        <p class="senior"><b>20년차 메모</b>같은 줄을 개발자는 header, 디자이너는 앱 바, 기획자는 내비라고 불러 회의가 엇갈립니다. 특히 iOS에서 Navigation Bar는 위쪽 제목 줄을 뜻해서, 아래 이동 막대를 말하는 안드로이드 쪽 용어와 반대입니다. 용어는 "위쪽 줄/아래쪽 줄"로 풀어서 한 번 더 확인하세요.</p>
+        <p class="senior"><b>실무 팁</b>같은 줄을 개발자는 header, 디자이너는 앱 바, 기획자는 내비라고 불러 회의가 엇갈립니다. 특히 iOS에서 Navigation Bar는 위쪽 제목 줄을 뜻해서, 아래 이동 막대를 말하는 안드로이드 쪽 용어와 반대입니다. 용어는 "위쪽 줄/아래쪽 줄"로 풀어서 한 번 더 확인하세요.</p>
       </div>
     </article>
-    <article class="term added s4" id="footer-tabbar">
+    <article class="term s4" id="footer-tabbar">
       <div class="demo"><div class="d-pair"><div class="side"><div class="ph clip"><div class="sc"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="ft">회사 정보</div></div></div><span class="d-cap">푸터: 글 끝에 있음</span></div><div class="mid">vs</div><div class="side"><div class="ph clip"><div class="sc"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div></div><div class="tbar"><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true" style=""><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div></div><span class="d-cap">탭 바: 늘 따라옴</span></div></div></div>
       <div class="body">
         <p class="num">06</p>
@@ -546,10 +546,10 @@
         <p class="desc"><strong>푸터는 페이지 내용 맨 끝에 놓인 정보 영역</strong>이라 끝까지 내려야 보이고, <strong>탭 바는 화면 아래에 붙어서 스크롤해도 늘 보입니다</strong>.</p>
         <p class="when"><b>이렇게 구분</b>회사 정보·약관·저작권처럼 끝에서 찾는 글이면 푸터, 언제든 눌러 이동해야 하는 주요 메뉴면 탭 바입니다.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>웹 페이지 맨 아래에는 회사 정보와 약관 링크가 있는 푸터를, 앱에는 항상 보이는 하단 탭 바를 넣어줘</q></p>
-        <p class="senior"><b>20년차 메모</b>무한 스크롤 목록 아래의 푸터는 영영 닿지 않아서 약관 링크가 사실상 사라집니다. 푸터를 고정하든가 링크를 다른 곳에 두세요. 탭 바는 iPhone 하단 홈 인디케이터와 겹치지 않도록 안전 영역을 비워 둬야 합니다.</p>
+        <p class="senior"><b>실무 팁</b>무한 스크롤 목록 아래의 푸터는 영영 닿지 않아서 약관 링크가 사실상 사라집니다. 푸터를 고정하든가 링크를 다른 곳에 두세요. 탭 바는 iPhone 하단 홈 인디케이터와 겹치지 않도록 안전 영역을 비워 둬야 합니다.</p>
       </div>
     </article>
-    <article class="term added s1" id="drawer">
+    <article class="term s1" id="drawer">
       <div class="demo"><div class="d-phone mp" style="width:150px;height:150px"><div class="d-bar dark" style="width:70%"></div><div class="d-bar"></div><div class="d-bar" style="width:80%"></div><div class="scrim"></div><div class="draw"><div class="d-bar dark"></div><div class="d-bar"></div><div class="d-bar"></div></div></div></div>
       <div class="body">
         <p class="num">07</p>
@@ -557,10 +557,10 @@
         <p class="desc">화면 옆에서 밀려 나오는 패널입니다. 햄버거 아이콘을 누르면 나오는 메뉴가 대표적이고 <strong>사이드 시트, 내비게이션 드로어</strong>라고도 합니다.</p>
         <p class="when"><b>언제 쓰나</b>메뉴 항목이 많아 하단 탭에 다 못 넣을 때, 웹에서 필터나 상세 정보를 옆에 띄울 때.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>왼쪽 상단 햄버거를 누르면 왼쪽에서 드로어가 열리고, 바깥을 누르면 닫히게 해줘</q></p>
-        <p class="senior"><b>20년차 메모</b>중요한 메뉴를 드로어 안에 숨기면 눈에 안 띄어 사용률이 크게 떨어집니다. 자주 쓰는 건 하단 탭으로 꺼내 놓으세요. 열린 동안 뒤 화면 스크롤이 같이 움직이지 않게 막는 처리도 개발자와 확인하세요.</p>
+        <p class="senior"><b>실무 팁</b>중요한 메뉴를 드로어 안에 숨기면 눈에 안 띄어 사용률이 크게 떨어집니다. 자주 쓰는 건 하단 탭으로 꺼내 놓으세요. 열린 동안 뒤 화면 스크롤이 같이 움직이지 않게 막는 처리도 개발자와 확인하세요.</p>
       </div>
     </article>
-    <article class="term added s4" id="drawer-sidebar">
+    <article class="term s4" id="drawer-sidebar">
       <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="main"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div></div><div class="dim"></div><div class="drw"><div class="mb"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:70%"></div></div></div><span class="d-cap">드로어: 필요할 때만</span></div><div class="mid">vs</div><div class="side"><div class="ph"><div class="sb"><b></b><b></b><b></b><b></b></div><div class="main"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div></div></div><span class="d-cap">사이드바: 늘 있음</span></div></div></div>
       <div class="body">
         <p class="num">08</p>
@@ -568,7 +568,7 @@
         <p class="desc">옆에서 나오는 세로 판이라는 점은 같지만, <strong>필요할 때만 열리면 드로어</strong>이고 <strong>화면에 늘 붙어 있으면 사이드바</strong>입니다. 드로어는 열린 동안 뒤를 어둡게 덮는 경우가 많습니다.</p>
         <p class="when"><b>이렇게 구분</b>햄버거 아이콘을 눌러야 나오면 드로어, 처음부터 왼쪽에 고정돼 있으면 사이드바입니다. 같은 메뉴 내용이라도 화면 폭에 따라 사이드바가 드로어로 바뀌기도 합니다.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>화면이 넓으면 왼쪽 사이드바로 보여주고, 모바일 폭에서는 햄버거로 여는 드로어로 바꿔줘</q></p>
-        <p class="senior"><b>20년차 메모</b>반응형에서는 한 메뉴가 사이드바였다가 드로어가 되는 일이 흔하니, 둘의 상태(열림·닫힘·현재 위치)를 따로 설계해 두세요. 드로어는 열렸을 때 포커스를 안에 가두고 뒤 스크롤을 막아야 하는데, 이걸 빠뜨리면 메뉴 뒤 화면이 같이 스크롤됩니다. 모바일에서 핵심 이동을 드로어에 숨기면 눈에 안 띄어 쓰이지 않습니다.</p>
+        <p class="senior"><b>실무 팁</b>반응형에서는 한 메뉴가 사이드바였다가 드로어가 되는 일이 흔하니, 둘의 상태(열림·닫힘·현재 위치)를 따로 설계해 두세요. 드로어는 열렸을 때 포커스를 안에 가두고 뒤 스크롤을 막아야 하는데, 이걸 빠뜨리면 메뉴 뒤 화면이 같이 스크롤됩니다. 모바일에서 핵심 이동을 드로어에 숨기면 눈에 안 띄어 쓰이지 않습니다.</p>
       </div>
     </article>
     <article class="term s3" id="hamburger-vs-kebab">
@@ -579,10 +579,10 @@
         <p class="desc">가로줄 세 개(햄버거)는 앱 전체의 메뉴를 여는 것이고, 세로 점 세 개(케밥)는 바로 옆 항목에 쓸 수 있는 동작을 여는 것입니다.</p>
         <p class="when"><b>이렇게 구분</b>화면 왼쪽 위에서 사이트 전체 메뉴가 나오면 햄버거, 카드·글 오른쪽에서 수정·신고 같은 항목별 동작이 나오면 케밥.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>왼쪽 상단에는 전체 메뉴를 여는 햄버거 아이콘을, 각 게시글 오른쪽에는 케밥 아이콘을 달아줘</q></p>
-        <p class="senior"><b>20년차 메모</b>햄버거 안에 숨긴 메뉴는 눈에 안 띄어서 쓰는 사람이 확 줄어듭니다. 핵심 메뉴는 하단 탭으로 꺼내 놓으세요. 케밥은 이름 그대로 점이 세로여야 하며, 가로 점(미트볼)과 섞으면 사용자가 위치로 의미를 찾지 못합니다.</p>
+        <p class="senior"><b>실무 팁</b>햄버거 안에 숨긴 메뉴는 눈에 안 띄어서 쓰는 사람이 확 줄어듭니다. 핵심 메뉴는 하단 탭으로 꺼내 놓으세요. 케밥은 이름 그대로 점이 세로여야 하며, 가로 점(미트볼)과 섞으면 사용자가 위치로 의미를 찾지 못합니다.</p>
       </div>
     </article>
-    <article class="term added s2" id="sticky-header">
+    <article class="term s2" id="sticky-header">
       <div class="demo"><div class="stickyh" tabindex="0" aria-label="스크롤 목록"><h6>ㄱ</h6><p>가나</p><p>가방</p><p>고래</p><h6>ㄴ</h6><p>나비</p><p>나무</p><p>노을</p><h6>ㄷ</h6><p>다리</p><p>달</p></div><span class="d-cap" style="position:absolute;bottom:6px">스크롤해 보세요</span></div>
       <div class="body">
         <p class="num">10</p>
@@ -590,10 +590,10 @@
         <p class="desc">스크롤을 내려도 화면 위쪽에 달라붙어 따라오는 제목이나 바입니다. CSS의 <strong>position: sticky</strong>로 만듭니다.</p>
         <p class="when"><b>언제 쓰나</b>연락처의 ㄱㄴㄷ 구분 제목, 표의 머리글, 스크롤해도 보여야 하는 상단 바.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>목록의 초성 구분 제목에 스티키 헤더를 적용해줘</q></p>
-        <p class="senior"><b>20년차 메모</b>스티키 요소가 두 개 이상 겹쳐 쌓이면 화면의 절반을 가립니다. 작은 화면에서는 하나만 고정하세요. 앵커 링크로 이동할 때 고정 헤더 뒤에 제목이 숨는 문제는 scroll-margin으로 해결합니다.</p>
+        <p class="senior"><b>실무 팁</b>스티키 요소가 두 개 이상 겹쳐 쌓이면 화면의 절반을 가립니다. 작은 화면에서는 하나만 고정하세요. 앵커 링크로 이동할 때 고정 헤더 뒤에 제목이 숨는 문제는 scroll-margin으로 해결합니다.</p>
       </div>
     </article>
-    <article class="term added s4" id="sticky-fixed">
+    <article class="term s4" id="sticky-fixed">
       <div class="demo"><div class="d-pair"><div class="side"><div class="sc2"><div class="hero"></div><div class="bar st">메뉴</div><div class="ln"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div></div></div><span class="d-cap">스티키: 가다가 붙음</span></div><div class="mid">vs</div><div class="side"><div class="fxw"><div class="bar" style="background:var(--p);height:20px;color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center">메뉴</div><div class="sc2"><div class="hero"></div><div class="ln"><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><div class="d-bar " style="width:80%"></div><div class="d-bar " style="width:60%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div></div></div></div><span class="d-cap">픽스드: 처음부터 고정</span></div></div></div>
       <div class="body">
         <p class="num">11</p>
@@ -601,7 +601,7 @@
         <p class="desc"><strong>스티키는 처음엔 제자리에 있다가 스크롤로 위에 닿으면 거기에 붙고</strong>, <strong>픽스드는 처음부터 화면의 정해진 자리에 못 박혀 스크롤과 상관없이 늘 같은 곳에 있습니다</strong>. 둘 다 스크롤해 보면 차이가 보입니다.</p>
         <p class="when"><b>이렇게 구분</b>원래 위치가 의미 있고 지나가면 따라붙게 하고 싶으면 스티키, 어디에 있든 항상 그 자리여야 하면 픽스드입니다.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>표 머리글은 스크롤하면 위에 붙는 스티키로, 채팅 입력창은 화면 아래에 고정된 픽스드로 만들어줘</q></p>
-        <p class="senior"><b>20년차 메모</b>고정 요소가 늘어나면 모바일에서 화면 대부분을 가려 정작 내용이 보이는 영역이 좁아집니다. 가로로 누운 화면에서는 특히 심합니다. 픽스드 요소는 키보드가 올라올 때 입력창을 가리거나 밀려 올라가는 문제가 있으니 실제 기기에서 확인하세요. 스티키는 부모 영역이 끝나면 함께 사라지는 점을 알아 두어야 합니다.</p>
+        <p class="senior"><b>실무 팁</b>고정 요소가 늘어나면 모바일에서 화면 대부분을 가려 정작 내용이 보이는 영역이 좁아집니다. 가로로 누운 화면에서는 특히 심합니다. 픽스드 요소는 키보드가 올라올 때 입력창을 가리거나 밀려 올라가는 문제가 있으니 실제 기기에서 확인하세요. 스티키는 부모 영역이 끝나면 함께 사라지는 점을 알아 두어야 합니다.</p>
       </div>
     </article>
     <article class="term s2" id="floating-vs-sticky">
@@ -612,7 +612,7 @@
         <p class="desc">내용 위에 둥둥 떠서 작게 자리를 차지하면 플로팅 버튼, 화면 아래에 가로로 길게 붙어 있으면 하단 고정 버튼입니다.</p>
         <p class="when"><b>이렇게 구분</b>새 글 쓰기처럼 선택적인 주요 동작 하나면 플로팅 버튼, 결제·신청처럼 이 화면의 최종 행동이면 하단 고정 버튼.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>목록 화면에는 오른쪽 아래 플로팅 글쓰기 버튼을, 상품 상세에는 구매하기 하단 고정 버튼을 달아줘</q></p>
-        <p class="senior"><b>20년차 메모</b>플로팅 버튼은 마지막 항목을 가려서 눌러야 할 것을 놓치게 합니다. 목록 맨 아래에 버튼 높이만큼 여백을 주세요. 하단 고정 버튼은 아이폰 아래 홈 바 영역(세이프 에어리어)과 키보드가 올라올 때 가려지는지 확인하세요. 한 화면에 둘을 같이 쓰면 어느 게 주인공인지 모르게 됩니다.</p>
+        <p class="senior"><b>실무 팁</b>플로팅 버튼은 마지막 항목을 가려서 눌러야 할 것을 놓치게 합니다. 목록 맨 아래에 버튼 높이만큼 여백을 주세요. 하단 고정 버튼은 아이폰 아래 홈 바 영역(세이프 에어리어)과 키보드가 올라올 때 가려지는지 확인하세요. 한 화면에 둘을 같이 쓰면 어느 게 주인공인지 모르게 됩니다.</p>
       </div>
     </article>
     <article class="term s3" id="fab-vs-icon-button">
@@ -623,7 +623,7 @@
         <p class="desc">FAB(플로팅 액션 버튼)는 그 화면에서 가장 중요한 행동 하나를 색 있는 큰 원으로 띄워 놓은 것이고, 아이콘 버튼은 배경 없이 바 안에 두는 평범한 도구입니다.</p>
         <p class="when"><b>이렇게 구분</b>새 글·새 채팅처럼 화면의 주인공 행동이면 FAB, 검색·공유·필터 같은 보조 도구면 아이콘 버튼.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>목록 화면 오른쪽 아래에 새 글 FAB를, 상단 바에는 검색 아이콘 버튼을 넣어줘</q></p>
-        <p class="senior"><b>20년차 메모</b>FAB는 한 화면에 하나만 있어야 합니다. 둘이 되면 어느 게 주인공인지 사라집니다. 아이콘 버튼은 그림만으로 뜻이 전달되는지 의심하고 접근성 라벨(aria-label)을 꼭 달아야 하며, 보이는 모양이 24dp여도 누르는 영역은 48dp를 확보하세요.</p>
+        <p class="senior"><b>실무 팁</b>FAB는 한 화면에 하나만 있어야 합니다. 둘이 되면 어느 게 주인공인지 사라집니다. 아이콘 버튼은 그림만으로 뜻이 전달되는지 의심하고 접근성 라벨(aria-label)을 꼭 달아야 하며, 보이는 모양이 24dp여도 누르는 영역은 48dp를 확보하세요.</p>
       </div>
     </article>
     <article class="term s3" id="button-vs-link">
@@ -634,10 +634,10 @@
         <p class="desc">누르면 저장·전송처럼 무언가가 실행되면 버튼, 누르면 다른 화면이나 페이지로 옮겨 가면 링크입니다. 모양이 아니라 하는 일로 가릅니다.</p>
         <p class="when"><b>이렇게 구분</b>저장·결제·삭제처럼 상태를 바꾸면 버튼, 약관·상세 페이지·외부 사이트처럼 이동하면 링크.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>저장은 버튼으로, 이용약관 보기는 밑줄이 있는 링크로 만들어줘</q></p>
-        <p class="senior"><b>20년차 메모</b>버튼처럼 생긴 링크, 링크처럼 생긴 버튼이 가장 흔한 혼동입니다. 이동인데 버튼 부품으로 만들면 새 탭으로 열기·주소 복사가 안 되고 검색 엔진도 못 따라갑니다. 반대로 동작인데 링크로 만들면 스크린 리더가 '이동'으로 읽어 사용자가 헷갈립니다.</p>
+        <p class="senior"><b>실무 팁</b>버튼처럼 생긴 링크, 링크처럼 생긴 버튼이 가장 흔한 혼동입니다. 이동인데 버튼 부품으로 만들면 새 탭으로 열기·주소 복사가 안 되고 검색 엔진도 못 따라갑니다. 반대로 동작인데 링크로 만들면 스크린 리더가 '이동'으로 읽어 사용자가 헷갈립니다.</p>
       </div>
     </article>
-    <article class="term added s4" id="hyperlink-anchor">
+    <article class="term s4" id="hyperlink-anchor">
       <div class="demo"><div class="d-pair"><div class="side"><div class="ph"><div class="pgf a"><div class="d-bar " style="width:50%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:70%"></div><span class="lnk">자세히 보기</span></div><div class="pgf b"><div class="d-bar dark" style="width:70%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:90%"></div><div class="d-bar " style="width:60%"></div></div></div><span class="d-cap">하이퍼링크: 다른 문서로</span></div><div class="mid">vs</div><div class="side"><div class="ph an"><div class="chips"><i>소개</i><i>가격</i><i>문의</i></div><div class="sec"><div class="d-bar " style="width:60%"></div><b></b></div><div class="sec"><div class="d-bar " style="width:60%"></div><b></b></div><div class="sec"><div class="d-bar " style="width:60%"></div><b></b></div></div><span class="d-cap">앵커: 같은 문서 속 자리로</span></div></div></div>
       <div class="body">
         <p class="num">15</p>
@@ -645,10 +645,10 @@
         <p class="desc"><strong>하이퍼링크는 눌러서 다른 문서·페이지·파일로 가는 연결 전체</strong>를 가리키고, <strong>앵커는 한 페이지 안의 특정 위치로 곧장 이동하는 연결</strong>을 가리킵니다. HTML에서는 이 둘 모두 a(anchor) 태그로 만듭니다.</p>
         <p class="when"><b>이렇게 구분</b>누르면 주소가 바뀌고 다른 화면이 열리면 하이퍼링크, 같은 페이지에서 소개·가격 같은 구간으로 스크롤만 되면 앵커 링크입니다.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>긴 페이지 위쪽에 소개·가격·문의 앵커 링크를 두고, 누르면 해당 구간으로 부드럽게 이동하게 해줘</q></p>
-        <p class="senior"><b>20년차 메모</b>앵커로 이동한 자리가 고정 헤더에 가려 제목이 안 보이는 사고가 가장 흔합니다. 스크롤 여백(scroll-margin)을 헤더 높이만큼 주세요. 링크 글자가 "여기"나 "더보기"뿐이면 스크린 리더로 링크 목록만 훑는 사용자는 어디로 가는지 알 수 없으니 행선지를 글자로 쓰세요.</p>
+        <p class="senior"><b>실무 팁</b>앵커로 이동한 자리가 고정 헤더에 가려 제목이 안 보이는 사고가 가장 흔합니다. 스크롤 여백(scroll-margin)을 헤더 높이만큼 주세요. 링크 글자가 "여기"나 "더보기"뿐이면 스크린 리더로 링크 목록만 훑는 사용자는 어디로 가는지 알 수 없으니 행선지를 글자로 쓰세요.</p>
       </div>
     </article>
-    <article class="term added s3" id="button-hierarchy">
+    <article class="term s3" id="button-hierarchy">
       <div class="demo"><div class="d-col" style="align-items:center"><button class="d-btn" type="button">결제하기</button><button class="d-btn soft" type="button">장바구니</button><button class="d-btn ghost" type="button" style="border:0;background:none;color:var(--p)">취소</button></div></div>
       <div class="body">
         <p class="num">16</p>
@@ -656,10 +656,10 @@
         <p class="desc">버튼의 중요도를 모양으로 나눈 것입니다. 색이 꽉 찬 버튼(프라이머리)이 가장 중요하고, 연한 배경(세컨더리), 글자만 있는 텍스트 버튼 순으로 약해집니다.</p>
         <p class="when"><b>언제 쓰나</b>한 화면에 버튼이 둘 이상일 때 어느 것이 주된 행동인지 알려줄 때.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>화면마다 프라이머리 버튼은 하나만 두고 나머지는 세컨더리와 텍스트 버튼으로 구분해줘</q></p>
-        <p class="senior"><b>20년차 메모</b>프라이머리가 두 개 있으면 사용자는 둘 사이에서 고민합니다. 텍스트 버튼은 링크와 모양이 같아서 동작인지 이동인지 헷갈리니 위치와 문구로 구분하세요.</p>
+        <p class="senior"><b>실무 팁</b>프라이머리가 두 개 있으면 사용자는 둘 사이에서 고민합니다. 텍스트 버튼은 링크와 모양이 같아서 동작인지 이동인지 헷갈리니 위치와 문구로 구분하세요.</p>
       </div>
     </article>
-    <article class="term added s2" id="destructive">
+    <article class="term s2" id="destructive">
       <div class="demo"><div class="d-col" style="width:190px;text-align:center"><b>글을 삭제할까요?</b><div class="d-row" style="justify-content:center"><button class="d-btn ghost" type="button">취소</button><button class="d-btn dng" type="button">삭제</button></div></div></div>
       <div class="body">
         <p class="num">17</p>
@@ -667,7 +667,7 @@
         <p class="desc">삭제·탈퇴처럼 되돌리기 어려운 동작을 하는 버튼입니다. 보통 빨간색으로 표시해 일반 버튼과 구분합니다.</p>
         <p class="when"><b>언제 쓰나</b>컨펌 대화상자에서 삭제·초기화·로그아웃 같은 동작을 확인받을 때.</p>
         <p class="prompt"><b>AI에게 이렇게</b><q>삭제 컨펌의 삭제 버튼은 빨간 파괴적 버튼 스타일로 하고, 취소를 기본 포커스로 해줘</q></p>
-        <p class="senior"><b>20년차 메모</b>빨간색이 남발되면 진짜 위험한 곳에서 효과가 없어집니다. 정말 위험한 동작은 컨펌 대신 '실행 취소'를 주는 쪽이 사용자에게 더 편한 경우도 많습니다.</p>
+        <p class="senior"><b>실무 팁</b>빨간색이 남발되면 진짜 위험한 곳에서 효과가 없어집니다. 정말 위험한 동작은 컨펌 대신 '실행 취소'를 주는 쪽이 사용자에게 더 편한 경우도 많습니다.</p>
       </div>
     </article>
 

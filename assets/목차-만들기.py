@@ -182,7 +182,8 @@ function filter() {
     row.hidden = !any;
   });
   document.querySelectorAll('.cat').forEach(c => c.hidden = !c.querySelector('.topic:not([hidden])'));
-  count.textContent = k ? (hits ? `용어 ${hits}개를 찾았습니다. 파란 이름을 누르면 그 카드로 갑니다.` : '찾는 용어가 없습니다. 다른 낱말이나 영어 이름으로 찾아보세요.') : '';
+  const en = document.documentElement.lang === 'en';
+  count.textContent = !k ? '' : hits ? (en ? `${hits} terms found. Tap a blue name to jump to its card.` : `용어 ${hits}개를 찾았습니다. 파란 이름을 누르면 그 카드로 갑니다.`) : (en ? 'No matching term. Try another word.' : '찾는 용어가 없습니다. 다른 낱말이나 영어 이름으로 찾아보세요.');
 }
 q.addEventListener('input', filter);
 </script>

@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="UX 법칙 — 움직이는 예시로 보는 UI 용어 사전">
+<title>UX 법칙 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+.sd { display: grid; gap: 8px; justify-items: center; }          /* 비교 한쪽 칸 */
+
+/* 01 피츠의 법칙: 같은 거리의 작은 과녁과 큰 과녁. 작은 쪽은 커서가 지나쳤다가 돌아온다 */
+.ft { position: relative; width: 120px; height: 56px; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.ft .t { position: absolute; top: 14px; height: 28px; border-radius: 5px; background: var(--p-soft); border: 1.5px solid var(--p); }
+.ft .s { left: 96px; width: 14px; }
+.ft .l { left: 70px; width: 44px; }
+.ft .c { position: absolute; left: 6px; top: 24px; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+.ft .s ~ .c { animation: cs 4s infinite; }
+.ft .l ~ .c { animation: cl 4s infinite; }
+@keyframes cs { 0%, 10% { transform: none; } 35% { transform: translateX(112px); } 50% { transform: translateX(86px); } 62%, 90% { transform: translateX(98px); } 100% { transform: none; } }
+@keyframes cl { 0%, 10% { transform: none; } 40%, 90% { transform: translateX(98px); } 100% { transform: none; } }
+
+/* 02 힉의 법칙: 선택지 3개 vs 12개 */
+.hk { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+.hk .d-chip { padding: 3px 8px; font-size: 11px; }
+
+/* 03 제이콥의 법칙: 익숙한 헤더 배치 vs 낯선 배치 */
+.site { width: 120px; padding: 6px; background: #fff; border: 1px solid var(--line); border-radius: 8px; display: grid; gap: 6px; }
+.site .hd { display: flex; align-items: center; gap: 4px; }
+.site .hd i { height: 18px; border-radius: 4px; font-style: normal; font-size: 9px; font-weight: 800; color: #fff; display: grid; place-items: center; }
+.site .lg { width: 28px; background: var(--p); }
+.site .sr { flex: 1; background: #d5daea; }
+.site .ct { width: 28px; background: var(--warn); }
+
+/* 04 밀러의 법칙: 덩어리 짓기 */
+.ml { font: 700 11px Consolas, monospace; letter-spacing: .02em; white-space: nowrap; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.ml.g { letter-spacing: 0; word-spacing: .4em; }
+
+/* 05 테슬러의 법칙: 복잡성 총량은 같고 누가 지느냐만 바뀐다(체크하면 너비가 옮겨 간다) */
+.ts { width: 250px; display: grid; gap: 8px; }
+.ts input { position: absolute; opacity: 0; }
+.ts .sw { display: inline-flex; gap: 8px; align-items: center; cursor: pointer; font-weight: 700; }
+.ts .sw::before { content: ""; width: 34px; height: 20px; border-radius: 99px; background: #c9cfe6; box-shadow: inset 0 0 0 2px #c9cfe6; transition: .2s; }
+.ts input:checked ~ .sw::before { background: radial-gradient(circle at 75% 50%, #fff 0 7px, transparent 8px), var(--p); }
+.ts input:not(:checked) ~ .sw::before { background: radial-gradient(circle at 25% 50%, #fff 0 7px, transparent 8px), #c9cfe6; }
+.ts input:focus-visible ~ .sw { outline: 3px solid var(--p); outline-offset: 3px; border-radius: 8px; }
+.tsb { display: flex; height: 30px; border-radius: 8px; overflow: hidden; font-size: 11px; font-weight: 800; color: #fff; }
+.tsb b { display: grid; place-items: center; white-space: nowrap; overflow: hidden; transition: width .5s; }
+.tsb .u { width: 80%; background: var(--warn); }
+.tsb .s { width: 20%; background: var(--p); }
+.ts input:checked ~ .tsb .u { width: 20%; }
+.ts input:checked ~ .tsb .s { width: 80%; }
+.ts .a1 { display: none; }
+.ts input:checked ~ .tx .a0 { display: none; }
+.ts input:checked ~ .tx .a1 { display: inline; }
+
+/* 06 도허티 임계: 같은 시각에 누르고, 빠른 쪽은 바로 반응하고 느린 쪽은 한참 뒤에 반응 */
+.dh { width: 250px; display: grid; gap: 10px; }
+.dh .r { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; }
+.dh .d-btn { min-height: 28px; padding: 0; font-size: 12px; }
+.dh .res { height: 28px; display: flex; align-items: center; gap: 6px; font-weight: 700; }
+.dh .ok { padding: 3px 10px; border-radius: 99px; background: #dcfce7; color: #166534; }
+.dh .fast .ok { animation: fastok 5s infinite; }
+.dh .slow .ok { animation: slowok 5s infinite; }
+.dh .slow .w { display: flex; gap: 6px; align-items: center; color: var(--mute); animation: wait 5s infinite; }
+.dh .w i { width: 14px; height: 14px; border: 2px solid #c9cfe6; border-top-color: var(--p); border-radius: 50%; animation: sp .8s linear infinite; }
+@keyframes sp { to { transform: rotate(360deg); } }
+@keyframes fastok { 0%, 4% { opacity: 0; } 6%, 85% { opacity: 1; } 95%, 100% { opacity: 0; } }
+@keyframes slowok { 0%, 55% { opacity: 0; } 58%, 85% { opacity: 1; } 95%, 100% { opacity: 0; } }
+@keyframes wait { 0%, 4% { opacity: 0; } 6%, 54% { opacity: 1; } 56%, 100% { opacity: 0; } }
+
+/* 07 폰 레스토프 효과: 같은 카드 셋 중 하나만 색을 바꿔 눈에 띄게 */
+.pl { display: flex; gap: 8px; align-items: stretch; }
+.pl div { width: 80px; padding: 10px 6px; border: 1px solid var(--line); border-radius: 10px; background: #fff; text-align: center; display: grid; gap: 4px; }
+.pl .hot { background: var(--p); color: #fff; border-color: var(--p); transform: translateY(-6px); box-shadow: 0 8px 16px rgba(79, 70, 229, .3); }
+.pl b { font-size: 12px; }
+.pl small { font-size: 11px; opacity: .8; }
+
+/* 08 근접성: 점은 그대로, row-gap/column-gap 만 바꾸면 묶음이 가로줄에서 세로줄로 바뀐다 */
+.pr { display: grid; grid-template-columns: repeat(4, 16px); gap: 5px 22px; animation: prx 5s ease-in-out infinite; }
+.pr i { width: 16px; height: 16px; border-radius: 50%; background: var(--p); }
+@keyframes prx { 0%, 35% { column-gap: 5px; row-gap: 22px; } 50%, 85% { column-gap: 22px; row-gap: 5px; } 100% { column-gap: 5px; row-gap: 22px; } }
+
+/* 09 유사성: 간격은 똑같이 두고 색과 모양만 열마다 다르게 */
+.sm { display: grid; grid-template-columns: repeat(6, 22px); gap: 8px; }
+.sm i { height: 22px; background: var(--p); border-radius: 4px; }
+.sm i:nth-child(2n) { background: var(--warn); border-radius: 50%; }
+
+/* 10 점진적 공개: 기본 항목만 보이고 고급 항목은 눌러야 펼쳐진다 */
+.pd { width: 230px; display: grid; gap: 8px; }
+.pd label { font-size: 12px; font-weight: 700; }
+.pd summary { cursor: pointer; font-weight: 700; color: var(--p); font-size: 13px; }
+.pd details[open] summary { margin-bottom: 8px; }
+.pd .adv { display: grid; gap: 6px; font-size: 12px; }
+
+/* 11 어포던스와 시그니파이어: 같은 동작인데 눌러 보라는 단서가 있는가 */
+.sg-flat { font-weight: 600; padding: 8px 4px; cursor: pointer; }
+.sg-btn { display: inline-flex; align-items: center; gap: 4px; min-height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid #c9cfe6; background: #fff; box-shadow: 0 2px 0 #c9cfe6; font: 700 12px var(--font); color: var(--ink); cursor: pointer; transition: transform .1s, box-shadow .1s; }
+.sg-btn:hover { background: var(--p-soft); }
+.sg-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #c9cfe6; }
+.sg-btn svg { width: 14px; height: 14px; }
+
+/* 12 인지 부하: 같은 일을 시키는 복잡한 화면과 단순한 화면 */
+.cl { width: 120px; min-height: 120px; padding: 6px; background: #fff; border: 1px solid var(--line); border-radius: 8px; display: grid; gap: 4px; align-content: start; }
+.cl .bn { padding: 3px 4px; font-size: 9px; font-weight: 800; background: #fde68a; border-radius: 3px; }
+.cl .bn.r { background: #fecaca; }
+.cl .bn.b { background: #bfdbfe; }
+.cl .mix { display: flex; gap: 3px; flex-wrap: wrap; }
+.cl .mix i { width: 18px; height: 10px; border-radius: 2px; }
+.cl.one { place-content: center; text-align: center; gap: 8px; }
+.cl.one b { font-size: 12px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">기본기</a><span class="sep">›</span>
+  <span>UX 법칙</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>UX 법칙</h1>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="fitts-law">
+      <div class="demo">
+        <div class="d-col" style="width:100%">
+          <div class="d-pair">
+            <div class="sd"><div class="ft"><i class="t s"></i><i class="c"></i></div><span class="d-cap">작은 과녁: 헤맴</span></div>
+            <span class="mid">vs</span>
+            <div class="sd"><div class="ft"><i class="t l"></i><i class="c"></i></div><span class="d-cap">큰 과녁: 바로 도착</span></div>
+          </div>
+          <span class="d-cap" style="text-align:center">단순화한 예시</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">피츠의 법칙 <span class="en">Fitts's law</span></h2>
+        <p class="desc">목표물을 맞히는 데 걸리는 시간은 목표가 멀수록, 작을수록 길어집니다. 폴 피츠(Paul Fitts)의 이름에서 왔습니다. 자주 누르는 것은 크게, 가까이 두라는 뜻입니다.</p>
+        <p class="when"><b>화면에서는</b>주요 버튼의 크기, 엄지가 닿는 거리, 서로 붙은 "삭제"와 "저장" 버튼의 간격, 화면 모서리에 붙은 메뉴.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>피츠의 법칙에 따라 주요 버튼은 높이 48px 이상 가로 전체 폭으로 키우고, 삭제 버튼은 저장 버튼에서 멀리 떨어뜨려줘</q></p>
+        <p class="senior"><b>실무 팁</b>눈에 보이는 아이콘은 작아도, 눌리는 영역(터치 영역)은 44pt(iOS)·48dp(안드로이드) 이상으로 따로 키울 수 있습니다. 시안에 이 터치 영역을 표시하지 않으면 개발자는 그림 크기만 눌리게 만듭니다. 반대로 위험한 버튼을 일부러 작고 멀게 두는 것도 이 법칙을 이용한 것입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="hicks-law">
+      <div class="demo">
+        <div class="d-col" style="width:100%">
+          <div class="d-pair">
+            <div class="sd"><div class="hk"><span class="d-chip">기본</span><span class="d-chip">추천</span><span class="d-chip">최신</span></div><span class="d-cap">3개: 금방 고름</span></div>
+            <span class="mid">vs</span>
+            <div class="sd"><div class="hk"><span class="d-chip">기본</span><span class="d-chip">추천</span><span class="d-chip">최신</span><span class="d-chip">인기</span><span class="d-chip">가격</span><span class="d-chip">평점</span><span class="d-chip">거리</span><span class="d-chip">할인</span><span class="d-chip">신상</span><span class="d-chip">리뷰</span><span class="d-chip">찜</span><span class="d-chip">랜덤</span></div><span class="d-cap">12개: 오래 고민</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">힉의 법칙 <span class="en">Hick's law</span></h2>
+        <p class="desc">선택지가 늘어날수록 고르는 데 걸리는 시간도 늘어납니다. 윌리엄 힉(William Hick)과 레이 하이먼(Ray Hyman)의 이름이 붙은 법칙으로, <strong>선택 과부하</strong>와 이어서 이야기합니다.</p>
+        <p class="when"><b>화면에서는</b>메뉴 항목 수, 요금제 선택, 정렬·필터 옵션, 온보딩의 질문 개수, 홈 화면의 바로가기 수.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>힉의 법칙에 따라 정렬 옵션을 자주 쓰는 3개만 보이게 하고 나머지는 "더보기" 안으로 묶어줘</q></p>
+        <p class="senior"><b>실무 팁</b>선택지를 줄이는 것과 기능을 숨기는 것은 다릅니다. 안 보이게 숨기면 찾는 시간이 늘어 더 나빠질 수 있어서, 의미 있게 묶고 이름을 잘 붙이는 쪽이 먼저입니다. 전문가가 쓰는 도구(관리자 화면, 편집기)는 선택지가 많아도 익숙해지면 빨라지니 일반 소비자 화면과 같은 기준을 쓰지 마세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="jakobs-law">
+      <div class="demo">
+        <div class="d-col" style="width:100%">
+          <div class="d-pair">
+            <div class="sd"><div class="site"><div class="hd"><i class="lg">로고</i><i class="sr"></i><i class="ct">카트</i></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div></div><span class="d-cap">다른 곳과 같은 배치</span></div>
+            <span class="mid">vs</span>
+            <div class="sd"><div class="site"><div class="hd"><i class="ct">카트</i><i class="sr"></i><i class="lg">로고</i></div><div class="d-bar"></div><div class="d-bar" style="width:70%"></div></div><span class="d-cap">새롭지만 낯선 배치</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">제이콥의 법칙 <span class="en">Jakob's law</span></h2>
+        <p class="desc">사용자는 대부분의 시간을 <em>다른</em> 서비스에서 보냅니다. 그래서 내 서비스도 이미 익숙한 방식으로 작동하길 기대합니다. 야코브 닐슨(Jakob Nielsen)이 말했습니다.</p>
+        <p class="when"><b>화면에서는</b>로고를 누르면 홈, 장바구니는 오른쪽 위, 햄버거 아이콘은 메뉴, 검색 돋보기 같은 약속된 위치와 모양.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>제이콥의 법칙에 맞게 로고는 왼쪽 위에 두고 클릭하면 홈으로, 장바구니와 검색은 오른쪽 위에 일반적인 위치로 배치해줘</q></p>
+        <p class="senior"><b>실무 팁</b>"우리만의 새로운 경험"은 대개 사용자가 배워야 하는 숙제를 뜻합니다. 새로움은 서비스의 핵심 가치에만 쓰고, 뒤로가기·저장·검색 같은 기본 동작은 익숙한 방식 그대로 두세요. 단, 플랫폼마다 익숙함이 다릅니다. iOS와 안드로이드의 뒤로가기, 탭 위치는 각자의 관습을 따라야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="millers-law">
+      <div class="demo">
+        <div class="d-col" style="width:100%">
+          <div class="d-pair">
+            <div class="sd"><div class="ml">01012345678</div><div class="ml">1234567812345678</div><span class="d-cap">한 덩어리: 읽기 힘듦</span></div>
+            <span class="mid">vs</span>
+            <div class="sd"><div class="ml g">010 1234 5678</div><div class="ml g">1234 5678 1234 5678</div><span class="d-cap">덩어리로 나눔</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">밀러의 법칙 <span class="en">Miller's law · Chunking</span></h2>
+        <p class="desc">사람이 잠깐 머릿속에 붙들 수 있는 정보의 양에는 한계가 있고, 정보를 의미 있는 덩어리로 묶으면(<strong>청킹</strong>) 더 많이 다룰 수 있다는 법칙입니다. 조지 밀러(George Miller)의 연구에서 나왔습니다.</p>
+        <p class="when"><b>화면에서는</b>전화번호·카드번호·인증번호의 끊어 쓰기, 긴 목록의 소제목 나누기, 한 화면에 담는 정보 묶음 수.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드번호 입력은 밀러의 법칙에 따라 4자리씩 청킹해서 보여주고, 입력 중에도 자동으로 끊어줘</q></p>
+        <p class="senior"><b>실무 팁</b>"7±2"는 가장 흔히 오해되는 숫자입니다. "메뉴는 7개 이하", "탭은 5개 이하" 같은 UI 규칙이 아니라, 잠깐 기억할 때의 용량 이야기이고 이후 연구에서는 숫자가 더 작게 논의되기도 합니다. 핵심은 개수가 아니라 묶음이니 근거로 숫자를 들이밀지 마세요. 그리고 스크린에 보이는 것은 기억할 필요가 없으므로, 기억을 요구하는 화면(앞 화면의 번호를 외워 입력)이 진짜 문제입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="teslers-law">
+      <div class="demo">
+        <div class="ts">
+          <input type="checkbox" id="tesler-sw">
+          <label class="sw" for="tesler-sw">주소 자동 검색 켜기</label>
+          <div class="tsb"><b class="u">사용자</b><b class="s">시스템</b></div>
+          <p class="tx" style="margin:0;font-size:12px"><span class="a0">우편번호, 시, 구, 동을 직접 입력해야 해요</span><span class="a1">검색해서 한 번 고르면 나머지는 채워져요</span></p>
+          <span class="d-cap">눌러 보세요. 복잡함의 총량은 그대로, 맡는 쪽만 바뀝니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">테슬러의 법칙 <span class="en">Tesler's law · 복잡성 보존</span></h2>
+        <p class="desc">어떤 일에는 더 이상 줄일 수 없는 복잡함이 있어서, 사용자가 덜면 누군가(시스템, 개발자, 디자이너)가 대신 져야 한다는 법칙. 래리 테슬러(Larry Tesler)의 이름이 붙었습니다.</p>
+        <p class="when"><b>화면에서는</b>자동 완성, 기본값, 주소 검색, 간편 결제처럼 "사용자가 할 일을 시스템이 대신하는" 모든 기능.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>테슬러의 법칙을 고려해 사용자가 입력할 칸을 줄이고, 이전 주문 정보와 위치 기반으로 시스템이 미리 채우게 해줘</q></p>
+        <p class="senior"><b>실무 팁</b>"단순하게 해주세요"는 그 복잡함을 누가 질지 정하라는 요청입니다. 개발 비용을 늘리는 결정이니 개발자와 함께 정해야 합니다. 시스템이 대신 채운 값이 틀렸을 때 고칠 수 있는 길을 안 만들면, 복잡함은 사라지지 않고 오류와 문의 전화로 돌아옵니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="doherty-threshold">
+      <div class="demo">
+        <div class="dh" role="img" aria-label="빠르게 반응하는 버튼과 느리게 반응하는 버튼의 비교">
+          <div class="r fast"><button class="d-btn" type="button" tabindex="-1">저장</button><div class="res"><span class="ok">저장됨</span></div></div>
+          <div class="r slow"><button class="d-btn" type="button" tabindex="-1">저장</button><div class="res"><span class="w"><i></i>저장 중</span><span class="ok" style="position:absolute;margin-left:0">저장됨</span></div></div>
+          <span class="d-cap">위: 0.4초 안에 반응 / 아래: 한참 뒤에 반응</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">도허티 임계 <span class="en">Doherty threshold</span></h2>
+        <p class="desc">시스템이 <strong>0.4초</strong> 안에 반응하면 사용자는 기다린다고 느끼지 않고 흐름이 끊기지 않습니다. 월터 도허티(Walter Doherty)와 아빈드 타다니(Arvind Thadhani)가 1982년에 제안한 기준입니다.</p>
+        <p class="when"><b>화면에서는</b>버튼을 누른 뒤 반응(눌림 효과, 스피너, 화면 전환), 입력창 자동완성, 화면 이동 시간.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>도허티 임계에 맞춰 버튼을 누르는 즉시 눌림 반응을 주고, 0.4초가 넘는 작업에는 로딩 표시를 띄워줘</q></p>
+        <p class="senior"><b>실무 팁</b>데이터를 다 가져오는 시간이 아니라 "받았다는 반응"이 0.4초 안에 오는지가 핵심입니다. 그래서 서버가 느려도 누르는 순간의 눌림 효과, 스켈레톤, 낙관적 UI로 체감을 맞출 수 있습니다. 반대로 0.4초보다 훨씬 빨라 보이는 로딩 표시는 번쩍거려 오히려 거슬립니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="von-restorff">
+      <div class="demo">
+        <div class="pl">
+          <div><b>기본</b><small>월 0원</small></div>
+          <div class="hot"><b>추천</b><small>월 9,900원</small></div>
+          <div><b>프로</b><small>월 19,900원</small></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">폰 레스토프 효과 <span class="en">Von Restorff effect</span></h2>
+        <p class="desc">비슷한 것들 사이에서 다르게 생긴 하나가 가장 눈에 띄고 기억에 남는 현상. 헤트비히 폰 레스토프(Hedwig von Restorff)의 이름이 붙었고, <strong>고립 효과</strong>라고도 합니다.</p>
+        <p class="when"><b>화면에서는</b>요금제 중 "추천" 카드, 여러 버튼 중 하나뿐인 주요 버튼, 탭바 가운데 강조 버튼, 새 알림 점.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>폰 레스토프 효과를 써서 요금제 카드 3개 중 가운데 카드만 진한 주색으로 강조하고 나머지는 흰색으로 둬줘</q></p>
+        <p class="senior"><b>실무 팁</b>강조는 하나일 때만 효과가 있습니다. 한 화면에서 빨간 뱃지, 굵은 글씨, 반짝이는 버튼을 다 쓰면 아무것도 눈에 띄지 않습니다. 또 색만으로 차이를 두면 색을 구분하기 어려운 사람에게 안 보이니, 크기·위치·글자 같은 단서도 함께 쓰세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="proximity">
+      <div class="demo">
+        <div class="d-col" style="align-items:center;height:130px;justify-content:center">
+          <div class="pr"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <span class="d-cap">점은 그대로, 간격만 바뀝니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">게슈탈트 근접성 <span class="en">Proximity</span></h2>
+        <p class="desc">가까이 있는 것들은 한 묶음으로 보인다는 원리. 선이나 상자 없이 간격만으로 관계를 표현할 수 있습니다. 게슈탈트는 사람이 전체를 먼저 인식한다는 심리학 이론의 이름입니다.</p>
+        <p class="when"><b>화면에서는</b>입력칸과 그 라벨의 거리, 카드 안 제목과 설명 사이, 섹션 사이의 큰 여백.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>근접성 원리에 따라 라벨은 자기 입력칸에 4px, 다른 입력칸과는 24px 떨어뜨려서 묶음이 구분되게 해줘</q></p>
+        <p class="senior"><b>실무 팁</b>폼에서 가장 흔한 사고가 라벨이 위 칸과 아래 칸의 한가운데 떠 있는 것입니다. 어느 칸의 라벨인지 헷갈립니다. 모든 간격을 16px로 똑같이 맞추는 "정돈"이 오히려 묶음을 없애니, 관련 있는 것은 좁게, 아닌 것은 넓게 간격에 위계를 주세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="similarity">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="sm"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <span class="d-cap">간격이 같아도 모양과 색이 같으면 한 줄로 보입니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">게슈탈트 유사성 <span class="en">Similarity</span></h2>
+        <p class="desc">색, 모양, 크기가 비슷한 것들은 같은 종류로 보인다는 원리. 비슷하게 생기면 같은 역할로, 다르게 생기면 다른 역할로 읽힙니다.</p>
+        <p class="when"><b>화면에서는</b>링크는 모두 같은 색, 주요 버튼은 모두 같은 모양, 클릭할 수 없는 글자는 링크와 다른 모양.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>유사성 원리에 따라 클릭할 수 있는 요소는 모두 같은 주색과 밑줄로, 일반 텍스트는 검정으로 통일해줘</q></p>
+        <p class="senior"><b>실무 팁</b>꾸미려고 클릭할 수 없는 제목에 파란색을 쓰면 사용자는 누르고 실망합니다. 반대로 같은 모양의 버튼이 서로 다른 일을 하면(저장과 삭제가 똑같이 생김) 사고가 납니다. 같은 역할은 같은 모양, 다른 역할은 다른 모양이 원칙입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="progressive-disclosure">
+      <div class="demo">
+        <div class="pd d-box">
+          <div><label for="pd-n">이름</label><input id="pd-n" class="d-input" placeholder="홍길동"></div>
+          <div><label for="pd-e">이메일</label><input id="pd-e" class="d-input" placeholder="name@email.com"></div>
+          <details><summary>고급 설정</summary><div class="adv"><label><input type="checkbox"> 마케팅 수신 동의</label><label><input type="checkbox"> 프로필 공개</label><label><input type="checkbox"> 두 단계 인증</label></div></details>
+          <span class="d-cap">고급 설정을 눌러 보세요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">점진적 공개 <span class="en">Progressive disclosure</span></h2>
+        <p class="desc">처음에는 꼭 필요한 것만 보여주고, 더 알고 싶은 사람에게만 나머지를 단계적으로 펼쳐 보이는 방식. 한꺼번에 모두 보여주지 않는다는 점에서 "숨기기"와 닮았지만, 필요할 때 바로 찾게 한다는 점이 다릅니다.</p>
+        <p class="when"><b>화면에서는</b>"고급 설정", "더보기", 접히는 FAQ, 단계별 가입 폼, 처음엔 일부만 보이는 긴 글.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>점진적 공개 방식으로 설정 화면에 기본 항목 3개만 먼저 보여주고 나머지는 "고급 설정" 아코디언 안에 넣어줘</q></p>
+        <p class="senior"><b>실무 팁</b>자주 쓰는 핵심 기능을 접어 두면 아무도 못 찾습니다. 무엇을 기본으로 보일지는 사용 빈도로 정하고, 접힌 곳의 이름은 안에 뭐가 있는지 알 수 있게 쓰세요. "더보기" 뒤에 뭐가 있는지 모르면 눌러 보지도 않습니다. 단계를 너무 쪼개면 뒤로 가기와 입력값 보존 같은 상태 처리가 급격히 늘어납니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="affordance-signifier">
+      <div class="demo">
+        <div class="d-col" style="width:100%">
+          <div class="d-pair">
+            <div class="sd"><span class="sg-flat">알림 받기</span><span class="d-cap">단서 없음: 눌러야 하나?</span></div>
+            <span class="mid">vs</span>
+            <div class="sd"><button class="sg-btn" type="button">알림 받기<svg class="d-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button><span class="d-cap">단서 있음: 눌러 보세요</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">어포던스와 시그니파이어 <span class="en">Affordance · Signifier</span></h2>
+        <p class="desc"><strong>어포던스</strong>는 사물이 가진 "할 수 있는 행동"(버튼은 누를 수 있다), <strong>시그니파이어</strong>는 그것이 눈에 보이도록 알려주는 단서(입체감, 화살표, 밑줄)입니다. 도널드 노먼(Donald Norman)이 정리했습니다.</p>
+        <p class="when"><b>화면에서는</b>버튼의 테두리·그림자, 링크의 밑줄, 스위치의 손잡이, 마우스를 올렸을 때 바뀌는 커서와 색.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>클릭할 수 있는 요소에 어포던스가 보이도록 시그니파이어로 테두리, 화살표, hover와 눌림 상태를 추가해줘</q></p>
+        <p class="senior"><b>실무 팁</b>평면(플랫) 디자인이 유행하면서 가장 먼저 사라진 것이 이 단서입니다. 글자만 있는 버튼은 시안에서는 깔끔해도 실제로는 눌러지는지 모릅니다. 마우스 올리기(hover)는 터치 화면에 없으니, hover에만 단서를 두면 모바일에서는 그 단서가 통째로 사라집니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="cognitive-load">
+      <div class="demo">
+        <div class="d-col" style="width:100%">
+          <div class="d-pair">
+            <div class="sd"><div class="cl"><span class="bn">할인 90%</span><span class="bn r">마감 임박</span><span class="bn b">공지 3건</span><div class="mix"><i style="background:#f87171"></i><i style="background:#60a5fa"></i><i style="background:#fbbf24"></i><i style="background:#34d399"></i><i style="background:#a78bfa"></i></div><div class="d-bar"></div><div class="d-bar" style="width:60%"></div></div><span class="d-cap">신경 쓸 것이 많음</span></div>
+            <span class="mid">vs</span>
+            <div class="sd"><div class="cl one"><b>배송지를 알려 주세요</b><button class="d-btn" type="button" tabindex="-1">입력하기</button></div><span class="d-cap">한 번에 한 가지</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">12</p>
+        <h2 class="term-name">인지 부하 <span class="en">Cognitive load</span></h2>
+        <p class="desc">사용자가 화면을 이해하고 판단하는 데 머리를 얼마나 쓰게 만드는가를 말합니다. 위의 법칙들은 대부분 이 부담을 줄이는 방법의 다른 이름입니다.</p>
+        <p class="when"><b>화면에서는</b>한 화면의 요소 수, 색과 글꼴의 종류, 한 번에 요구하는 결정의 수, 외워야 하는 정보의 양.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>인지 부하를 줄이기 위해 이 화면을 한 번에 한 가지 결정만 하도록 단계로 나누고 불필요한 장식 요소를 빼줘</q></p>
+        <p class="senior"><b>실무 팁</b>사용자가 급하거나 피곤하거나 한 손으로 쓸 때 가용한 인지 능력은 훨씬 줄어듭니다. 결제와 오류 복구 화면은 평소보다 더 단순해야 합니다. 요소를 지우는 것만이 답은 아니고, 한 줄에 두 가지를 묻는 문장을 둘로 쪼개고 기본값을 채워 주는 것만으로도 부하는 크게 줄어듭니다.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

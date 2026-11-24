@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="타이포그래피 — 움직이는 예시로 보는 UI 용어 사전">
+<title>타이포그래피 · UI 용어 사전</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../../assets/style.css">
+<style>
+/* ── 이 주제 전용 데모 CSS ── */
+.cardp { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; }
+.lab { display: block; margin-top: 6px; color: var(--mute); font-size: 11px; font-weight: 700; }
+
+/* 01 타입 스케일: 12 → 14 → 16 → 20 → 25 → 31 처럼 일정한 비율(1.25배)로 커지는 크기 사다리 */
+.sc { display: grid; gap: 2px; width: 270px; }
+.sc div { display: flex; align-items: baseline; justify-content: space-between; line-height: 1.25; }
+.sc small { color: var(--mute); font-size: 11px; font-weight: 600; }
+
+/* 02 행간: line-height 만 다르게 한 같은 글 */
+.lh p { margin: 0; font-size: 12px; }
+.lh .tight { line-height: 1; } .lh .good { line-height: 1.6; }
+
+/* 03 자간: letter-spacing 을 em 단위로 준다 */
+.ls { font-size: 17px; font-weight: 800; }
+.ls.tight { letter-spacing: -.1em; } .ls.good { letter-spacing: -.02em; }
+.ls.up { letter-spacing: .12em; font-size: 11px; font-weight: 700; color: var(--p); }
+
+/* 04 행 길이: 글줄을 막대로 그려 한 줄의 길이를 비교한다(단순화) */
+.ml { display: grid; gap: 4px; }
+.ml i { display: block; height: 5px; border-radius: 99px; background: #c9cfe6; }
+
+/* 05 굵기 위계: font-weight 를 단계별로 다르게 */
+.wt .h { font-weight: 800; font-size: 14px; } .wt .s { font-weight: 600; font-size: 12px; } .wt .b { font-weight: 400; font-size: 11px; color: var(--mute); }
+.wt.flat * { font-weight: 700; font-size: 12px; color: var(--ink); }
+
+/* 06 세리프: font-family 만 바꾼다 */
+.serif { font-family: "Noto Serif KR", "Batang", "바탕", serif; }
+.big { font-size: 22px; font-weight: 700; line-height: 1.2; }
+
+/* 07 고정폭 숫자: @property 로 숫자를 올리고, font-variant-numeric 으로 폭을 고정/가변 */
+.cnt { font-size: 24px; font-weight: 800; text-align: right; line-height: 1.3; }
+
+.cnt.pro { font-variant-numeric: proportional-nums; font-feature-settings: "tnum" 0; }
+.cnt.tab { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+.cnt-box { display: inline-block; padding: 8px 10px; background: #fff; border-radius: 10px; border: 1px solid var(--line); }
+.cnt-box::after { content: ""; display: block; height: 3px; background: var(--p); width: 100%; margin-top: 2px; opacity: .15; }
+
+/* 08 말줄임: 한 줄은 text-overflow, 여러 줄은 line-clamp */
+.one { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.two { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.trc { width: 220px; font-size: 13px; font-weight: 600; }
+
+/* 09 한글 줄바꿈: word-break 값만 다르다 */
+.wb { width: 100%; padding: 8px; border-radius: 8px; background: #fff; border: 1px solid var(--line); font-size: 12px; line-height: 1.5; }
+.wb.all { word-break: break-all; } .wb.keep { word-break: keep-all; }
+
+/* 10 정렬: text-align */
+.al p { margin: 0; font-size: 12px; line-height: 1.5; }
+
+/* 11 위계: 가늘게 눈을 뜨듯 블러를 걸어도 순서가 읽히는지 본다 */
+.vh { width: 240px; transition: filter .25s; cursor: help; }
+.vh:hover { filter: blur(3px); }
+.vh .t { font-size: 20px; font-weight: 800; line-height: 1.2; }
+.vh .m { font-size: 12px; color: var(--mute); margin: 2px 0 8px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="../../index.html">UI 용어 사전</a><span class="sep">›</span>
+  <a href="../index.html">기본기</a><span class="sep">›</span>
+  <span>타이포그래피</span>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>타이포그래피</h1>
+  </section>
+
+  <div class="terms">
+
+    <article class="term" id="type-scale">
+      <div class="demo">
+        <div class="sc">
+          <div style="font-size:31px;font-weight:800">제목 <small>31 · Display</small></div>
+          <div style="font-size:25px;font-weight:800">큰 제목 <small>25 · H1</small></div>
+          <div style="font-size:20px;font-weight:700">중간 제목 <small>20 · H2</small></div>
+          <div style="font-size:16px;font-weight:500">본문 <small>16 · Body</small></div>
+          <div style="font-size:13px;font-weight:500;color:var(--mute)">보조 글 <small>13 · Caption</small></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">01</p>
+        <h2 class="term-name">타입 스케일 <span class="en">Type scale</span></h2>
+        <p class="desc">쓸 글자 크기를 미리 정해 둔 사다리. 크기를 그때그때 고르지 않고 12·14·16·20·24처럼 일정한 비율로 몇 단계만 정해서 돌려 씁니다. <strong>글자 크기 체계</strong>라고도 부릅니다.</p>
+        <p class="when"><b>언제 쓰나</b>디자인을 시작할 때 가장 먼저. 제목, 부제, 본문, 캡션 이름을 정해서 개발자와 같은 표를 씁니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>글자 크기를 12, 14, 16, 20, 24, 32px 여섯 단계 타입 스케일로 정의하고 CSS 변수로 만들어줘</q></p>
+        <p class="senior"><b>실무 팁</b>단계가 열 개를 넘으면 스케일이 아니라 그냥 아무 크기입니다. 본문은 모바일 기준 16px 안팎을 잡고 그 아래로는 12px보다 작게 내리지 마세요. 그리고 iOS와 안드로이드는 이름과 기준 크기가 다르니 화면별로 대응표를 따로 두는 편이 좋습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="line-height">
+      <div class="demo">
+        <div class="d-pair lh">
+          <div class="side"><div class="cardp"><p class="tight">줄 사이가 너무 좁아서 위아래 글줄이 달라붙어 읽기 힘듭니다.</p></div><span class="d-cap">1.0</span></div>
+          <div class="mid">vs</div>
+          <div class="side"><div class="cardp"><p class="good">줄 사이를 넉넉히 두면 눈이 다음 줄을 쉽게 찾습니다.</p></div><span class="d-cap">1.6</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">02</p>
+        <h2 class="term-name">행간 <span class="en">Line height · Leading</span></h2>
+        <p class="desc">글줄과 글줄 사이의 간격. 글자 크기의 몇 배인지로 정하며(<code>line-height: 1.6</code>), 한글 본문은 보통 <strong>1.5~1.7배</strong>가 읽기 편합니다. 제목은 반대로 1.2~1.3배로 좁힙니다.</p>
+        <p class="when"><b>언제 쓰나</b>두 줄 이상 되는 모든 글. 본문, 상품 설명, 카드 안의 요약, 약관.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>본문은 행간을 1.6으로, 제목은 1.25로 설정해줘</q></p>
+        <p class="senior"><b>실무 팁</b>피그마 기본값 그대로(자동 행간)를 넘기면 한글은 위아래가 답답하게 나옵니다. 또 행간은 글자 크기가 커질수록 비율을 줄여야 하는데, 한 가지 값을 전부에 쓰면 큰 제목만 둥둥 떠 보입니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="letter-spacing">
+      <div class="demo">
+        <div class="d-col" style="width:260px;gap:10px">
+          <div class="d-pair">
+            <div class="side"><div class="cardp ls tight">오늘의 추천</div><span class="d-cap">-0.1em 너무 좁음</span></div>
+            <div class="mid">vs</div>
+            <div class="side"><div class="cardp ls good">오늘의 추천</div><span class="d-cap">-0.02em 적당</span></div>
+          </div>
+          <div class="ls up" style="text-align:center">LABEL TEXT · 대문자는 넓게</div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">03</p>
+        <h2 class="term-name">자간 <span class="en">Letter spacing · Tracking</span></h2>
+        <p class="desc">글자와 글자 사이의 간격. 보통은 기본값을 쓰고, 큰 제목은 아주 살짝 좁히고(-0.01~-0.03em), 영문 대문자 라벨은 넓힙니다. em은 현재 글자 크기를 기준으로 하는 단위입니다.</p>
+        <p class="when"><b>언제 쓰나</b>24px 이상의 큰 제목, 영문 대문자 라벨(EYEBROW), 숫자가 큰 대시보드.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>큰 제목에는 자간을 -0.02em으로 살짝 좁히고, 본문은 기본 자간을 유지해줘</q></p>
+        <p class="senior"><b>실무 팁</b>본문까지 자간을 좁히는 것이 가장 흔한 실수입니다. 작은 글자는 오히려 기본값이 더 읽기 좋고, 한글은 좁히면 받침이 붙어 뭉칩니다. 디자인 도구의 자간은 퍼센트, 웹은 em이라 단위 변환을 한 번 맞춰 두어야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="line-length">
+      <div class="demo">
+        <div class="d-col" style="width:270px;gap:12px">
+          <div><div class="ml"><i></i><i></i><i></i><i></i><i style="width:60%"></i></div><span class="lab">한 줄이 너무 길다: 눈이 다음 줄 시작점을 놓침</span></div>
+          <div style="width:62%"><div class="ml"><i></i><i></i><i></i><i></i><i></i><i style="width:60%"></i></div><span class="lab">한 줄 40자 안팎: 안정적</span></div>
+          <span class="d-cap">단순화한 예시. 글줄을 막대로 표현했습니다</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">04</p>
+        <h2 class="term-name">행 길이 <span class="en">Line length · Measure</span></h2>
+        <p class="desc">한 줄에 들어가는 글자 수. 너무 길면 줄을 넘어갈 때 눈이 길을 잃고, 너무 짧으면 자꾸 끊깁니다. 널리 쓰는 기준은 영문 45~75자, 한글은 한 줄 <strong>30~45자 안팎</strong>입니다.</p>
+        <p class="when"><b>언제 쓰나</b>넓은 화면의 기사 본문, 블로그, 약관, 도움말. 반응형에서 PC 화면이 넓어질 때 특히 중요합니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>본문 영역에 행 길이 제한을 걸어서 한 줄이 약 40자를 넘지 않게 max-width를 잡아줘</q></p>
+        <p class="senior"><b>실무 팁</b>PC 화면에서 본문이 가로 전체로 퍼지는 시안을 정말 자주 봅니다. 화면이 넓을수록 글 상자는 가운데에 좁게 두는 게 맞습니다. 반대로 모바일은 폭이 이미 좁아서 걱정할 일이 거의 없습니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="weight-hierarchy">
+      <div class="demo">
+        <div class="d-pair">
+          <div class="side"><div class="cardp wt flat"><div>여름 세일</div><div>최대 50% 할인</div><div>6월 30일까지</div></div><span class="d-cap">모두 굵게: 뭐가 중요한지 모름</span></div>
+          <div class="mid">vs</div>
+          <div class="side"><div class="cardp wt"><div class="h">여름 세일</div><div class="s">최대 50% 할인</div><div class="b">6월 30일까지</div></div><span class="d-cap">굵기로 순서 만들기</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">05</p>
+        <h2 class="term-name">굵기 위계 <span class="en">Weight hierarchy</span></h2>
+        <p class="desc">글자 굵기(font-weight)로 중요도의 순서를 만드는 것. 크기를 키우지 않고 굵기만으로도 "제목은 굵게, 설명은 보통"처럼 읽는 순서를 줄 수 있습니다. 보통 서로 구분되는 <strong>2~3가지</strong> 굵기만 씁니다.</p>
+        <p class="when"><b>언제 쓰나</b>카드의 제목과 설명, 목록의 이름과 부가 정보, 가격과 단위, 표의 머리글.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드 안의 글자는 제목 700, 본문 400의 굵기 위계로 나누고 그 외의 굵기는 쓰지 마</q></p>
+        <p class="senior"><b>실무 팁</b>한글은 가는 굵기(300 이하)가 작은 크기에서 뭉개져 읽기 어렵습니다. 본문은 400 이상으로 두세요. 굵기가 비슷한 400과 500은 구분이 안 돼 "굵기 위계"가 되지 않으니, 최소 200 이상 차이를 두는 편이 안전합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="serif-sans">
+      <div class="demo">
+        <div class="d-pair">
+          <div class="side"><div class="cardp big serif">가나다 Ag</div><span class="d-cap">세리프(명조·바탕체)</span></div>
+          <div class="mid">vs</div>
+          <div class="side"><div class="cardp big">가나다 Ag</div><span class="d-cap">산세리프(고딕체)</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">06</p>
+        <h2 class="term-name">세리프 <span class="vs">vs</span> 산세리프 <span class="en">Serif vs Sans-serif</span></h2>
+        <p class="desc">글자 끝에 삐침(세리프)이 있으면 세리프, 없으면 산세리프(sans는 "없다"는 뜻)입니다. 한글에서는 세리프가 명조·바탕체, 산세리프가 고딕체에 해당합니다.</p>
+        <p class="when"><b>이렇게 구분</b>글자 끝에 가늘게 삐치면 세리프(진지함·전통·긴 글). 끝이 깔끔하게 잘려 있으면 산세리프(화면 UI, 버튼, 작은 글자).</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>UI 전체는 Pretendard 산세리프로 쓰고, 기사 본문 제목에만 세리프 폰트를 써줘</q></p>
+        <p class="senior"><b>실무 팁</b>화면의 UI에는 산세리프가 기본입니다. 세리프는 작은 크기와 낮은 해상도에서 가는 획이 사라지기 쉽고, 한글 폰트는 용량도 큽니다. 한 서비스에서 두 종류를 섞을 땐 "제목만 세리프"처럼 역할을 분명히 나누세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="tabular-figures">
+      <div class="demo">
+        <div class="d-pair">
+          <div class="side"><div class="cnt-box"><div class="cnt pro">1,111<br>8,888<br>1,000</div></div><span class="d-cap">가변 폭: 자릿수가 어긋남</span></div>
+          <div class="mid">vs</div>
+          <div class="side"><div class="cnt-box"><div class="cnt tab">1,111<br>8,888<br>1,000</div></div><span class="d-cap">고정폭: 자릿수가 맞음</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">07</p>
+        <h2 class="term-name">고정폭 숫자 <span class="en">Tabular figures</span></h2>
+        <p class="desc">모든 숫자가 같은 너비를 차지하게 하는 설정. 기본(가변 폭)은 1이 좁고 8이 넓어서 숫자가 바뀔 때 전체가 좌우로 흔들립니다. CSS는 <code>font-variant-numeric: tabular-nums</code> 입니다.</p>
+        <p class="when"><b>언제 쓰나</b>카운트다운 타이머, 가격 표, 계산서, 재생 시간, 실시간 점수판, 오른쪽 정렬한 금액 열.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>가격과 타이머 숫자에 고정폭 숫자 tabular-nums를 적용해서 값이 바뀌어도 너비가 안 흔들리게 해줘</q></p>
+        <p class="senior"><b>실무 팁</b>폰트가 이 기능을 지원해야 적용됩니다. 지원하지 않는 폰트에서는 아무 일도 안 일어나니, 폰트를 고를 때 미리 확인하세요. 또 가격 표에서 금액을 오른쪽 정렬해도 고정폭이 아니면 자릿수가 어긋나 비교가 안 됩니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="truncation">
+      <div class="demo">
+        <div class="d-col trc">
+          <div class="d-box"><div class="one">제주 한달살이 숙소 추천 총정리 가이드와 후기</div><span class="lab">한 줄 말줄임</span></div>
+          <div class="d-box"><div class="two">제주 한달살이 숙소를 고를 때 꼭 확인해야 하는 다섯 가지 기준과 실제 지내본 후기를 정리했습니다</div><span class="lab">두 줄 말줄임</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">08</p>
+        <h2 class="term-name">말줄임 <span class="en">Truncation · Ellipsis</span></h2>
+        <p class="desc">공간보다 긴 글을 자르고 끝에 …(<strong>줄임표, ellipsis</strong>)를 붙이는 처리. 한 줄이면 <code>text-overflow: ellipsis</code>, 여러 줄이면 <code>line-clamp</code> 로 줄 수를 정합니다.</p>
+        <p class="when"><b>언제 쓰나</b>목록의 제목, 카드의 미리보기 문장, 파일 이름, 탭 이름처럼 길이를 예측할 수 없는 글.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>카드 제목은 두 줄까지만 보여주고 넘치면 말줄임으로 처리해줘</q></p>
+        <p class="senior"><b>실무 팁</b>말줄임은 정보를 지우는 일입니다. 가격·날짜·상태처럼 꼭 보여야 하는 값은 자르면 안 되고, 잘린 글의 전문을 볼 방법(눌러서 상세, 툴팁)이 있어야 합니다. 시안에는 항상 가장 긴 이름으로 테스트한 장면을 그려 보세요.</p>
+      </div>
+    </article>
+
+    <article class="term" id="korean-linebreak">
+      <div class="demo">
+        <div class="d-pair">
+          <div class="side"><div class="wb all">오늘은 날씨가 좋아서 산책하기 좋습니다</div><span class="d-cap">break-all: 단어 중간에서 끊김</span></div>
+          <div class="mid">vs</div>
+          <div class="side"><div class="wb keep">오늘은 날씨가 좋아서 산책하기 좋습니다</div><span class="d-cap">keep-all: 어절 단위로 끊김</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">09</p>
+        <h2 class="term-name">한글 줄바꿈 <span class="en">word-break: keep-all</span></h2>
+        <p class="desc">한글은 기본 설정에서 글자 단위로 줄이 바뀌어 "산-책"처럼 단어가 반으로 갈라집니다. <code>word-break: keep-all</code> 을 주면 <strong>띄어쓰기(어절) 단위</strong>로만 줄이 바뀌어 읽기 편해집니다.</p>
+        <p class="when"><b>언제 쓰나</b>한국어 본문, 제목, 버튼, 안내 문구처럼 두 줄 이상 될 수 있는 모든 한글 텍스트. 이 사전의 페이지에도 적용되어 있습니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>한글이 어절 단위로 줄바꿈되도록 body에 word-break: keep-all을 적용하고 긴 영문 단어는 overflow-wrap으로 처리해줘</q></p>
+        <p class="senior"><b>실무 팁</b>keep-all만 쓰면 URL이나 긴 영어 단어가 상자를 뚫고 나갑니다. <code>overflow-wrap: anywhere</code> 를 함께 걸어 두세요. 그리고 제목은 <code>text-wrap: balance</code> 를 더하면 마지막 줄에 한두 글자만 외롭게 남는 일이 줄어듭니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="text-align">
+      <div class="demo">
+        <div class="d-pair al">
+          <div class="side"><div class="cardp"><p style="text-align:left">긴 문단은 왼쪽 정렬이 시작점이 같아서 읽기 편합니다. 줄이 바뀔 때 눈이 같은 자리로 돌아옵니다.</p></div><span class="d-cap">왼쪽 정렬</span></div>
+          <div class="mid">vs</div>
+          <div class="side"><div class="cardp"><p style="text-align:center">긴 문단을 가운데 정렬하면 줄마다 시작점이 달라서 읽기 힘들어집니다.</p></div><span class="d-cap">가운데 정렬</span></div>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">10</p>
+        <h2 class="term-name">정렬 <span class="vs">vs</span> 가운데 정렬 <span class="en">Left align vs Center align</span></h2>
+        <p class="desc">글이 줄의 어느 쪽에 붙는지를 정하는 일. 글이 몇 줄이나 되는지가 기준입니다. 한두 줄은 가운데도 되지만, 읽어야 하는 문단은 왼쪽 정렬이 기본입니다. 숫자 열은 오른쪽 정렬입니다.</p>
+        <p class="when"><b>이렇게 구분</b>세 줄 이상 읽는 글이면 왼쪽 정렬. 한두 줄 제목·빈 화면 안내·버튼이면 가운데 정렬. 금액 열이면 오른쪽 정렬.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>본문 문단은 왼쪽 정렬로 두고, 빈 상태 안내 문구처럼 한두 줄만 가운데 정렬해줘</q></p>
+        <p class="senior"><b>실무 팁</b>가운데 정렬 문단은 줄 수가 늘어나는 순간 문제가 됩니다. 번역이나 사용자 입력으로 글이 길어질 수 있는 자리에는 가운데 정렬을 쓰지 마세요. 아랍어·히브리어처럼 오른쪽에서 왼쪽으로 쓰는 언어를 지원하면 "왼쪽/오른쪽" 대신 "시작/끝"으로 정렬을 정의해야 합니다.</p>
+      </div>
+    </article>
+
+    <article class="term" id="visual-hierarchy">
+      <div class="demo">
+        <div class="d-col" style="align-items:center">
+          <div class="d-box vh">
+            <div class="t">제주 3박 4일</div>
+            <div class="m">항공권 + 숙소 포함</div>
+            <div class="d-row" style="justify-content:space-between"><b style="font-size:18px">389,000원</b><span class="d-btn" style="min-height:30px">예약</span></div>
+          </div>
+          <span class="d-cap">마우스를 올리면 흐려집니다. 그래도 순서가 보이나요</span>
+        </div>
+      </div>
+      <div class="body">
+        <p class="num">11</p>
+        <h2 class="term-name">시각적 위계 <span class="en">Visual hierarchy</span></h2>
+        <p class="desc">눈이 어디를 먼저 보고, 다음에 어디를 보는지를 크기·굵기·색·여백으로 정해주는 것. <strong>스퀸트 테스트(squint test)</strong>는 눈을 가늘게 뜨거나 흐리게 해서 그래도 가장 중요한 것이 먼저 보이는지 확인하는 방법입니다.</p>
+        <p class="when"><b>언제 쓰나</b>화면을 새로 그릴 때, 완성한 시안을 점검할 때. "이 화면에서 가장 중요한 한 가지"를 정하는 첫 단계입니다.</p>
+        <p class="prompt"><b>AI에게 이렇게</b><q>이 카드의 시각적 위계를 점검해서 가격이 가장 먼저, 제목이 그다음, 보조 정보가 마지막에 읽히도록 크기와 굵기를 조정해줘</q></p>
+        <p class="senior"><b>실무 팁</b>"전부 중요하니까 전부 크게"가 위계를 가장 빨리 무너뜨립니다. 한 화면에서 가장 눈에 띄는 것은 하나여야 하고, 버튼도 주 버튼 하나 외에는 힘을 빼야 합니다. 팀 리뷰에서 시안을 3초만 보여주고 "뭐가 보였어요?"라고 물어보세요.</p>
+      </div>
+    </article>
+
+  </div>
+</main>
+<script src="../../assets/app.js"></script>
+</body>
+</html>
